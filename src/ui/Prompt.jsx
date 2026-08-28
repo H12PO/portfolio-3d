@@ -1,13 +1,12 @@
 import { useGameStore } from '../store/useGameStore'
-import { DOORS } from '../config/doors'
+import { useT } from '../i18n'
 
 export default function Prompt() {
   const nearbyDoor = useGameStore((s) => s.nearbyDoor)
   const activeDoor = useGameStore((s) => s.activeDoor)
+  const t = useT()
 
   if (!nearbyDoor || activeDoor) return null
-
-  const door = DOORS.find((d) => d.id === nearbyDoor)
 
   return (
     <div style={{
@@ -18,7 +17,7 @@ export default function Prompt() {
       font: '15px system-ui', letterSpacing: '.02em',
       pointerEvents: 'none',
     }}>
-      Embarquement <strong>{door.gate}</strong> — {door.label} · appuyer sur <strong>E</strong>
+      {t(`doors.${nearbyDoor}.label`)} · {t('nav.interact')}
     </div>
   )
 }

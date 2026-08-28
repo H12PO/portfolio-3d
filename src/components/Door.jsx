@@ -1,9 +1,11 @@
 import { Text } from '@react-three/drei'
 import { useGameStore } from '../store/useGameStore'
+import { useT } from '../i18n'
 import { DOOR_Z } from '../config/doors'
 
-export default function Door({ id, label, gate, x }) {
+export default function Door({ id, gate, x }) {
   const isNear = useGameStore((s) => s.nearbyDoor === id)
+  const t = useT()
 
   return (
     <group position={[x, 0, DOOR_Z]}>
@@ -13,7 +15,7 @@ export default function Door({ id, label, gate, x }) {
       </mesh>
 
       <Text position={[0, 2.9, 0.2]} fontSize={0.32} color="#e8e8f0" anchorY="middle">
-        {`${gate} — ${label}`}
+        {`${gate} — ${t(`doors.${id}.label`)}`}
       </Text>
     </group>
   )

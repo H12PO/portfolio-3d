@@ -1,0 +1,35 @@
+{
+  "nav": {
+    "back": "Retour au terminal",
+    "gate": "Porte",
+    "interact": "appuyer sur E"
+  },
+  "doors": {
+    "parcours": { "label": "Parcours" },
+    "experiences": { "label": "Expériences" },
+    "projets": { "label": "Projets" },
+    "contact": { "label": "Contact" }
+  },
+  "pages": {
+    "parcours": {
+      "title": "Parcours",
+      "body": [
+        "Toutes les familles heureuses se ressemblent. Chaque famille malheureuse, au contraire, l'est à sa façon.",
+        "Tout était bouleversé dans la famille des Oblonskï. La princesse, ayant appris que son mari entretenait des relations avec la gouvernante française qui était chez eux, avait déclaré à son mari qu'elle ne pouvait plus vivre sous le même toit que lui. Cette situation, qui durait déjà depuis trois jours, était pénible pour les époux eux-mêmes, pour tous les membres de la famille et le personnel de la maison. Tous les parents et les familiers sentaient que leur cohabitation n'avait plus de raison d'être et que les étrangers que le hasard fait se rencontrer dans une auberge sont plus liés entre eux que ne pouvaient l'être maintenant les membres de la famille Oblonskï. La femme ne sortait pas de sa chambre ; le mari était absent depuis trois jours ; les enfants erraient par toute la maison comme des abandonnés ; l'Anglaise s'était querellée avec la femme de charge et avait écrit à une amie de lui trouver une nouvelle place ; le cuisinier, la veille, s'était absenté à l'heure du dîner ; la cuisinière et le cocher demandaient leur compte.",
+        "Le troisième jour après la querelle, le prince Stépan Arkadiévitch Oblonskï, — Stiva comme on l'appelait dans le monde, — s'éveillait à son heure habituelle, c'est-à-dire à huit heures du matin, non dans la chambre à coucher de sa femme mais dans son cabinet de travail, sur le divan couvert de maroquin. Il retourna son corps puissant et bien soigné sur les ressorts du divan, comme s'il avait l'intention de s'endormir pour longtemps. De l'autre côté, il enlaça fortement l'oreiller et y appuya sa joue. Mais, tout à coup, il se redressa, s'assit sur le divan et ouvrit les yeux."
+      ]
+    },
+    "experiences": {
+      "title": "Expériences",
+      "body": ["Contenu à venir."]
+    },
+    "projets": {
+      "title": "Projets",
+      "body": ["Contenu à venir."]
+    },
+    "contact": {
+      "title": "Contact",
+      "body": ["Contenu à venir."]
+    }
+  }
+}

@@ -5,6 +5,7 @@ import Player from './components/Player'
 import Door from './components/Door'
 import Prompt from './ui/Prompt'
 import DoorOverlay from './ui/DoorOverlay'
+import LangSwitch from './ui/LangSwitch'
 import { DOORS } from './config/doors'
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
 
       <Prompt />
       <DoorOverlay />
+      <LangSwitch />
     </>
   )
 }

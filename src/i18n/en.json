@@ -1,0 +1,26 @@
+{
+  "nav": {
+    "back": "Back to terminal",
+    "gate": "Gate",
+    "interact": "press E"
+  },
+  "doors": {
+    "parcours": { "label": "Education" },
+    "experiences": { "label": "Experience" },
+    "projets": { "label": "Projects" },
+    "contact": { "label": "Contact" }
+  },
+  "pages": {
+    "parcours": {
+      "title": "Education",
+      "body": [
+        "Happy families are all alike; every unhappy family is unhappy in its own way.",
+        "Everything was in confusion in the Oblonskys' house. The wife had discovered that the husband was carrying on an intrigue with a French girl, who had been a governess in their family, and she had announced to her husband that she could not go on living in the same house with him.",
+        "Placeholder text — replace with real content later."
+      ]
+    },
+    "experiences": { "title": "Experience", "body": ["Coming soon."] },
+    "projets":     { "title": "Projects",   "body": ["Coming soon."] },
+    "contact":     { "title": "Contact",    "body": ["Coming soon."] }
+  }
+}
