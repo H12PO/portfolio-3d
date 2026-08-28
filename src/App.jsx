@@ -1,32 +1,32 @@
-import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, Stats } from '@react-three/drei'
-import { useRef } from 'react'
-
-function Cube() {
-  const ref = useRef()
-
-  useFrame((state, delta) => {
-    ref.current.rotation.y += delta * 0.5
-    ref.current.rotation.x += delta * 0.2
-  })
-
-  return (
-    <mesh ref={ref}>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="orange" />
-    </mesh>
-  )
-}
+import { Canvas } from '@react-three/fiber'
+import { Stats } from '@react-three/drei'
+import Ground from './components/Ground'
+import Player from './components/Player'
+import Door from './components/Door'
+import Prompt from './ui/Prompt'
+import DoorOverlay from './ui/DoorOverlay'
+import { DOORS } from './config/doors'
 
 export default function App() {
   return (
-    <Canvas camera={{ position: [3, 3, 3], fov: 50 }}>
-      <color attach="background" args={['#15151f']} />
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[5, 5, 5]} intensity={3} />
-      <Cube />
-      <OrbitControls />
-      <Stats />
-    </Canvas>
+    <>
+      <Canvas shadows camera={{ position: [0, 4, 12], fov: 50 }}>
+        <color attach="background" args={['#15151f']} />
+
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[5, 8, 5]} intensity={2} castShadow />
+
+        <Ground />
+        <Player />
+        {DOORS.map((door) => (
+          <Door key={door.id} {...door} />
+        ))}
+
+        <Stats />
+      </Canvas>
+
+      <Prompt />
+      <DoorOverlay />
+    </>
   )
 }
