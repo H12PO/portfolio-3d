@@ -1,10 +1,11 @@
-import { useNavigate, useParams } from 'react-router'
+import { useParams } from 'react-router'
+import { useGameStore } from '../store/useGameStore'
 import { useT } from '../i18n'
 import { DOORS } from '../config/doors'
 
 export default function Page() {
   const { doorId } = useParams()
-  const navigate = useNavigate()
+  const beginLanding = useGameStore((s) => s.beginLanding)
   const t = useT()
 
   const door = DOORS.find((d) => d.id === doorId)
@@ -31,9 +32,8 @@ export default function Page() {
         {paragraphs.map((text, i) => (
           <p key={i} style={{ marginBottom: 22, opacity: .82 }}>{text}</p>
         ))}
-
         <button
-          onClick={() => navigate('/')}
+          onClick={() => beginLanding(doorId)}
           style={{
             marginTop: 20, padding: '11px 26px', borderRadius: 8,
             border: '1px solid rgba(255,255,255,.22)',

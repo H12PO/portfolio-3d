@@ -5,22 +5,78 @@ import useKeyboard from '../hooks/useKeyboard'
 import useDoorNavigation from '../hooks/useDoorNavigation'
 import { useGameStore } from '../store/useGameStore'
 import { BOUNDS } from '../config/world'
-import { DOORS, DOOR_Z, DOOR_RADIUS } from '../config/doors'
+import { DOORS, DOOR_Z, DOOR_RADIUS, BOARDING, LANDING } from '../config/doors'
 
 const SPEED = 4
 const SMOOTHNESS = 4
 const ARRIVAL_THRESHOLD = 0.15
+
+const smoothstep = (x) => x * x * (3 - 2 * x)
 
 export default function Player() {
   const ref = useRef()
   const enterDoor = useDoorNavigation()
   const keys = useKeyboard(enterDoor)
   const direction = useRef(new THREE.Vector3())
+  const boardingStart = useRef(new THREE.Vector3())
 
   useFrame((state, delta) => {
     const pos = ref.current.position
     const store = useGameStore.getState()
     if (!store.started) return
+
+    const camPos = state.camera.position
+
+    // ===================== EMBARQUEMENT =====================
+    if (store.boardingDoor) {
+      const time = store.boardingTime
+      if (time === 0) boardingStart.current.copy(pos)
+      store.tickBoarding(delta)
+
+      const door = DOORS.find((d) => d.id === store.boardingDoor)
+      const walk = THREE.MathUtils.clamp(
+        (time - BOARDING.doorOpen) / (BOARDING.walkIn - BOARDING.doorOpen), 0, 1
+      )
+      const eased = smoothstep(walk)
+
+      pos.x = THREE.MathUtils.lerp(boardingStart.current.x, door.x, eased)
+      pos.z = THREE.MathUtils.lerp(boardingStart.current.z, DOOR_Z - 1.2, eased)
+
+      camPos.x = THREE.MathUtils.lerp(camPos.x, door.x, 1 - Math.exp(-3 * delta))
+      camPos.y = THREE.MathUtils.lerp(camPos.y, 2.6, 1 - Math.exp(-2 * delta))
+      camPos.z = THREE.MathUtils.lerp(camPos.z, 5, 1 - Math.exp(-2 * delta))
+      state.camera.lookAt(door.x, 1.2, DOOR_Z)
+      return
+    }
+
+    // ===================== DÉBARQUEMENT =====================
+    if (store.landingDoor) {
+      const time = store.landingTime
+      const door = DOORS.find((d) => d.id === store.landingDoor)
+
+      if (time === 0) {
+        pos.x = door.x
+        pos.z = DOOR_Z - 1.2
+        camPos.set(door.x, 2.6, 5)
+      }
+      store.tickLanding(delta)
+
+      const walk = THREE.MathUtils.clamp(
+        (time - LANDING.routeChange) / (LANDING.walkOut - LANDING.routeChange), 0, 1
+      )
+      const eased = smoothstep(walk)
+
+      pos.x = door.x
+      pos.z = THREE.MathUtils.lerp(DOOR_Z - 1.2, DOOR_Z + 1.8, eased)
+
+      camPos.x = THREE.MathUtils.lerp(camPos.x, door.x, 1 - Math.exp(-3 * delta))
+      camPos.y = THREE.MathUtils.lerp(camPos.y, 4, 1 - Math.exp(-2.5 * delta))
+      camPos.z = THREE.MathUtils.lerp(camPos.z, 12, 1 - Math.exp(-2.5 * delta))
+      state.camera.lookAt(camPos.x, 1.5, 0)
+      return
+    }
+
+    // ===================== DÉPLACEMENT NORMAL =====================
     const { forward, backward, left, right } = keys.current
 
     direction.current.set(
@@ -51,13 +107,10 @@ export default function Player() {
       pos.z = THREE.MathUtils.clamp(pos.z, BOUNDS.minZ, BOUNDS.maxZ)
     }
 
-    const camPos = state.camera.position
     const targetX = THREE.MathUtils.clamp(pos.x, BOUNDS.minX + 6, BOUNDS.maxX - 6)
-
     camPos.x = THREE.MathUtils.lerp(camPos.x, targetX, 1 - Math.exp(-SMOOTHNESS * delta))
-    camPos.y = 4
-    camPos.z = 12
-
+    camPos.y = THREE.MathUtils.lerp(camPos.y, 4, 1 - Math.exp(-SMOOTHNESS * delta))
+    camPos.z = THREE.MathUtils.lerp(camPos.z, 12, 1 - Math.exp(-SMOOTHNESS * delta))
     state.camera.lookAt(camPos.x, 1.5, 0)
 
     let found = null
