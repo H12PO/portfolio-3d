@@ -1,10 +1,12 @@
+import { Routes, Route } from 'react-router'
 import { Canvas } from '@react-three/fiber'
 import { Stats } from '@react-three/drei'
 import Ground from './components/Ground'
 import Player from './components/Player'
 import Door from './components/Door'
 import Prompt from './ui/Prompt'
-import DoorOverlay from './ui/DoorOverlay'
+import Page from './ui/Page'
+import Intro from './ui/Intro'
 import LangSwitch from './ui/LangSwitch'
 import { DOORS } from './config/doors'
 
@@ -27,7 +29,10 @@ export default function App() {
       </Canvas>
 
       <Prompt />
-      <DoorOverlay />
+      <Routes>
+        <Route path="/:doorId" element={<Page />} />
+      </Routes>
+      <Intro />
       <LangSwitch />
     </>
   )

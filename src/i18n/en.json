@@ -1,4 +1,15 @@
 {
+  "intro": {
+    "name": "Hippolyte",
+    "subtitle": "Portfolio",
+    "controls": "Controls",
+    "move": "Move",
+    "moveClick": "Or click the floor",
+    "interact": "Interact",
+    "keys": "WASD",
+    "enter": "Board",
+    "loading": "Loading"
+  },
   "nav": {
     "back": "Back to terminal",
     "gate": "Gate",

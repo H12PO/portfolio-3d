@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import useKeyboard from '../hooks/useKeyboard'
+import useDoorNavigation from '../hooks/useDoorNavigation'
 import { useGameStore } from '../store/useGameStore'
 import { BOUNDS } from '../config/world'
 import { DOORS, DOOR_Z, DOOR_RADIUS } from '../config/doors'
@@ -11,16 +12,17 @@ const SMOOTHNESS = 4
 const ARRIVAL_THRESHOLD = 0.15
 
 export default function Player() {
-    const ref = useRef()
-    const keys = useKeyboard(() => useGameStore.getState().enterDoor())
-    const direction = useRef(new THREE.Vector3())
+  const ref = useRef()
+  const enterDoor = useDoorNavigation()
+  const keys = useKeyboard(enterDoor)
+  const direction = useRef(new THREE.Vector3())
 
-    useFrame((state, delta) => {
+  useFrame((state, delta) => {
     const pos = ref.current.position
     const store = useGameStore.getState()
+    if (!store.started) return
     const { forward, backward, left, right } = keys.current
 
-    // --- direction voulue -------------------------------------------------
     direction.current.set(
       (right ? 1 : 0) - (left ? 1 : 0),
       0,
@@ -43,14 +45,12 @@ export default function Player() {
       }
     }
 
-    // --- déplacement ------------------------------------------------------
     if (direction.current.lengthSq() > 0) {
       pos.addScaledVector(direction.current, SPEED * delta)
       pos.x = THREE.MathUtils.clamp(pos.x, BOUNDS.minX, BOUNDS.maxX)
       pos.z = THREE.MathUtils.clamp(pos.z, BOUNDS.minZ, BOUNDS.maxZ)
     }
 
-    // --- caméra en traveling ----------------------------------------------
     const camPos = state.camera.position
     const targetX = THREE.MathUtils.clamp(pos.x, BOUNDS.minX + 6, BOUNDS.maxX - 6)
 
@@ -60,7 +60,6 @@ export default function Player() {
 
     state.camera.lookAt(camPos.x, 1.5, 0)
 
-    // --- porte la plus proche ---------------------------------------------
     let found = null
     for (const door of DOORS) {
       const dx = door.x - pos.x
@@ -71,12 +70,12 @@ export default function Player() {
       }
     }
     store.setNearbyDoor(found)
-    })
+  })
 
-    return (
+  return (
     <mesh ref={ref} position={[0, 0.6, 0]} castShadow>
       <capsuleGeometry args={[0.3, 0.6, 8, 16]} />
       <meshStandardMaterial color="#e8a33d" />
     </mesh>
-    )
+  )
 }

@@ -1,16 +1,16 @@
-import { useGameStore } from '../store/useGameStore'
+import { useNavigate, useParams } from 'react-router'
 import { useT } from '../i18n'
 import { DOORS } from '../config/doors'
 
-export default function DoorOverlay() {
-  const activeDoor = useGameStore((s) => s.activeDoor)
-  const exitDoor = useGameStore((s) => s.exitDoor)
+export default function Page() {
+  const { doorId } = useParams()
+  const navigate = useNavigate()
   const t = useT()
 
-  if (!activeDoor) return null
+  const door = DOORS.find((d) => d.id === doorId)
+  if (!door) return null
 
-  const door = DOORS.find((d) => d.id === activeDoor)
-  const paragraphs = t(`pages.${activeDoor}.body`)
+  const paragraphs = t(`pages.${doorId}.body`)
 
   return (
     <div style={{
@@ -25,7 +25,7 @@ export default function DoorOverlay() {
         </p>
 
         <h1 style={{ fontSize: 42, fontWeight: 600, marginBottom: 36 }}>
-          {t(`pages.${activeDoor}.title`)}
+          {t(`pages.${doorId}.title`)}
         </h1>
 
         {paragraphs.map((text, i) => (
@@ -33,7 +33,7 @@ export default function DoorOverlay() {
         ))}
 
         <button
-          onClick={exitDoor}
+          onClick={() => navigate('/')}
           style={{
             marginTop: 20, padding: '11px 26px', borderRadius: 8,
             border: '1px solid rgba(255,255,255,.22)',

@@ -1,12 +1,13 @@
+import { useLocation } from 'react-router'
 import { useGameStore } from '../store/useGameStore'
 import { useT } from '../i18n'
 
 export default function Prompt() {
   const nearbyDoor = useGameStore((s) => s.nearbyDoor)
-  const activeDoor = useGameStore((s) => s.activeDoor)
+  const { pathname } = useLocation()
   const t = useT()
 
-  if (!nearbyDoor || activeDoor) return null
+  if (!nearbyDoor || pathname !== '/') return null
 
   return (
     <div style={{

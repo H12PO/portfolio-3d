@@ -1,4 +1,15 @@
 {
+  "intro": {
+    "name": "Hippolyte",
+    "subtitle": "Portfolio",
+    "controls": "Contrôles",
+    "move": "Se déplacer",
+    "moveClick": "Ou cliquer au sol",
+    "interact": "Interagir",
+    "keys": "ZQSD",
+    "enter": "Embarquer",
+    "loading": "Chargement"
+  },
   "nav": {
     "back": "Retour au terminal",
     "gate": "Porte",
