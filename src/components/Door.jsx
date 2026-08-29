@@ -33,7 +33,7 @@ export default function Door({ id, gate, x }) {
     rightRef.current.position.x = HALF / 2 + shift
   })
 
-  const color = isNear ? '#4d8bd8' : '#3a3a4a'
+  const color = isNear ? '#5aa9e6' : '#b9bec7'
 
   return (
     <group position={[x, 0, DOOR_Z]}>
@@ -53,7 +53,7 @@ export default function Door({ id, gate, x }) {
         <meshStandardMaterial color="#0d0d16" side={THREE.BackSide} />
       </mesh>
 
-      <Text position={[0, 2.9, 0.2]} fontSize={0.32} color="#e8e8f0" anchorY="middle">
+      <Text position={[0, 3.55, 0.42]} fontSize={0.28} color="#ffffff" anchorY="middle">
         {`${gate} — ${t(`doors.${id}.label`)}`}
       </Text>
     </group>
