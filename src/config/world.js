@@ -5,21 +5,22 @@ export const BOUNDS = {
   maxZ: 3.6,
 }
 
-// ⚠️ Ces cotes sont la référence pour la modélisation Blender.
-// Toute modification ici doit être reportée dans le fichier .blend.
+// ⚠️ COTES DE RÉFÉRENCE POUR BLENDER — ne pas modifier à la légère
 export const TERMINAL = {
-  length: 52,        // longueur du couloir
-  wallZ: -4.6,       // plan de la façade vitrée
-  wallHeight: 4.6,   // hauteur sous plafond
-  floorDepth: 34,    // sol, déborde largement du cadre
-  ceilingFront: 12,  // le plafond dépasse la caméra
+  length: 52,
+  wallZ: -4.6,
+  wallHeight: 8,      // pas de plafond : le mur sort du cadre par le haut
+  glassBase: 0.6,     // hauteur de l'allège
+  glassTop: 6.8,      // sous le bandeau haut
+  transomY: 3.3,      // traverse horizontale, alignée sur les linteaux de porte
+  doorHeight: 3.1,
+  floorDepth: 40,
 }
 
-// Plans de fond, remplacés par des images texturées en phase 7
 export const BACKDROP = {
-  near: -20,   // avion + passerelle → 3D en Blender
-  mid: -35,    // tour de contrôle, terminal d'en face → image
-  far: -60,    // ciel, nuages, horizon → image
+  near: -20,
+  mid: -35,
+  far: -60,
 }
 
 export const PALETTE = {
@@ -28,7 +29,6 @@ export const PALETTE = {
   wall:      '#e8e9ed',
   structure: '#c4c7cf',
   mullion:   '#9aa0aa',
-  ceiling:   '#eceef1',
   led:       '#f2f7ff',
   glass:     '#bfe0f0',
   sign:      '#2b3440',

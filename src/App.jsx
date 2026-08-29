@@ -16,12 +16,12 @@ import { DOORS } from './config/doors'
 export default function App() {
   return (
     <>
-      <Canvas shadows camera={{ position: [0, 4, 12], fov: 50 }}>
+      <Canvas shadows camera={{ position: [0, 5, 15], fov: 35 }}>
         <color attach="background" args={['#8fc4e8']} />
 
-        <ambientLight intensity={1.4} />
-        <directionalLight position={[10, 16, 6]} intensity={2.6} castShadow />
-        <directionalLight position={[-8, 6, -12]} intensity={1.2} color="#cfe6f7" />
+        <ambientLight intensity={1.3} />
+        <directionalLight position={[10, 18, 10]} intensity={2.4} castShadow />
+        <directionalLight position={[-8, 8, -14]} intensity={1.1} color="#cfe6f7" />
 
         <Terminal />
         <Ground />

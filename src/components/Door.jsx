@@ -6,8 +6,9 @@ import { useGameStore } from '../store/useGameStore'
 import { useT } from '../i18n'
 import { DOOR_Z, BOARDING, LANDING } from '../config/doors'
 
-const WIDTH = 2.2
+const WIDTH = 2.9
 const HALF = WIDTH / 2
+const HEIGHT = 3.1
 
 export default function Door({ id, gate, x }) {
   const isNear = useGameStore((s) => s.nearbyDoor === id)
@@ -37,23 +38,18 @@ export default function Door({ id, gate, x }) {
 
   return (
     <group position={[x, 0, DOOR_Z]}>
-      <mesh ref={leftRef} position={[-HALF / 2, 1.1, 0]} castShadow>
-        <boxGeometry args={[HALF, 2.2, 0.3]} />
+      <mesh ref={leftRef} position={[-HALF / 2, HEIGHT / 2, 0]} castShadow>
+        <boxGeometry args={[HALF, HEIGHT, 0.28]} />
         <meshStandardMaterial color={color} />
       </mesh>
 
-      <mesh ref={rightRef} position={[HALF / 2, 1.1, 0]} castShadow>
-        <boxGeometry args={[HALF, 2.2, 0.3]} />
+      <mesh ref={rightRef} position={[HALF / 2, HEIGHT / 2, 0]} castShadow>
+        <boxGeometry args={[HALF, HEIGHT, 0.28]} />
         <meshStandardMaterial color={color} />
       </mesh>
 
-      {/* la passerelle derrière, visible quand la porte s'ouvre */}
-      <mesh position={[0, 1.1, -1.5]}>
-        <boxGeometry args={[WIDTH, 2.2, 3]} />
-        <meshStandardMaterial color="#0d0d16" side={THREE.BackSide} />
-      </mesh>
 
-      <Text position={[0, 3.55, 0.42]} fontSize={0.28} color="#ffffff" anchorY="middle">
+      <Text position={[0, 3.85, 0.4]} fontSize={0.3} color="#ffffff" anchorY="middle">
         {`${gate} — ${t(`doors.${id}.label`)}`}
       </Text>
     </group>

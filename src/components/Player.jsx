@@ -18,9 +18,9 @@ const ARRIVAL_THRESHOLD = 0.15
    CAMÉRA FIXÉE — ne plus modifier sans raison
    ============================================================ */
 const CAM = {
-  height: 2.4,
-  distance: 11,
-  lookAtY: 2.0,
+  height: 5,
+  distance: 15,
+  lookAtY: 2.2,
   margin: 7,
 }
 
@@ -58,9 +58,9 @@ export default function Player() {
       pos.z = THREE.MathUtils.lerp(boardingStart.current.z, DOOR_Z - 1.2, eased)
 
       camPos.x = THREE.MathUtils.lerp(camPos.x, door.x, 1 - Math.exp(-3 * delta))
-      camPos.y = THREE.MathUtils.lerp(camPos.y, 2.4, 1 - Math.exp(-2 * delta))
-      camPos.z = THREE.MathUtils.lerp(camPos.z, 5, 1 - Math.exp(-2 * delta))
-      state.camera.lookAt(door.x, 1.6, DOOR_Z)
+      camPos.y = THREE.MathUtils.lerp(camPos.y, 3.6, 1 - Math.exp(-2 * delta))
+      camPos.z = THREE.MathUtils.lerp(camPos.z, 8, 1 - Math.exp(-2 * delta))
+      state.camera.lookAt(door.x, 1.8, DOOR_Z)
       return
     }
 
@@ -74,7 +74,7 @@ export default function Player() {
       if (time === 0) {
         pos.x = door.x
         pos.z = DOOR_Z - 1.2
-        camPos.set(door.x, 2.4, 5)
+        camPos.set(door.x, 3.6, 8)
       }
       store.tickLanding(delta)
 
