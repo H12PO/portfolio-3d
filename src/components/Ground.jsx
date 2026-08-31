@@ -1,21 +1,27 @@
 import { useGameStore } from '../store/useGameStore'
-import { TERMINAL } from '../config/world'
+import { BOUNDS } from '../config/world'
 
 export default function Ground() {
   const setDestination = useGameStore((s) => s.setDestination)
-  const { length } = TERMINAL
+
+  const width = BOUNDS.maxX - BOUNDS.minX
+  const depth = BOUNDS.maxZ - BOUNDS.minZ
 
   return (
     <mesh
       rotation-x={-Math.PI / 2}
-      position={[0, 0.02, 0]}
+      position={[
+        (BOUNDS.minX + BOUNDS.maxX) / 2,
+        0.02,
+        (BOUNDS.minZ + BOUNDS.maxZ) / 2,
+      ]}
       visible={false}
       onPointerDown={(e) => {
         e.stopPropagation()
         setDestination(e.point)
       }}
     >
-      <planeGeometry args={[length, 12]} />
+      <planeGeometry args={[width, depth]} />
       <meshBasicMaterial />
     </mesh>
   )

@@ -5,8 +5,9 @@ import Ground from './components/Ground'
 import Player from './components/Player'
 import Door from './components/Door'
 import Terminal from './components/Terminal'
+import FrontLine from './components/FrontLine'
+import Seat from './components/props/Seat'
 import Prompt from './ui/Prompt'
-import Page from './ui/Page'
 import Intro from './ui/Intro'
 import Ticket from './ui/Ticket'
 import LangSwitch from './ui/LangSwitch'
@@ -24,9 +25,10 @@ export default function App() {
         <directionalLight position={[-8, 8, -14]} intensity={1.1} color="#cfe6f7" />
 
         <Terminal />
-        <Ground />
+        <FrontLine />
         <Ground />
         <Player />
+        <Seat position={[0, 0, 0]} />
         {DOORS.map((door) => (
           <Door key={door.id} {...door} />
         ))}

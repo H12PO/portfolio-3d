@@ -2,20 +2,23 @@ export const BOUNDS = {
   minX: -20,
   maxX: 20,
   minZ: -3.4,
-  maxZ: 3.6,
+  maxZ: 4.3,      // +1.2 m de profondeur jouable
 }
 
-// ⚠️ COTES DE RÉFÉRENCE POUR BLENDER — ne pas modifier à la légère
 export const TERMINAL = {
   length: 52,
   wallZ: -4.6,
-  wallHeight: 8,      // pas de plafond : le mur sort du cadre par le haut
-  glassBase: 0.6,     // hauteur de l'allège
-  glassTop: 6.8,      // sous le bandeau haut
-  transomY: 3.3,      // traverse horizontale, alignée sur les linteaux de porte
+  wallHeight: 8,
+  glassBase: 0.6,
+  glassTop: 6.8,
+  transomY: 3.3,
   doorHeight: 3.1,
   floorDepth: 40,
+  frontZ: 5.4,       // mobilier reculé, hors du chemin
+  railHeight: 0.55,  // barrière basse
+  planterH: 0.4,     // bac bas
 }
+
 
 export const BACKDROP = {
   near: -20,

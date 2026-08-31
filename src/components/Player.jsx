@@ -19,7 +19,7 @@ const ARRIVAL_THRESHOLD = 0.15
    ============================================================ */
 const CAM = {
   height: 5,
-  distance: 15,
+  distance: 16,
   lookAtY: 2.2,
   margin: 7,
 }
