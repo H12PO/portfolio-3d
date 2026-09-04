@@ -36,7 +36,6 @@ export default function Intro() {
   if (started) return null
 
   const ready = timedOut || !active
-  console.log({ active, progress, item: useProgress.getState().item, errors: useProgress.getState().errors })
   return (
     <div style={{
       position: 'absolute', inset: 0, zIndex: 10,

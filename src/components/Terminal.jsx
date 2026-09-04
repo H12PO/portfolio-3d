@@ -1,129 +1,150 @@
-import { TERMINAL, BACKDROP, PALETTE as C } from '../config/world'
-import { DOORS, DOOR_Z } from '../config/doors'
+import { useMemo } from 'react'
+import { HALL, OUTLINE, WALLS, RECESSES, PALETTE as C } from '../config/world'
+import Floor from './Floor'
 
-const HALF_DOOR = 1.6
+/**
+ * Un pan de mur, défini par ses deux sommets au sol.
+ * Longueur, position et rotation sont déduites du tracé :
+ * on ne décrit jamais une géométrie, seulement un contour.
+ * `low` : mur d'alcôve, arrêté au plafond bas.
+ */
+function Wall({ a, b, glazed, low }) {
+  const dx = b[0] - a[0]
+  const dz = b[1] - a[1]
+  const len = Math.hypot(dx, dz)
+  if (len < 0.05) return null
 
-export default function Terminal() {
+  const midX = (a[0] + b[0]) / 2
+  const midZ = (a[1] + b[1]) / 2
+  const rotY = Math.atan2(dx, dz) + Math.PI / 2
+
   const {
-    length, wallZ, wallHeight,
-    glassBase, glassTop, transomY, doorHeight, floorDepth,
-  } = TERMINAL
-
-  // segments de verrière pleine hauteur, entre les portes
-  const spans = []
-  let cursor = -length / 2
-  for (const door of DOORS) {
-    if (door.x - HALF_DOOR - cursor > 0.6) spans.push([cursor, door.x - HALF_DOOR])
-    cursor = door.x + HALF_DOOR
-  }
-  if (length / 2 - cursor > 0.6) spans.push([cursor, length / 2])
+    wallHeight, glassBase, glassTop, transomY, mullionGap, alcoveCeiling,
+  } = HALL
 
   const glassH = glassTop - glassBase
   const glassY = (glassBase + glassTop) / 2
+  const mullions = Math.max(1, Math.round(len / mullionGap))
+
+  // hauteur du mur plein : abaissée dans les creux
+  const h = low ? alcoveCeiling : wallHeight
 
   return (
-    <group>
-      {/* ================= SOL ================= */}
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0, wallZ + floorDepth / 2]} receiveShadow>
-        <planeGeometry args={[length, floorDepth]} />
-        <meshStandardMaterial color={C.floor} roughness={0.3} />
-      </mesh>
-
-      {[-2.4, 2.4].map((z) => (
-        <mesh key={z} rotation-x={-Math.PI / 2} position={[0, 0.012, z]}>
-          <planeGeometry args={[length - 4, 0.12]} />
-          <meshStandardMaterial color={C.floorLine} emissive={C.led} emissiveIntensity={0.5} />
-        </mesh>
-      ))}
-
-      {/* ================= FAÇADE : ALLÈGE ET BANDEAU HAUT ================= */}
-      <mesh position={[0, glassBase / 2, wallZ]} receiveShadow>
-        <boxGeometry args={[length, glassBase, 0.45]} />
-        <meshStandardMaterial color={C.structure} />
-      </mesh>
-
-      <mesh position={[0, (glassTop + wallHeight) / 2, wallZ]} receiveShadow>
-        <boxGeometry args={[length, wallHeight - glassTop, 0.45]} />
-        <meshStandardMaterial color={C.wall} />
-      </mesh>
-
-      {/* ================= VERRIÈRE ================= */}
-      {spans.map(([from, to], i) => {
-        const w = to - from
-        const count = Math.max(1, Math.round(w / 3.2))
-
-        return (
-          <group key={`span-${i}`}>
-            <mesh position={[(from + to) / 2, glassY, wallZ]}>
-              <boxGeometry args={[w, glassH, 0.07]} />
-              <meshStandardMaterial color={C.glass} transparent opacity={0.16} />
-            </mesh>
-
-            {/* meneaux verticaux */}
-            {Array.from({ length: count + 1 }).map((_, k) => (
-              <mesh key={k} position={[from + (w / count) * k, glassY, wallZ + 0.06]}>
-                <boxGeometry args={[0.13, glassH, 0.2]} />
-                <meshStandardMaterial color={C.mullion} metalness={0.4} />
-              </mesh>
-            ))}
-
-            {/* traverse horizontale */}
-            <mesh position={[(from + to) / 2, transomY, wallZ + 0.06]}>
-              <boxGeometry args={[w, 0.13, 0.2]} />
-              <meshStandardMaterial color={C.mullion} metalness={0.4} />
-            </mesh>
-          </group>
-        )
-      })}
-
-      {/* ================= PORTES ================= */}
-      {DOORS.map((door) => (
-        <group key={`frame-${door.id}`} position={[door.x, 0, DOOR_Z]}>
-          {/* verrière au-dessus de la porte */}
-          <mesh position={[0, (doorHeight + glassTop) / 2, 0]}>
-            <boxGeometry args={[HALF_DOOR * 2, glassTop - doorHeight, 0.07]} />
-            <meshStandardMaterial color={C.glass} transparent opacity={0.16} />
-          </mesh>
-
-          {/* montants et linteau */}
-          {[-1.5, 1.5].map((x) => (
-            <mesh key={x} position={[x, doorHeight / 2, 0]} castShadow>
-              <boxGeometry args={[0.32, doorHeight, 0.5]} />
-              <meshStandardMaterial color={C.structure} />
-            </mesh>
-          ))}
-          <mesh position={[0, doorHeight, 0]} castShadow>
-            <boxGeometry args={[3.32, 0.28, 0.5]} />
+    <group position={[midX, 0, midZ]} rotation-y={rotY}>
+      {glazed ? (
+        <>
+          {/* allège */}
+          <mesh position={[0, glassBase / 2, 0]} receiveShadow>
+            <boxGeometry args={[len, glassBase, 0.45]} />
             <meshStandardMaterial color={C.structure} />
           </mesh>
 
-          {/* fond du sas */}
-          <mesh position={[0, doorHeight / 2, -0.35]}>
-            <boxGeometry args={[2.9, doorHeight, 0.06]} />
-            <meshStandardMaterial color="#7d838c" />
+          {/* linteau plein au-dessus du vitrage */}
+          <mesh position={[0, (glassTop + wallHeight) / 2, 0]} receiveShadow>
+            <boxGeometry args={[len, wallHeight - glassTop, 0.45]} />
+            <meshStandardMaterial color={C.wall} />
           </mesh>
 
-          {/* panneau de signalétique */}
-          <mesh position={[0, 3.85, 0.32]} castShadow>
-            <boxGeometry args={[3.5, 0.6, 0.08]} />
-            <meshStandardMaterial color={C.sign} />
+          {/* vitrage */}
+          <mesh position={[0, glassY, 0]}>
+            <boxGeometry args={[len, glassH, 0.07]} />
+            <meshStandardMaterial color={C.glass} transparent opacity={0.16} />
           </mesh>
-        </group>
+
+          {/* meneaux verticaux */}
+          {Array.from({ length: mullions + 1 }).map((_, i) => (
+            <mesh key={i} position={[-len / 2 + (len / mullions) * i, glassY, 0.06]}>
+              <boxGeometry args={[0.13, glassH, 0.2]} />
+              <meshStandardMaterial color={C.mullion} metalness={0.4} />
+            </mesh>
+          ))}
+
+          {/* traverse horizontale */}
+          <mesh position={[0, transomY, 0.06]}>
+            <boxGeometry args={[len, 0.13, 0.2]} />
+            <meshStandardMaterial color={C.mullion} metalness={0.4} />
+          </mesh>
+        </>
+      ) : (
+        <mesh position={[0, h / 2, 0]} receiveShadow>
+          <boxGeometry args={[len, h, 0.45]} />
+          <meshStandardMaterial color={C.wall} />
+        </mesh>
+      )}
+    </group>
+  )
+}
+
+/**
+ * Un creux fermé : dalle de plafond bas, bandeau d'enseigne
+ * au-dessus de l'ouverture, puis verrière jusqu'au linteau.
+ */
+function Recess({ minX, maxX, minZ, maxZ }) {
+  const { alcoveCeiling: h, alcoveBanner: b, glassTop } = HALL
+
+  const w = maxX - minX
+  const d = maxZ - minZ
+  const cx = (minX + maxX) / 2
+  const cz = (minZ + maxZ) / 2
+
+  return (
+    <group>
+      {/* dalle de plafond */}
+      <mesh position={[cx, h, cz]} receiveShadow>
+        <boxGeometry args={[w + 0.5, 0.3, d + 0.5]} />
+        <meshStandardMaterial color={C.structure} />
+      </mesh>
+
+      {/* bandeau plein — support de l'enseigne */}
+      <mesh position={[cx, h + b / 2, maxZ]} castShadow>
+        <boxGeometry args={[w + 0.5, b, 0.4]} />
+        <meshStandardMaterial color={C.wall} />
+      </mesh>
+
+      {/* verrière au-dessus du bandeau */}
+      <mesh position={[cx, (h + b + glassTop) / 2, maxZ]}>
+        <boxGeometry args={[w + 0.5, glassTop - h - b, 0.07]} />
+        <meshStandardMaterial color={C.glass} transparent opacity={0.16} />
+      </mesh>
+    </group>
+  )
+}
+
+export default function Terminal() {
+  const walls = useMemo(
+    () => WALLS.map((w) => ({ ...w, a: OUTLINE[w.a], b: OUTLINE[w.b] })),
+    []
+  )
+
+  return (
+    <group>
+      <Floor />
+
+      {/* plan capteur d'ombres — le shader du sol n'en reçoit pas */}
+      <mesh rotation-x={-Math.PI / 2} position={[0, 0.008, 0]} receiveShadow>
+        <planeGeometry args={[HALL.floorSize, HALL.floorSize]} />
+        <shadowMaterial opacity={0.2} />
+      </mesh>
+
+      {walls.map((w, i) => (
+        <Wall key={w.name ?? i} {...w} />
       ))}
 
-      {/* ================= PLANS DE FOND (images en phase 7) ================= */}
-      <mesh rotation-x={-Math.PI / 2} position={[0, -0.02, BACKDROP.near]}>
-        <planeGeometry args={[140, 40]} />
+      {RECESSES.map((r) => (
+        <Recess key={r.id} {...r} />
+      ))}
+
+      {/* ---- plans de fond, remplacés par des images en phase 7 ---- */}
+      <mesh rotation-x={-Math.PI / 2} position={[0, -0.02, -26]}>
+        <planeGeometry args={[180, 40]} />
         <meshStandardMaterial color={C.backNear} />
       </mesh>
-
-      <mesh position={[0, 12, BACKDROP.mid]}>
-        <planeGeometry args={[160, 30]} />
+      <mesh position={[0, 12, -42]}>
+        <planeGeometry args={[200, 30]} />
         <meshBasicMaterial color={C.backMid} />
       </mesh>
-
-      <mesh position={[0, 20, BACKDROP.far]}>
-        <planeGeometry args={[220, 60]} />
+      <mesh position={[0, 22, -70]}>
+        <planeGeometry args={[260, 64]} />
         <meshBasicMaterial color={C.backFar} />
       </mesh>
     </group>

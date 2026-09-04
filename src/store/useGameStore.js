@@ -4,9 +4,12 @@ export const useGameStore = create((set, get) => ({
   started: false,
   start: () => set({ started: true }),
 
+  topDown: false,
+  toggleTopDown: () => set((s) => ({ topDown: !s.topDown })),
+
   nearbyDoor: null,
-  setNearbyDoor: (door) => set((state) =>
-    state.nearbyDoor === door ? state : { nearbyDoor: door }
+  setNearbyDoor: (door) => set((s) =>
+    s.nearbyDoor === door ? s : { nearbyDoor: door }
   ),
 
   destination: null,
@@ -20,12 +23,7 @@ export const useGameStore = create((set, get) => ({
 
   beginBoarding: (doorId) => {
     if (get().boardingDoor || get().landingDoor) return
-    set({
-      boardingDoor: doorId,
-      boardingTime: 0,
-      destination: null,
-      lastDoor: doorId,
-    })
+    set({ boardingDoor: doorId, boardingTime: 0, destination: null, lastDoor: doorId })
   },
   tickBoarding: (delta) => set((s) => ({ boardingTime: s.boardingTime + delta })),
   endBoarding: () => set({ boardingDoor: null, boardingTime: 0 }),

@@ -17,4 +17,4 @@ export default function Seat(props) {
   )
 }
 
-useGLTF.preload(URL)
+useGLTF.preload(URL) 

@@ -4,150 +4,182 @@ import * as THREE from 'three'
 import useKeyboard from '../hooks/useKeyboard'
 import useDoorNavigation from '../hooks/useDoorNavigation'
 import { useGameStore } from '../store/useGameStore'
-import { BOUNDS } from '../config/world'
-import { DOORS, DOOR_Z, DOOR_RADIUS, BOARDING, LANDING } from '../config/doors'
+import { clampToHall, isInsideHall } from '../config/world'
+import {
+  DOORS, DOOR_RADIUS, STAND_OFF, WALK_IN, BOARDING, LANDING,
+} from '../config/doors'
 
 const SPEED = 4
 const SMOOTHNESS = 4
-const ARRIVAL_THRESHOLD = 0.15
+const ARRIVAL = 0.15
+const TURN_SPEED = 10
 
 /* ============================================================
-   RÉGLAGES DE CAMÉRA  ←  c'est ici qu'on ajuste le cadrage
+   CAMÉRA À CRANS — 8 orientations, une par face de l'octogone
    ============================================================ */
-/* ============================================================
-   CAMÉRA FIXÉE — ne plus modifier sans raison
-   ============================================================ */
+const STEP = Math.PI / 4      // 45°
 const CAM = {
-  height: 5,
-  distance: 16,
-  lookAtY: 2.2,
-  margin: 7,
+  height: 2.5,
+  distance: 13,
+  minDist: 7,
+  maxDist: 18,
+  lookAtY: 2.0,
+  wallMargin: 1.2,
+  turnSpeed: 7,               // vitesse de la transition entre crans
 }
 
 const smoothstep = (x) => x * x * (3 - 2 * x)
+const damp = (delta, k = SMOOTHNESS) => 1 - Math.exp(-k * delta)
 
 export default function Player() {
   const ref = useRef()
   const enterDoor = useDoorNavigation()
   const keys = useKeyboard(enterDoor)
-  const direction = useRef(new THREE.Vector3())
-  const boardingStart = useRef(new THREE.Vector3())
+
+  const dir = useRef(new THREE.Vector3())
+  const from = useRef(new THREE.Vector3())
+  const sector = useRef(0)          // cran courant, entier
+  const yaw = useRef(0)             // angle lissé, suit le cran
+  const dist = useRef(CAM.distance)
+  const camTarget = useRef(new THREE.Vector3())
+
+  function placeCamera(state, pos, delta, k) {
+    const sy = Math.sin(yaw.current)
+    const cy = Math.cos(yaw.current)
+
+    let d = dist.current
+    while (d > CAM.minDist) {
+      if (isInsideHall(pos.x + sy * d, pos.z + cy * d, CAM.wallMargin)) break
+      d -= 0.5
+    }
+
+    camTarget.current.set(pos.x + sy * d, pos.y + CAM.height, pos.z + cy * d)
+    state.camera.position.lerp(camTarget.current, damp(delta, k))
+    state.camera.lookAt(pos.x, CAM.lookAtY, pos.z)
+  }
 
   useFrame((state, delta) => {
     const pos = ref.current.position
     const store = useGameStore.getState()
-    if (!store.started) return
+    if (!store.started || store.topDown) return
 
-    const camPos = state.camera.position
+    const cam = state.camera.position
 
-    /* ==========================================================
-       1. EMBARQUEMENT — inchangé
-       ========================================================== */
+    /* ---------- EMBARQUEMENT ---------- */
     if (store.boardingDoor) {
       const time = store.boardingTime
-      if (time === 0) boardingStart.current.copy(pos)
+      if (time === 0) from.current.copy(pos)
       store.tickBoarding(delta)
 
-      const door = DOORS.find((d) => d.id === store.boardingDoor)
-      const walk = THREE.MathUtils.clamp(
+      const d = DOORS.find((x) => x.id === store.boardingDoor)
+      const p = THREE.MathUtils.clamp(
         (time - BOARDING.doorOpen) / (BOARDING.walkIn - BOARDING.doorOpen), 0, 1
       )
-      const eased = smoothstep(walk)
+      const e = smoothstep(p)
 
-      pos.x = THREE.MathUtils.lerp(boardingStart.current.x, door.x, eased)
-      pos.z = THREE.MathUtils.lerp(boardingStart.current.z, DOOR_Z - 1.2, eased)
+      pos.x = THREE.MathUtils.lerp(from.current.x, d.x - d.nx * WALK_IN, e)
+      pos.z = THREE.MathUtils.lerp(from.current.z, d.z - d.nz * WALK_IN, e)
+      ref.current.rotation.y = Math.atan2(-d.nx, -d.nz)
 
-      camPos.x = THREE.MathUtils.lerp(camPos.x, door.x, 1 - Math.exp(-3 * delta))
-      camPos.y = THREE.MathUtils.lerp(camPos.y, 3.6, 1 - Math.exp(-2 * delta))
-      camPos.z = THREE.MathUtils.lerp(camPos.z, 8, 1 - Math.exp(-2 * delta))
-      state.camera.lookAt(door.x, 1.8, DOOR_Z)
+      cam.x = THREE.MathUtils.lerp(cam.x, d.x + d.nx * 8, damp(delta, 3))
+      cam.y = THREE.MathUtils.lerp(cam.y, 4, damp(delta, 2))
+      cam.z = THREE.MathUtils.lerp(cam.z, d.z + d.nz * 8, damp(delta, 2))
+      state.camera.lookAt(d.x, 1.6, d.z)
       return
     }
 
-    /* ==========================================================
-       2. DÉBARQUEMENT — la caméra revient au cadrage normal
-       ========================================================== */
+    /* ---------- DÉBARQUEMENT ---------- */
     if (store.landingDoor) {
       const time = store.landingTime
-      const door = DOORS.find((d) => d.id === store.landingDoor)
+      const d = DOORS.find((x) => x.id === store.landingDoor)
 
       if (time === 0) {
-        pos.x = door.x
-        pos.z = DOOR_Z - 1.2
-        camPos.set(door.x, 3.6, 8)
+        pos.set(d.x - d.nx * WALK_IN, 0.6, d.z - d.nz * WALK_IN)
+        cam.set(d.x + d.nx * 8, 4, d.z + d.nz * 8)
+        // le cran le plus proche de la normale de la porte
+        sector.current = Math.round(Math.atan2(d.nx, d.nz) / STEP)
+        yaw.current = sector.current * STEP
+        dist.current = CAM.distance
       }
       store.tickLanding(delta)
 
-      const walk = THREE.MathUtils.clamp(
+      const p = THREE.MathUtils.clamp(
         (time - LANDING.routeChange) / (LANDING.walkOut - LANDING.routeChange), 0, 1
       )
-      const eased = smoothstep(walk)
+      const e = smoothstep(p)
 
-      pos.x = door.x
-      pos.z = THREE.MathUtils.lerp(DOOR_Z - 1.2, DOOR_Z + 1.8, eased)
+      pos.x = THREE.MathUtils.lerp(d.x - d.nx * WALK_IN, d.x + d.nx * STAND_OFF, e)
+      pos.z = THREE.MathUtils.lerp(d.z - d.nz * WALK_IN, d.z + d.nz * STAND_OFF, e)
+      ref.current.rotation.y = Math.atan2(d.nx, d.nz)
 
-      // ⬇️ MODIFIÉ : on revient vers CAM.height / CAM.distance
-      camPos.x = THREE.MathUtils.lerp(camPos.x, door.x, 1 - Math.exp(-3 * delta))
-      camPos.y = THREE.MathUtils.lerp(camPos.y, CAM.height, 1 - Math.exp(-2.5 * delta))
-      camPos.z = THREE.MathUtils.lerp(camPos.z, CAM.distance, 1 - Math.exp(-2.5 * delta))
-      state.camera.lookAt(camPos.x, CAM.lookAtY, 0)
+      placeCamera(state, pos, delta, 2.5)
       return
     }
 
-    /* ==========================================================
-       3. DÉPLACEMENT NORMAL — inchangé jusqu'à la caméra
-       ========================================================== */
-    const { forward, backward, left, right } = keys.current
+    /* ---------- ROTATION PAR CRANS ---------- */
+    if (keys.current.turn !== 0) {
+      sector.current += keys.current.turn
+      keys.current.turn = 0
+    }
 
-    direction.current.set(
-      (right ? 1 : 0) - (left ? 1 : 0),
-      0,
-      (backward ? 1 : 0) - (forward ? 1 : 0)
+    // yaw rejoint le cran cible, par le plus court chemin
+    const targetYaw = sector.current * STEP
+    let dy = targetYaw - yaw.current
+    while (dy >  Math.PI) dy -= Math.PI * 2
+    while (dy < -Math.PI) dy += Math.PI * 2
+    yaw.current += dy * damp(delta, CAM.turnSpeed)
+
+    dist.current = THREE.MathUtils.clamp(
+      dist.current + keys.current.zoomDelta, CAM.minDist, CAM.maxDist
     )
+    keys.current.zoomDelta = 0
 
-    const usingKeyboard = direction.current.lengthSq() > 0
+    /* ---------- DÉPLACEMENT, relatif au cran ---------- */
+    const { forward, backward, left, right } = keys.current
+    const f = (forward ? 1 : 0) - (backward ? 1 : 0)
+    const r = (right ? 1 : 0) - (left ? 1 : 0)
+
+    // on utilise le cran cible, pas le yaw lissé :
+    // le déplacement ne dérive pas pendant la transition
+    const sy = Math.sin(targetYaw)
+    const cy = Math.cos(targetYaw)
+
+    dir.current.set(-sy * f + cy * r, 0, -cy * f - sy * r)
+    const usingKeyboard = dir.current.lengthSq() > 0
 
     if (usingKeyboard) {
       if (store.destination) store.setDestination(null)
-      direction.current.normalize()
+      dir.current.normalize()
     } else if (store.destination) {
-      const dx = THREE.MathUtils.clamp(store.destination.x, BOUNDS.minX, BOUNDS.maxX) - pos.x
-      const dz = THREE.MathUtils.clamp(store.destination.z, BOUNDS.minZ, BOUNDS.maxZ) - pos.z
-
-      if (dx * dx + dz * dz < ARRIVAL_THRESHOLD * ARRIVAL_THRESHOLD) {
+      const dx = store.destination.x - pos.x
+      const dz = store.destination.z - pos.z
+      if (dx * dx + dz * dz < ARRIVAL * ARRIVAL) {
         store.setDestination(null)
       } else {
-        direction.current.set(dx, 0, dz).normalize()
+        dir.current.set(dx, 0, dz).normalize()
       }
     }
 
-    if (direction.current.lengthSq() > 0) {
-      pos.addScaledVector(direction.current, SPEED * delta)
-      pos.x = THREE.MathUtils.clamp(pos.x, BOUNDS.minX, BOUNDS.maxX)
-      pos.z = THREE.MathUtils.clamp(pos.z, BOUNDS.minZ, BOUNDS.maxZ)
+    if (dir.current.lengthSq() > 0) {
+      pos.addScaledVector(dir.current, SPEED * delta)
+      clampToHall(pos)
+
+      const target = Math.atan2(dir.current.x, dir.current.z)
+      let diff = target - ref.current.rotation.y
+      while (diff >  Math.PI) diff -= Math.PI * 2
+      while (diff < -Math.PI) diff += Math.PI * 2
+      ref.current.rotation.y += diff * damp(delta, TURN_SPEED)
     }
 
-    /* ==========================================================
-       ⬇️⬇️⬇️  LES 4 LIGNES MODIFIÉES SONT ICI  ⬇️⬇️⬇️
-       ========================================================== */
-    const targetX = THREE.MathUtils.clamp(
-      pos.x, BOUNDS.minX + CAM.margin, BOUNDS.maxX - CAM.margin
-    )
-    camPos.x = THREE.MathUtils.lerp(camPos.x, targetX, 1 - Math.exp(-SMOOTHNESS * delta))
-    camPos.y = THREE.MathUtils.lerp(camPos.y, CAM.height, 1 - Math.exp(-SMOOTHNESS * delta))
-    camPos.z = THREE.MathUtils.lerp(camPos.z, CAM.distance, 1 - Math.exp(-SMOOTHNESS * delta))
-    state.camera.lookAt(camPos.x, CAM.lookAtY, 0)
-    /* ========================================================== */
+    placeCamera(state, pos, delta, SMOOTHNESS)
 
-    /* ==========================================================
-       4. DÉTECTION DE PORTE — inchangé
-       ========================================================== */
+    /* ---------- PORTE LA PLUS PROCHE ---------- */
     let found = null
-    for (const door of DOORS) {
-      const dx = door.x - pos.x
-      const dz = DOOR_Z - pos.z
+    for (const d of DOORS) {
+      const dx = (d.x + d.nx * STAND_OFF) - pos.x
+      const dz = (d.z + d.nz * STAND_OFF) - pos.z
       if (dx * dx + dz * dz < DOOR_RADIUS * DOOR_RADIUS) {
-        found = door.id
+        found = d.id
         break
       }
     }
@@ -155,9 +187,15 @@ export default function Player() {
   })
 
   return (
-    <mesh ref={ref} position={[0, 0.6, 0]} castShadow>
-      <capsuleGeometry args={[0.3, 0.6, 8, 16]} />
-      <meshStandardMaterial color="#e8a33d" />
-    </mesh>
+    <group ref={ref} position={[0, 0.6, 4]}>
+      <mesh castShadow>
+        <capsuleGeometry args={[0.3, 0.6, 8, 16]} />
+        <meshStandardMaterial color="#e8a33d" />
+      </mesh>
+      <mesh position={[0, 0.1, 0.35]}>
+        <boxGeometry args={[0.12, 0.12, 0.25]} />
+        <meshStandardMaterial color="#2b3440" />
+      </mesh>
+    </group>
   )
 }
