@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import useKeyboard from '../hooks/useKeyboard'
+import useInput from '../hooks/useInput'
 import useDoorNavigation from '../hooks/useDoorNavigation'
 import { useGameStore } from '../store/useGameStore'
 import { clampToHall, isInsideHall } from '../config/world'
@@ -15,9 +15,8 @@ const ARRIVAL = 0.15
 const TURN_SPEED = 10
 
 /* ============================================================
-   CAMÉRA À CRANS — 8 orientations, une par face de l'octogone
+   CAMÉRA — orientation fixe, suit le joueur en translation
    ============================================================ */
-const STEP = Math.PI / 4      // 45°
 const CAM = {
   height: 2.5,
   distance: 13,
@@ -25,8 +24,14 @@ const CAM = {
   maxDist: 18,
   lookAtY: 2.0,
   wallMargin: 1.2,
-  turnSpeed: 7,               // vitesse de la transition entre crans
 }
+/* Repère d'entrée → repère monde.
+   La caméra regarde vers −Z, écran et monde coïncident : angle nul.
+   Si son orientation change un jour, c'est la seule valeur à corriger. */
+const INPUT_YAW = 0
+const INPUT_COS = Math.cos(INPUT_YAW)
+const INPUT_SIN = Math.sin(INPUT_YAW)
+
 
 const smoothstep = (x) => x * x * (3 - 2 * x)
 const damp = (delta, k = SMOOTHNESS) => 1 - Math.exp(-k * delta)
@@ -34,26 +39,21 @@ const damp = (delta, k = SMOOTHNESS) => 1 - Math.exp(-k * delta)
 export default function Player() {
   const ref = useRef()
   const enterDoor = useDoorNavigation()
-  const keys = useKeyboard(enterDoor)
+  const input = useInput(enterDoor)
 
   const dir = useRef(new THREE.Vector3())
   const from = useRef(new THREE.Vector3())
-  const sector = useRef(0)          // cran courant, entier
-  const yaw = useRef(0)             // angle lissé, suit le cran
   const dist = useRef(CAM.distance)
   const camTarget = useRef(new THREE.Vector3())
 
   function placeCamera(state, pos, delta, k) {
-    const sy = Math.sin(yaw.current)
-    const cy = Math.cos(yaw.current)
-
     let d = dist.current
     while (d > CAM.minDist) {
-      if (isInsideHall(pos.x + sy * d, pos.z + cy * d, CAM.wallMargin)) break
+      if (isInsideHall(pos.x, pos.z + d, CAM.wallMargin)) break
       d -= 0.5
     }
 
-    camTarget.current.set(pos.x + sy * d, pos.y + CAM.height, pos.z + cy * d)
+    camTarget.current.set(pos.x, pos.y + CAM.height, pos.z + d)
     state.camera.position.lerp(camTarget.current, damp(delta, k))
     state.camera.lookAt(pos.x, CAM.lookAtY, pos.z)
   }
@@ -81,9 +81,9 @@ export default function Player() {
       pos.z = THREE.MathUtils.lerp(from.current.z, d.z - d.nz * WALK_IN, e)
       ref.current.rotation.y = Math.atan2(-d.nx, -d.nz)
 
-      cam.x = THREE.MathUtils.lerp(cam.x, d.x + d.nx * 8, damp(delta, 3))
-      cam.y = THREE.MathUtils.lerp(cam.y, 4, damp(delta, 2))
-      cam.z = THREE.MathUtils.lerp(cam.z, d.z + d.nz * 8, damp(delta, 2))
+      cam.x = THREE.MathUtils.lerp(cam.x, d.x + d.nx * 7, damp(delta, 3))
+      cam.y = THREE.MathUtils.lerp(cam.y, 2.4, damp(delta, 2))
+      cam.z = THREE.MathUtils.lerp(cam.z, d.z + d.nz * 7, damp(delta, 2))
       state.camera.lookAt(d.x, 1.6, d.z)
       return
     }
@@ -95,10 +95,7 @@ export default function Player() {
 
       if (time === 0) {
         pos.set(d.x - d.nx * WALK_IN, 0.6, d.z - d.nz * WALK_IN)
-        cam.set(d.x + d.nx * 8, 4, d.z + d.nz * 8)
-        // le cran le plus proche de la normale de la porte
-        sector.current = Math.round(Math.atan2(d.nx, d.nz) / STEP)
-        yaw.current = sector.current * STEP
+        cam.set(d.x + d.nx * 7, 2.4, d.z + d.nz * 7)
         dist.current = CAM.distance
       }
       store.tickLanding(delta)
@@ -116,51 +113,23 @@ export default function Player() {
       return
     }
 
-    /* ---------- ROTATION PAR CRANS ---------- */
-    if (keys.current.turn !== 0) {
-      sector.current += keys.current.turn
-      keys.current.turn = 0
-    }
-
-    // yaw rejoint le cran cible, par le plus court chemin
-    const targetYaw = sector.current * STEP
-    let dy = targetYaw - yaw.current
-    while (dy >  Math.PI) dy -= Math.PI * 2
-    while (dy < -Math.PI) dy += Math.PI * 2
-    yaw.current += dy * damp(delta, CAM.turnSpeed)
-
+        /* ---------- ZOOM ---------- */
     dist.current = THREE.MathUtils.clamp(
-      dist.current + keys.current.zoomDelta, CAM.minDist, CAM.maxDist
+      dist.current + input.current.zoomDelta, CAM.minDist, CAM.maxDist
     )
-    keys.current.zoomDelta = 0
+    input.current.zoomDelta = 0
 
-    /* ---------- DÉPLACEMENT, relatif au cran ---------- */
-    const { forward, backward, left, right } = keys.current
-    const f = (forward ? 1 : 0) - (backward ? 1 : 0)
-    const r = (right ? 1 : 0) - (left ? 1 : 0)
+    /* ---------- DÉPLACEMENT ---------- */
+    // dir n'est volontairement plus normalisé : sa longueur porte le
+    // dosage de vitesse, ce qui rendra le joystick analogique gratuit.
+    const move = input.current.move
+    dir.current.set(
+      move.x * INPUT_COS - move.z * INPUT_SIN,
+      0,
+      move.x * INPUT_SIN + move.z * INPUT_COS,
+    )
 
-    // on utilise le cran cible, pas le yaw lissé :
-    // le déplacement ne dérive pas pendant la transition
-    const sy = Math.sin(targetYaw)
-    const cy = Math.cos(targetYaw)
-
-    dir.current.set(-sy * f + cy * r, 0, -cy * f - sy * r)
-    const usingKeyboard = dir.current.lengthSq() > 0
-
-    if (usingKeyboard) {
-      if (store.destination) store.setDestination(null)
-      dir.current.normalize()
-    } else if (store.destination) {
-      const dx = store.destination.x - pos.x
-      const dz = store.destination.z - pos.z
-      if (dx * dx + dz * dz < ARRIVAL * ARRIVAL) {
-        store.setDestination(null)
-      } else {
-        dir.current.set(dx, 0, dz).normalize()
-      }
-    }
-
-    if (dir.current.lengthSq() > 0) {
+    if (dir.current.lengthSq() > 1e-6) {
       pos.addScaledVector(dir.current, SPEED * delta)
       clampToHall(pos)
 

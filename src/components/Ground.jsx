@@ -1,22 +1,18 @@
-import { useGameStore } from '../store/useGameStore'
-import { HALL, clampToHall } from '../config/world'
+import { BOUNDS } from '../config/world'
 
+/**
+ * Plan de pioche au sol, invisible et inerte.
+ * Le clic pour se déplacer a été retiré : ZQSD sur desktop, joystick sur mobile.
+ * Ce plan resservira au mode éditeur pour lire les coordonnées sous le curseur.
+ */
 export default function Ground() {
-  const setDestination = useGameStore((s) => s.setDestination)
-
   return (
     <mesh
       rotation-x={-Math.PI / 2}
-      position={[0, 0.02, 0]}
+      position={[BOUNDS.cx, 0.02, BOUNDS.cz]}
       visible={false}
-      onPointerDown={(e) => {
-        e.stopPropagation()
-        const p = { x: e.point.x, z: e.point.z }
-        clampToHall(p)
-        setDestination(p)
-      }}
     >
-      <planeGeometry args={[HALL.halfWidth * 2, HALL.halfDepth * 2]} />
+      <planeGeometry args={[BOUNDS.spanX, BOUNDS.spanZ]} />
       <meshBasicMaterial />
     </mesh>
   )

@@ -27,7 +27,8 @@ export default function Door({ id, gate, x, z, rotY }) {
     if (boardingDoor === id) {
       opening = THREE.MathUtils.clamp(boardingTime / BOARDING.doorOpen, 0, 1)
     } else if (landingDoor === id) {
-      const closing = (landingTime - LANDING.walkOut) / (LANDING.total - LANDING.walkOut)
+      const closing =
+        (landingTime - LANDING.walkOut) / (LANDING.total - LANDING.walkOut)
       opening = 1 - THREE.MathUtils.clamp(closing, 0, 1)
     }
 
@@ -36,25 +37,33 @@ export default function Door({ id, gate, x, z, rotY }) {
     rightRef.current.position.x = HALF / 2 + shift
   })
 
-  const color = isNear ? '#5aa9e6' : '#aeb4bd'
+  const color = isNear ? '#7fb8e0' : '#aeb4bd'
 
   return (
     <group position={[x, 0, z]} rotation-y={rotY}>
-      {/* fond du sas, derrière les battants */}
-      <mesh position={[0, H / 2, -0.4]}>
-        <boxGeometry args={[W + 0.2, H, 0.06]} />
-        <meshStandardMaterial color="#7d838c" />
+      {/* fond du sas — trou d'ombre, jamais coloré */}
+      <mesh position={[0, H / 2, -0.6]}>
+        <boxGeometry args={[W + 0.3, H, 0.06]} />
+        <meshStandardMaterial color="#3a3f47" />
       </mesh>
+      {[-1, 1].map((s) => (
+        <mesh key={s} position={[s * (HALF + 0.15), H / 2, -0.3]}>
+          <boxGeometry args={[0.06, H, 0.6]} />
+          <meshStandardMaterial color="#4a5057" />
+        </mesh>
+      ))}
 
+      {/* battants coulissants */}
       <mesh ref={leftRef} position={[-HALF / 2, H / 2, 0]} castShadow>
-        <boxGeometry args={[HALF, H, 0.26]} />
+        <boxGeometry args={[HALF, H, 0.24]} />
         <meshStandardMaterial color={color} />
       </mesh>
       <mesh ref={rightRef} position={[HALF / 2, H / 2, 0]} castShadow>
-        <boxGeometry args={[HALF, H, 0.26]} />
+        <boxGeometry args={[HALF, H, 0.24]} />
         <meshStandardMaterial color={color} />
       </mesh>
 
+      {/* encadrement */}
       {[-(HALF + 0.2), HALF + 0.2].map((px) => (
         <mesh key={px} position={[px, H / 2, 0.05]} castShadow>
           <boxGeometry args={[0.34, H, 0.5]} />
@@ -66,11 +75,17 @@ export default function Door({ id, gate, x, z, rotY }) {
         <meshStandardMaterial color={C.structure} />
       </mesh>
 
-      <mesh position={[0, H + 0.9, 0.3]} castShadow>
-        <boxGeometry args={[W + 0.9, 0.58, 0.08]} />
+      {/* signalétique */}
+      <mesh position={[0, H + 0.85, 0.28]} castShadow>
+        <boxGeometry args={[W + 0.9, 0.56, 0.08]} />
         <meshStandardMaterial color={C.sign} />
       </mesh>
-      <Text position={[0, H + 0.9, 0.38]} fontSize={0.28} color="#ffffff" anchorY="middle">
+      <Text
+        position={[0, H + 0.85, 0.34]}
+        fontSize={0.27}
+        color="#ffffff"
+        anchorY="middle"
+      >
         {`${gate} — ${t(`doors.${id}.label`)}`}
       </Text>
     </group>

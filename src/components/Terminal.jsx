@@ -95,17 +95,17 @@ function Recess({ minX, maxX, minZ, maxZ }) {
         <meshStandardMaterial color={C.structure} />
       </mesh>
 
-      {/* bandeau plein — support de l'enseigne */}
+      {/* bandeau plein — support de l'enseigne }
       <mesh position={[cx, h + b / 2, maxZ]} castShadow>
         <boxGeometry args={[w + 0.5, b, 0.4]} />
         <meshStandardMaterial color={C.wall} />
       </mesh>
 
-      {/* verrière au-dessus du bandeau */}
+      {verrière au-dessus du bandeau }
       <mesh position={[cx, (h + b + glassTop) / 2, maxZ]}>
         <boxGeometry args={[w + 0.5, glassTop - h - b, 0.07]} />
         <meshStandardMaterial color={C.glass} transparent opacity={0.16} />
-      </mesh>
+      </mesh>*/}
     </group>
   )
 }

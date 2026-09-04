@@ -13,8 +13,7 @@ export const HALL = {
 
   doorHeight: 3.1,
   doorWidth: 2.9,
-
-   // plafond bas des creux : effet boutique
+  
   frontZ: 9,
   floorSize: 120,
 
@@ -46,6 +45,23 @@ export const OUTLINE = [
   [ 27,    1],   // 18  mur face caméra droit, 5 m
   [ 27,    9],   // 19
 ]
+
+
+// ---- Emprise du contour, dérivée. Aucune cote d'emprise ailleurs. ----
+const _xs = OUTLINE.map((p) => p[0])
+const _zs = OUTLINE.map((p) => p[1])
+const _minX = Math.min(..._xs), _maxX = Math.max(..._xs)
+const _minZ = Math.min(..._zs), _maxZ = Math.max(..._zs)
+
+export const BOUNDS = {
+  minX: _minX, maxX: _maxX,     // -27 → 27
+  minZ: _minZ, maxZ: _maxZ,     // -13 →  9
+  spanX: _maxX - _minX,         // 54
+  spanZ: _maxZ - _minZ,         // 22
+  cx: (_minX + _maxX) / 2,      //  0
+  cz: (_minZ + _maxZ) / 2,      // -2
+}
+
 
 // ---- Murs. `low` : plafond d'alcôve abaissé ----
 export const WALLS = [
