@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useGameStore } from '../store/useGameStore'
 
 const MAP = {
   KeyW: 'forward',  KeyZ: 'forward',  ArrowUp: 'forward',
@@ -51,11 +52,24 @@ export default function useInput(onInteract) {
     s.sync = sync
 
     const down = (e) => {
+      const tag = e.target.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return
+
       if (e.repeat) return
 
       if (e.code === 'KeyE' || e.code === 'Space' || e.code === 'Enter') {
         e.preventDefault()
         callback.current?.()
+        return
+      }
+
+      if (e.code === 'KeyP') {
+        useGameStore.getState().toggleMode('plan')
+        return
+      }
+
+      if (e.code === 'KeyO') {
+        useGameStore.getState().toggleMode('edit')
         return
       }
 

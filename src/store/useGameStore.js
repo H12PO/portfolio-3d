@@ -4,14 +4,16 @@ export const useGameStore = create((set, get) => ({
   started: false,
   start: () => set({ started: true }),
 
-  topDown: false,
-  toggleTopDown: () => set((s) => ({ topDown: !s.topDown })),
+  // Un seul mode à la fois : 'play' | 'plan' | 'edit'
+  // 'plan' = vue de dessus simple (P), 'edit' = vue de dessus + éditeur (O)
+  mode: 'play',
+  setMode: (m) => set({ mode: m }),
+  toggleMode: (m) => set((s) => ({ mode: s.mode === m ? 'play' : m })),
 
   nearbyDoor: null,
   setNearbyDoor: (door) => set((s) =>
     s.nearbyDoor === door ? s : { nearbyDoor: door }
   ),
-
 
   boardingDoor: null,
   boardingTime: 0,

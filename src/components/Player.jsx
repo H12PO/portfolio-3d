@@ -46,6 +46,7 @@ export default function Player() {
   const dist = useRef(CAM.distance)
   const camTarget = useRef(new THREE.Vector3())
 
+
   function placeCamera(state, pos, delta, k) {
     let d = dist.current
     while (d > CAM.minDist) {
@@ -61,7 +62,7 @@ export default function Player() {
   useFrame((state, delta) => {
     const pos = ref.current.position
     const store = useGameStore.getState()
-    if (!store.started || store.topDown) return
+    if (!store.started || store.mode !== 'play') return
 
     const cam = state.camera.position
 

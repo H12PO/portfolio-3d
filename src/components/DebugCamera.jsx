@@ -1,47 +1,59 @@
-import { useEffect, useRef } from 'react'
+import { useMemo } from 'react'
+import * as THREE from 'three'
 import { useThree } from '@react-three/fiber'
-import { Grid } from '@react-three/drei'
+import { OrthographicCamera, Grid, Line } from '@react-three/drei'
 import { useGameStore } from '../store/useGameStore'
+import { BOUNDS, OUTLINE } from '../config/world'
+
+const MARGIN = 6      // marge en mètres autour du contour
+const CAM_Y = 40      // altitude de la caméra
+const CUT = 3.2       // hauteur de coupe, comme un plan d'architecte  // marge en mètres autour du contour
 
 export default function DebugCamera() {
-  const topDown = useGameStore((s) => s.topDown)
-  const toggleTopDown = useGameStore((s) => s.toggleTopDown)
-  const { camera } = useThree()
-  const saved = useRef(null)
+  const mode = useGameStore((s) => s.mode)
+  const size = useThree((s) => s.size)
 
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.code === 'KeyP' && !e.repeat) toggleTopDown()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [toggleTopDown])
+  // Zoom orthographique = pixels par mètre. On prend l'axe le plus contraint,
+  // le hall entre donc toujours dans le cadre, quel que soit le format.
+  const zoom = useMemo(() => Math.min(
+    size.width / (BOUNDS.spanX + MARGIN),
+    size.height / (BOUNDS.spanZ + MARGIN),
+  ), [size.width, size.height])
 
-  useEffect(() => {
-    if (topDown) {
-      saved.current = { pos: camera.position.clone(), fov: camera.fov }
-      camera.position.set(0, 52, 0.01)
-      camera.lookAt(0, 0, 0)
-      camera.fov = 45
-      camera.updateProjectionMatrix()
-    } else if (saved.current) {
-      camera.position.copy(saved.current.pos)
-      camera.fov = saved.current.fov
-      camera.updateProjectionMatrix()
-    }
-  }, [topDown, camera])
+  const contour = useMemo(() => {
+    const pts = OUTLINE.map(([x, z]) => new THREE.Vector3(x, 0.05, z))
+    pts.push(pts[0].clone())
+    return pts
+  }, [])
 
-  if (!topDown) return null
+  if (mode === 'play') return null
 
   return (
-    <Grid
-      position={[0, 0.02, 0]}
-      args={[80, 80]}
-      cellSize={1}
-      cellColor="#9aa0aa"
-      sectionSize={5}
-      sectionColor="#5a6a80"
-      fadeDistance={120}
-    />
+    <>
+      {/* Vue de dessus. La rotation explicite évite le lookAt dégénéré,
+          et makeDefault restaure seul la caméra de jeu au démontage. */}
+      <OrthographicCamera
+        makeDefault
+        position={[BOUNDS.cx, CAM_Y, BOUNDS.cz]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        zoom={zoom}
+        near={CAM_Y - CUT}
+        far={120}
+      />
+
+      {/* Grille centrée sur l'origine du monde, pas sur le hall :
+          les sections de 5 m tombent ainsi sur des coordonnées rondes. */}
+      <Grid
+        position={[0, 0.02, 0]}
+        args={[80, 40]}
+        cellSize={1}
+        cellColor="#9aa0aa"
+        sectionSize={5}
+        sectionColor="#5a6a80"
+        fadeDistance={200}
+      />
+
+      <Line points={contour} color="#5aa9e6" lineWidth={2} />
+    </>
   )
 }
