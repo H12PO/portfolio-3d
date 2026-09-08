@@ -25,6 +25,15 @@ const CAM = {
   lookAtY: 2.0,
   wallMargin: 1.2,
 }
+/* Gabarit du joueur. Le chibi devra respecter cette hauteur totale ;
+   son style vient des proportions, pas de la taille. */
+const BODY_HEIGHT = 1.7
+const BODY_RADIUS = 0.3
+const BODY_Y = BODY_HEIGHT / 2                          // centre de la capsule
+const CAPSULE_LEN = BODY_HEIGHT - 2 * BODY_RADIUS       // 1.10
+
+
+
 /* Repère d'entrée → repère monde.
    La caméra regarde vers −Z, écran et monde coïncident : angle nul.
    Si son orientation change un jour, c'est la seule valeur à corriger. */
@@ -95,7 +104,7 @@ export default function Player() {
       const d = DOORS.find((x) => x.id === store.landingDoor)
 
       if (time === 0) {
-        pos.set(d.x - d.nx * WALK_IN, 0.6, d.z - d.nz * WALK_IN)
+        pos.set(d.x - d.nx * WALK_IN, BODY_Y, d.z - d.nz * WALK_IN)
         cam.set(d.x + d.nx * 7, 2.4, d.z + d.nz * 7)
         dist.current = CAM.distance
       }
@@ -157,12 +166,12 @@ export default function Player() {
   })
 
   return (
-    <group ref={ref} position={[0, 0.6, 4]}>
+    <group ref={ref} position={[0, BODY_Y, 4]}>
       <mesh castShadow>
-        <capsuleGeometry args={[0.3, 0.6, 8, 16]} />
+        <capsuleGeometry args={[BODY_RADIUS, CAPSULE_LEN, 8, 16]} />
         <meshStandardMaterial color="#e8a33d" />
       </mesh>
-      <mesh position={[0, 0.1, 0.35]}>
+      <mesh position={[0, 0.55, 0.3]}>
         <boxGeometry args={[0.12, 0.12, 0.25]} />
         <meshStandardMaterial color="#2b3440" />
       </mesh>

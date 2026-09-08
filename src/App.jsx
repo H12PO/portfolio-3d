@@ -7,6 +7,10 @@ import Ground from './components/Ground'
 import Player from './components/Player'
 import Props from './components/Props'
 import Door from './components/Door'
+
+import CookieStand from './components/props/CookieStand'
+
+
 import { EditorScene, EditorPanel } from './components/Editor'
 import DebugCamera from './components/DebugCamera'
 import Prompt from './ui/Prompt'
@@ -62,6 +66,7 @@ export default function App() {
           <Ground />
           <Props />
           <EditorScene />
+          <CookieStand position={[0, 0, -10.5]} />
           <Player />
           {DOORS.map((d) => <Door key={d.id} {...d} />)}
         </Suspense>

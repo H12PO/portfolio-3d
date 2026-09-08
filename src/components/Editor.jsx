@@ -80,7 +80,7 @@ export function EditorScene() {
       {items.map((p) => {
         const { w, d } = sizeOf(p)
         const on = p.id === selected
-        const color = PROP_TYPES[p.type]?.color ?? '#888'
+        const color = PROP_TYPES[p.type]?.color ?? '#000'
 
         return (
           <group key={p.id}>

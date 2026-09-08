@@ -17,7 +17,7 @@ export const PROP_TYPES = {
   planter: { w: 1.4, d: 1.1, h: 0.6, color: '#4a8c55' },
 }
 export const PROPS = [
-  { id: 'seat-01',    type: 'seat',    x:  -7, z: -3, rotY: 0, scale: 1.0 },
+  /*{ id: 'seat-01',    type: 'seat',    x:  -7, z: -3, rotY: 0, scale: 1.0 },
   { id: 'seat-02',    type: 'seat',    x:   2, z: -3, rotY: 0, scale: 1.0 },
   { id: 'seat-03',    type: 'seat',    x:  -7, z:  3, rotY: 0, scale: 1.0 },
   { id: 'seat-04',    type: 'seat',    x:   7, z:  3, rotY: 0, scale: 1.0 },
@@ -27,5 +27,5 @@ export const PROPS = [
   { id: 'planter-03', type: 'planter', x:  -9, z:  8, rotY: 0, scale: 0.95 },
   { id: 'planter-04', type: 'planter', x:   9, z:  8, rotY: 0, scale: 0.95 },
   { id: 'planter-05', type: 'planter', x:  -3, z:  9, rotY: 0, scale: 1.15 },
-  { id: 'planter-06', type: 'planter', x:   3, z:  9, rotY: 0, scale: 1.00 },
+  { id: 'planter-06', type: 'planter', x:   3, z:  9, rotY: 0, scale: 1.00 },*/
 ]
