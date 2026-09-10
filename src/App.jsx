@@ -9,6 +9,8 @@ import Props from './components/Props'
 import Door from './components/Door'
 
 import CookieStand from './components/props/CookieStand'
+import DepartureBoard from './components/props/DepartureBoard'
+import VendingMachine from './components/props/VendingMachine'
 
 
 import { EditorScene, EditorPanel } from './components/Editor'
@@ -41,6 +43,7 @@ function Sun() {
       intensity={2.4}
       castShadow
       shadow-mapSize={[2048, 2048]}
+      shadow-normalBias={0.02}
       shadow-camera-left={-32}
       shadow-camera-right={32}
       shadow-camera-top={22}
@@ -67,6 +70,8 @@ export default function App() {
           <Props />
           <EditorScene />
           <CookieStand position={[0, 0, -10.5]} />
+          <DepartureBoard position={[-24.5, 0, 1.15]} />
+          <VendingMachine position={[-3.5, 0, -8.25]} />
           <Player />
           {DOORS.map((d) => <Door key={d.id} {...d} />)}
         </Suspense>
