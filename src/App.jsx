@@ -72,7 +72,7 @@ export default function App() {
           <CookieStand position={[0, 0, -10.5]} />
           <DepartureBoard position={[-24.5, 0, 1.15]} />
           <VendingMachine position={[-3.5, 0, -8.25]} />
-          <Bookshelf position={[24.5, 0, 2]} />
+          <Bookshelf position={[0, 0, 2]} />
           <Player />
           {DOORS.map((d) => <Door key={d.id} {...d} />)}
         </Suspense>
