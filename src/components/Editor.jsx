@@ -16,8 +16,8 @@ const EIGHTH = Math.PI / 4
 
 const round = (v) => Math.round(v / SNAP) * SNAP
 const sizeOf = (p) => ({
-  w: p.w ?? PROP_TYPES[p.type].w,
-  d: p.d ?? PROP_TYPES[p.type].d,
+  w: p.w ?? PROP_TYPES[p.type]?.w ?? 1,
+  d: p.d ?? PROP_TYPES[p.type]?.d ?? 1,
 })
 
 const useEditor = create((set, get) => ({
@@ -31,13 +31,14 @@ const useEditor = create((set, get) => ({
   })),
   setDrag: (d) => set({ drag: d }),
 
-  add: (type) => set((s) => {
+  add: () => set((s) => {
     let n = 1
-    while (s.items.some((p) => p.id === `${type}-${n}`)) n++
-    const id = `${type}-${n}`
+    while (s.items.some((p) => p.id === `silhouette-${n}`)) n++
+    const id = `silhouette-${n}`
     return {
       selected: id,
-      items: [...s.items, { id, type, label: type, x: 0, z: -2, rotY: 0, scale: 1 }],
+      items: [...s.items, { id, type: 'silhouette', label: 'zone',
+                            x: 0, z: -2, rotY: 0, scale: 1, w: 2, d: 1 }],
     }
   }),
   remove: (id) => set((s) => ({
@@ -80,7 +81,7 @@ export function EditorScene() {
       {items.map((p) => {
         const { w, d } = sizeOf(p)
         const on = p.id === selected
-        const color = PROP_TYPES[p.type]?.color ?? '#000'
+        const color = p.type === 'silhouette' ? '#c98b4a' : '#5a6a80'
 
         return (
           <group key={p.id}>
@@ -189,11 +190,9 @@ export function EditorPanel() {
   return (
     <div style={S.panel}>
       <div style={S.title}>Plan — {items.length} props</div>
-
+      
       <div style={S.row}>
-        {Object.keys(PROP_TYPES).map((t) => (
-          <button key={t} style={S.btn} onClick={() => add(t)}>+ {t}</button>
-        ))}
+        <button style={S.btn} onClick={() => add()}>+ silhouette</button>
       </div>
 
       <div style={S.list}>

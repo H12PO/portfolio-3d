@@ -8,10 +8,6 @@ import Player from './components/Player'
 import Props from './components/Props'
 import Door from './components/Door'
 
-import CookieStand from './components/props/CookieStand'
-import DepartureBoard from './components/props/DepartureBoard'
-import VendingMachine from './components/props/VendingMachine'
-import Bookshelf from './components/props/Bookshelf'
 
 import { EditorScene, EditorPanel } from './components/Editor'
 import DebugCamera from './components/DebugCamera'
@@ -69,10 +65,6 @@ export default function App() {
           <Ground />
           <Props />
           <EditorScene />
-          <CookieStand position={[0, 0, -10.5]} />
-          <DepartureBoard position={[-24.5, 0, 1.15]} />
-          <VendingMachine position={[-3.5, 0, -8.25]} />
-          <Bookshelf position={[0, 0, 2]} />
           <Player />
           {DOORS.map((d) => <Door key={d.id} {...d} />)}
         </Suspense>
