@@ -19,6 +19,9 @@ import Fauteuil from '../components/props/sieges/Fauteuil'
 import Borne from '../components/props/bornes/Borne'
 import BorneInfo from '../components/props/bornes/BorneInfo'
 import Carrousel from '../components/props/bornes/Carrousel'
+import PortiqueEntree from '../components/props/bornes/PortiqueEntree'
+import PortiqueSortie from '../components/props/bornes/PortiqueSortie'
+
 
 import BagageMallette from '../components/props/bagages/BagageMallette'
 import BagageSacADos from '../components/props/bagages/BagageSacADos'
@@ -68,6 +71,8 @@ export const COMPONENTS = {
   borne:      Borne,
   borne_info: BorneInfo,
   carrousel:  Carrousel,
+  portique_entree: PortiqueEntree,
+  portique_sortie: PortiqueSortie,
 
   bag_mallette:      BagageMallette,
   bag_sac_a_dos:     BagageSacADos,

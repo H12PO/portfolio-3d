@@ -17,7 +17,7 @@ export const PROPS = [
   { id: 'cookie-01',     type: 'cookie_stand', x:   0.0, z: -10.5, rotY: 0, scale: 1 },
   { id: 'departures-01', type: 'departures',   x: -24.5, z:   1.15, rotY: 0, scale: 1 },
   { id: 'vending-01',    type: 'vending',      x:  -3.5, z:  -8.25, rotY: 0, scale: 1 },
-  { id: 'bookshelf-01',  type: 'bookshelf',    x:  23, z:   1.3,  rotY: 0, scale: 1 },
+  { id: 'bookshelf-01',  type: 'bookshelf',    x:  22, z:   1.3,  rotY: 0, scale: 1 },
 
   // --- sièges, positions temporaires pour jugement ---
   /*{ id: 'banq2-01',    type: 'banquette_2p',       x: -10, z: 2, rotY: 0, scale: 1 },
@@ -32,7 +32,8 @@ export const PROPS = [
   { id: 'borne-01',     type: 'borne',      x: -14, z: 5, rotY: 0, scale: 1 },
   { id: 'borneinfo-01', type: 'borne_info', x: -11, z: 5, rotY: 0, scale: 1 },
   { id: 'carrousel-01', type: 'carrousel',  x:  25.7, z: 6.5, rotY: 0, scale: 1 },
-
+  { id: 'portique-e', type: 'portique_entree', x: 24.65, z: 1.4, rotY: 0, scale: 1 },
+  { id: 'portique-s', type: 'portique_sortie', x: 26.7, z: 7.55, rotY: Math.PI / 2, scale: 1 },
   /*// --- bagages, positions temporaires ---
   { id: 'bag-01', type: 'bag_mallette',       x: -1, z: 5, rotY: 0, scale: 1 },
   { id: 'bag-02', type: 'bag_sac_a_dos',      x:  0, z: 5, rotY: 0, scale: 1 },

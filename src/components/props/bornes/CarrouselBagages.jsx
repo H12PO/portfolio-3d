@@ -1,6 +1,7 @@
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { CARROUSEL } from '../../../store/carrousel'
 
 import BagageMallette from '../bagages/BagageMallette'
 import BagageSacADos from '../bagages/BagageSacADos'
@@ -16,12 +17,12 @@ import BagageValiseRigide from '../bagages/BagageValiseRigide'
  *   hauteur     : correction verticale, une valise couchee descend.
  */
 const MODELES = [
-  { C: BagageValiseRigide, inclinaison: -Math.PI / 2, hauteur: -0.14, decal: 0.11 },
-  { C: BagageValiseCabine, inclinaison: -Math.PI / 2, hauteur: -0.11, decal: 0 },
-  { C: BagageMallette,     inclinaison: 0, hauteur: 0, decal: 0 },
-  { C: BagageSacVoyage,    inclinaison: 0, hauteur: 0, decal: 0 },
-  { C: BagageSacMarin,     inclinaison: 0, hauteur: 0, decal: 0 },
-  { C: BagageSacADos,      inclinaison: 0, hauteur: 0, decal: 0 },
+  { C: BagageValiseRigide, inclinaison: -Math.PI / 2, hauteur: -0.14, decal: 0.11, demi: 0.44 },
+  { C: BagageValiseCabine, inclinaison: -Math.PI / 2, hauteur: -0.11, decal: 0, demi: 0.32 },
+  { C: BagageMallette,     inclinaison: 0, hauteur: 0, decal: 0, demi: 0.22 },
+  { C: BagageSacVoyage,    inclinaison: 0, hauteur: 0, decal: 0, demi: 0.30 },
+  { C: BagageSacMarin,     inclinaison: 0, hauteur: 0, decal: 0, demi: 0.31 },
+  { C: BagageSacADos,      inclinaison: 0, hauteur: 0, decal: 0, demi: 0.16 },
 ]
 
 // Douze teintes, choisies pour se lire a 13 m sans jurer avec le hall.
@@ -46,6 +47,15 @@ const POINTS = [
   [ 1.90, 0.45,  1.05],
 ]
 
+// Portiques, en coordonnees LOCALES du carrousel. L'axe dit dans quelle
+// direction le bagage traverse le passage : l'entree se franchit selon Z,
+// la sortie selon X.
+const PORTIQUES = {
+  entree: { x: -1.05, z: -4.7, axe: 'z' },
+  sortie: { x:  1.00, z:  1.05, axe: 'x' },
+}
+const ZONE = 0.60      // demi-longueur de la zone de detection, en metres
+
 const NB = 6         // bagages simultanes
 const DUREE = 15      // secondes pour un tour complet
 
@@ -53,7 +63,7 @@ const _pos = new THREE.Vector3()
 const _tan = new THREE.Vector3()
 
 export default function CarrouselBagages() {
-    const courbe = useMemo(() => {
+  const courbe = useMemo(() => {
     const c = new THREE.CatmullRomCurve3(POINTS.map((p) => new THREE.Vector3(...p)))
     c.arcLengthDivisions = 400        // echantillonnage fin : espacement regulier
     return c
@@ -76,6 +86,9 @@ export default function CarrouselBagages() {
   useFrame((_, delta) => {
     horloge.current += delta / DUREE
     if (horloge.current > 1) horloge.current -= 1
+
+    CARROUSEL.entree.ecart = null
+    CARROUSEL.sortie.ecart = null
 
     for (let i = 0; i < refs.current.length; i++) {
       const g = refs.current[i]
@@ -120,6 +133,23 @@ export default function CarrouselBagages() {
           }
         })
       }
+
+      // Publication pour les portiques : un bagage proche donne sa
+      // position laterale, qui dira quelles lanieres soulever, et son
+      // avance le long du passage, qui dira de combien.
+      for (const nom in PORTIQUES) {
+        const p = PORTIQUES[nom]
+        const dx = g.position.x - p.x
+        const dz = g.position.z - p.z
+        const along = p.axe === 'z' ? dz : dx
+        const lateral = p.axe === 'z' ? dx : dz
+
+        if (Math.abs(along) < ZONE && Math.abs(lateral) < 1.0) {
+          CARROUSEL[nom].ecart = lateral
+          CARROUSEL[nom].avance = along / ZONE
+          CARROUSEL[nom].demi = MODELES[l.modele].demi
+        }
+      }
     }
   })
 
@@ -130,6 +160,7 @@ export default function CarrouselBagages() {
         return (
           <group key={i} ref={(o) => (refs.current[i] = o)}>
             <C couleur={TEINTES[teinte]} rotation-x={inclinaison} />
+
           </group>
         )
       })}
