@@ -7,9 +7,11 @@ import { useEffect, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useGLTF } from '@react-three/drei'
+import CarrouselBagages from './CarrouselBagages'
+
 
 const URL = '/models/bornes/carrousel.glb'
-const VITESSE = 0.25          // motifs par seconde
+const VITESSE = 2         // motifs par seconde
 
 export default function Carrousel(props) {
   const { nodes, materials } = useGLTF(URL)
@@ -68,6 +70,8 @@ export default function Carrousel(props) {
       <mesh castShadow receiveShadow geometry={nodes.CAR_Ocre_Base.geometry} material={materials.M_Ocre_Base} />
       <mesh castShadow receiveShadow geometry={nodes.CAR_Struct.geometry} material={materials.M_Struct} />
       <mesh castShadow receiveShadow geometry={nodes.CAR_Tapis001.geometry} material={materials.M_Tapis_Carrousel} />
+      <CarrouselBagages />
+
     </group>
   )
 }

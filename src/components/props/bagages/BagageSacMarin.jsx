@@ -6,11 +6,13 @@ Command: npx gltfjsx@6.5.3 public/models/bagages/bagage_sac_marin.glb -o src/com
 import { useEffect } from 'react'
 import * as THREE from 'three'
 import { useGLTF } from '@react-three/drei'
+import { useTeinte } from '../useTeinte'
 
 const URL = '/models/bagages/bagage_sac_marin.glb'
 
-export default function BagageSacMarin(props) {
+export default function BagageSacMarin({ couleur, ...props }) {
   const { nodes, materials } = useGLTF(URL)
+  const coque = useTeinte(materials.M_Bagage_Coque, couleur)
   useEffect(() => {
     Object.values(materials).forEach((m) => {
       if (m.name !== 'M_Vitre') m.side = THREE.FrontSide
@@ -19,7 +21,7 @@ export default function BagageSacMarin(props) {
 
   return (
     <group {...props} dispose={null}>
-      <mesh castShadow receiveShadow geometry={nodes.MAR_Coque.geometry} material={materials.M_Bagage_Coque} />
+      <mesh castShadow receiveShadow geometry={nodes.MAR_Coque.geometry} material={coque} />
       <mesh castShadow receiveShadow geometry={nodes.MAR_Fond.geometry} material={materials.M_Bagage_Fond} />
       <mesh castShadow receiveShadow geometry={nodes.MAR_Sangles.geometry} material={materials.M_Bagage_Sangle} />
       <mesh castShadow receiveShadow geometry={nodes.MAR_Sombre.geometry} material={materials.M_Bagage_Sombre} />
