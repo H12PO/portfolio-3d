@@ -16,12 +16,12 @@ import BagageValiseRigide from '../bagages/BagageValiseRigide'
  *   hauteur     : correction verticale, une valise couchee descend.
  */
 const MODELES = [
-  { C: BagageValiseRigide, inclinaison: -Math.PI / 2, hauteur: -0.14 },
-  { C: BagageValiseCabine, inclinaison: -Math.PI / 2, hauteur: -0.11 },
-  { C: BagageMallette,     inclinaison: 0, hauteur: 0 },
-  { C: BagageSacVoyage,    inclinaison: 0, hauteur: 0 },
-  { C: BagageSacMarin,     inclinaison: 0, hauteur: 0 },
-  { C: BagageSacADos,      inclinaison: 0, hauteur: 0 },
+  { C: BagageValiseRigide, inclinaison: -Math.PI / 2, hauteur: -0.14, decal: 0.11 },
+  { C: BagageValiseCabine, inclinaison: -Math.PI / 2, hauteur: -0.11, decal: 0 },
+  { C: BagageMallette,     inclinaison: 0, hauteur: 0, decal: 0 },
+  { C: BagageSacVoyage,    inclinaison: 0, hauteur: 0, decal: 0 },
+  { C: BagageSacMarin,     inclinaison: 0, hauteur: 0, decal: 0 },
+  { C: BagageSacADos,      inclinaison: 0, hauteur: 0, decal: 0 },
 ]
 
 // Douze teintes, choisies pour se lire a 13 m sans jurer avec le hall.
@@ -47,7 +47,7 @@ const POINTS = [
 ]
 
 const NB = 6         // bagages simultanes
-const DUREE = 30      // secondes pour un tour complet
+const DUREE = 15      // secondes pour un tour complet
 
 const _pos = new THREE.Vector3()
 const _tan = new THREE.Vector3()
@@ -71,22 +71,40 @@ export default function CarrouselBagages() {
   const refs = useRef([])
   const avance = useRef(Array.from({ length: NB }, (_, i) => i / NB))
   const cycle = useRef(0)
+  const horloge = useRef(0)
 
   useFrame((_, delta) => {
+    horloge.current += delta / DUREE
+    if (horloge.current > 1) horloge.current -= 1
+
     for (let i = 0; i < refs.current.length; i++) {
       const g = refs.current[i]
       if (!g) continue
       const l = lots.current[i]
 
-      let t = avance.current[i] + delta / DUREE
-      let reboucle = false
-      if (t > 1) { t -= 1; reboucle = true }
+      // Position derivee d'une horloge commune plutot que d'un compteur
+      // par bagage : ils ne peuvent plus deriver les uns par rapport aux
+      // autres, meme si une image est perdue ou si une reference est
+      // momentanement nulle.
+      let t = horloge.current + i / NB
+      if (t > 1) t -= 1
+
+      const reboucle = t < avance.current[i]
       avance.current[i] = t
 
       courbe.getPointAt(t, _pos)
       courbe.getTangentAt(t, _tan)
-      g.position.copy(_pos)
-      g.position.y -= MODELES[l.modele].hauteur
+
+      // Decalage lateral propre au modele : une valise couchee est large,
+      // on la recentre vers l'exterieur du virage pour qu'elle ne morde
+      // pas sur la joue. La normale est la tangente tournee d'un quart
+      // de tour dans le plan du sol.
+      const d = MODELES[l.modele].decal
+      g.position.set(
+        _pos.x + _tan.z * d,
+        _pos.y - MODELES[l.modele].hauteur,
+        _pos.z - _tan.x * d,
+      )
       g.rotation.y = Math.atan2(_tan.x, _tan.z) + DEVIATIONS[l.ecart]
 
       // Un bagage qui repasse l'entree change de couleur et d'angle.
