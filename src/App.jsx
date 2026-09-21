@@ -17,7 +17,7 @@ import Intro from './ui/Intro'
 import Ticket from './ui/Ticket'
 import LangSwitch from './ui/LangSwitch'
 import { DOORS } from './config/doors'
-
+import Musique from './ui/Musique'
 /**
  * Soleil. Les bornes shadow-camera-* sont écrites sur l'objet par R3F,
  * mais la matrice de projection de la caméra d'ombre n'est pas recalculée
@@ -82,6 +82,7 @@ export default function App() {
       </Routes>
       <Intro />
       <LangSwitch />
+      <Musique />
     </>
   )
 }

@@ -34,4 +34,16 @@ export const useGameStore = create((set, get) => ({
   },
   tickLanding: (delta) => set((s) => ({ landingTime: s.landingTime + delta })),
   endLanding: () => set({ landingDoor: null, landingTime: 0 }),
+
+    // Musique. La lecture elle-meme vit dans store/musique.js : ici on ne
+  // garde que ce qui declenche un rendu.
+  muet: false,
+  toggleMuet: () => set((s) => ({ muet: !s.muet })),
+
+  jukeboxOuvert: false,
+  setJukeboxOuvert: (v) => set({ jukeboxOuvert: v }),
+
+  titreCourant: null,
+  setTitreCourant: (t) => set({ titreCourant: t }),
+
 }))

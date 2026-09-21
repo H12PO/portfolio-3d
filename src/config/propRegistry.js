@@ -21,7 +21,7 @@ import BorneInfo from '../components/props/bornes/BorneInfo'
 import Carrousel from '../components/props/bornes/Carrousel'
 import PortiqueEntree from '../components/props/bornes/PortiqueEntree'
 import PortiqueSortie from '../components/props/bornes/PortiqueSortie'
-
+import Jukebox from '../components/props/loisirs/Jukebox'
 
 import BagageMallette from '../components/props/bagages/BagageMallette'
 import BagageSacADos from '../components/props/bagages/BagageSacADos'
@@ -73,7 +73,9 @@ export const COMPONENTS = {
   carrousel:  Carrousel,
   portique_entree: PortiqueEntree,
   portique_sortie: PortiqueSortie,
+  jukebox: Jukebox,
 
+  
   bag_mallette:      BagageMallette,
   bag_sac_a_dos:     BagageSacADos,
   bag_sac_marin:     BagageSacMarin,

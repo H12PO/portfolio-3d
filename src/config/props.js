@@ -34,6 +34,10 @@ export const PROPS = [
   { id: 'carrousel-01', type: 'carrousel',  x:  25.7, z: 6.5, rotY: 0, scale: 1 },
   { id: 'portique-e', type: 'portique_entree', x: 24.65, z: 1.4, rotY: 0, scale: 1 },
   { id: 'portique-s', type: 'portique_sortie', x: 26.7, z: 7.55, rotY: Math.PI / 2, scale: 1 },
+  { id: 'jukebox-01', type: 'jukebox', x: 0, z: 2, rotY: 0, scale: 1, y: -0.058 },
+
+
+
   /*// --- bagages, positions temporaires ---
   { id: 'bag-01', type: 'bag_mallette',       x: -1, z: 5, rotY: 0, scale: 1 },
   { id: 'bag-02', type: 'bag_sac_a_dos',      x:  0, z: 5, rotY: 0, scale: 1 },
