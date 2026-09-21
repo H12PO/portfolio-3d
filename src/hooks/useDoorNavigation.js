@@ -1,8 +1,13 @@
-import { useCallback, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router'
 import { useGameStore } from '../store/useGameStore'
 import { BOARDING, LANDING } from '../config/doors'
 
+/**
+ * Effets des sequences de porte : ouvre la page a la fin de
+ * l'embarquement, la referme pendant le debarquement.
+ * Le declenchement, lui, passe par useInteraction.
+ */
 export default function useDoorNavigation() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -12,26 +17,14 @@ export default function useDoorNavigation() {
   const landingDoor = useGameStore((s) => s.landingDoor)
   const landingTime = useGameStore((s) => s.landingTime)
 
-  const enterDoor = useCallback(() => {
-    if (pathname !== '/') return
-
-    const { nearbyDoor, started, boardingDoor, landingDoor } = useGameStore.getState()
-    if (!started || !nearbyDoor || boardingDoor || landingDoor) return
-
-    useGameStore.getState().beginBoarding(nearbyDoor)
-  }, [pathname])
-
-  // embarquement terminé → on ouvre la page
   useEffect(() => {
     if (!boardingDoor || boardingTime < BOARDING.total) return
     navigate(`/${boardingDoor}`)
     useGameStore.getState().endBoarding()
   }, [boardingDoor, boardingTime, navigate])
 
-  // débarquement : on referme la page à mi-course
   useEffect(() => {
     if (!landingDoor) return
-
     if (landingTime >= LANDING.routeChange && pathname !== '/') {
       navigate('/')
     }
@@ -39,6 +32,4 @@ export default function useDoorNavigation() {
       useGameStore.getState().endLanding()
     }
   }, [landingDoor, landingTime, pathname, navigate])
-
-  return enterDoor
 }

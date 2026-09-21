@@ -42,5 +42,8 @@
       "title": "Contact",
       "body": ["Contenu à venir."]
     }
+  },
+  "props": {
+    "jukebox": { "label": "Jukebox" }
   }
 }

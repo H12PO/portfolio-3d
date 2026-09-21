@@ -10,9 +10,9 @@ export const useGameStore = create((set, get) => ({
   setMode: (m) => set({ mode: m }),
   toggleMode: (m) => set((s) => ({ mode: s.mode === m ? 'play' : m })),
 
-  nearbyDoor: null,
-  setNearbyDoor: (door) => set((s) =>
-    s.nearbyDoor === door ? s : { nearbyDoor: door }
+  nearby: null,
+  setNearby: (door) => set((s) =>
+    s.nearby === door ? s : { nearby: door }
   ),
 
   boardingDoor: null,

@@ -1,13 +1,16 @@
 import { useLocation } from 'react-router'
 import { useGameStore } from '../store/useGameStore'
+import { INTERACTIFS } from '../config/interactions'
 import { useT } from '../i18n'
 
 export default function Prompt() {
-  const nearbyDoor = useGameStore((s) => s.nearbyDoor)
+  const nearby = useGameStore((s) => s.nearby)
   const { pathname } = useLocation()
   const t = useT()
 
-  if (!nearbyDoor || pathname !== '/') return null
+  if (!nearby || pathname !== '/') return null
+  const it = INTERACTIFS.find((i) => i.id === nearby)
+  if (!it) return null
 
   return (
     <div style={{
@@ -18,7 +21,7 @@ export default function Prompt() {
       font: '15px system-ui', letterSpacing: '.02em',
       pointerEvents: 'none',
     }}>
-      {t(`doors.${nearbyDoor}.label`)} · {t('nav.interact')}
+      {t(it.libelle)} · {t('nav.interact')}
     </div>
   )
 }

@@ -3,10 +3,12 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import useInput from '../hooks/useInput'
 import useDoorNavigation from '../hooks/useDoorNavigation'
+import useInteraction from '../hooks/useInteraction'
 import { useGameStore } from '../store/useGameStore'
 import { clampToHall, isInsideHall } from '../config/world'
+import { INTERACTIFS } from '../config/interactions'
 import {
-  DOORS, DOOR_RADIUS, STAND_OFF, WALK_IN, BOARDING, LANDING,
+  DOORS, STAND_OFF, WALK_IN, BOARDING, LANDING,
 } from '../config/doors'
 
 const SPEED = 4
@@ -47,8 +49,9 @@ const damp = (delta, k = SMOOTHNESS) => 1 - Math.exp(-k * delta)
 
 export default function Player() {
   const ref = useRef()
-  const enterDoor = useDoorNavigation()
-  const input = useInput(enterDoor)
+  useDoorNavigation()               // effets d'embarquement et de debarquement
+  const interagir = useInteraction()
+  const input = useInput(interagir)
 
   const dir = useRef(new THREE.Vector3())
   const from = useRef(new THREE.Vector3())
@@ -152,17 +155,21 @@ export default function Player() {
 
     placeCamera(state, pos, delta, SMOOTHNESS)
 
-    /* ---------- PORTE LA PLUS PROCHE ---------- */
+    /* ---------- INTERACTIF LE PLUS PROCHE ---------- */
+    // Le plus proche l'emporte, plutot que le premier trouve : utile
+    // quand deux zones de detection se chevauchent.
     let found = null
-    for (const d of DOORS) {
-      const dx = (d.x + d.nx * STAND_OFF) - pos.x
-      const dz = (d.z + d.nz * STAND_OFF) - pos.z
-      if (dx * dx + dz * dz < DOOR_RADIUS * DOOR_RADIUS) {
-        found = d.id
-        break
+    let best = Infinity
+    for (const it of INTERACTIFS) {
+      const dx = it.x - pos.x
+      const dz = it.z - pos.z
+      const d2 = dx * dx + dz * dz
+      if (d2 < it.rayon * it.rayon && d2 < best) {
+        best = d2
+        found = it.id
       }
     }
-    store.setNearbyDoor(found)
+    store.setNearby(found)
   })
 
   return (

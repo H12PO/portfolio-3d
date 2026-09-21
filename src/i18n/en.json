@@ -33,5 +33,8 @@
     "experiences": { "title": "Experience", "body": ["Coming soon."] },
     "projets":     { "title": "Projects",   "body": ["Coming soon."] },
     "contact":     { "title": "Contact",    "body": ["Coming soon."] }
+  },
+  "props": {
+    "jukebox": { "label": "Jukebox" }
   }
 }

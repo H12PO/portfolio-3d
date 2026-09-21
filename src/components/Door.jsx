@@ -10,7 +10,7 @@ import { BOARDING, LANDING } from '../config/doors'
 const smoothstep = (x) => x * x * (3 - 2 * x)
 
 export default function Door({ id, gate, x, z, rotY }) {
-  const isNear = useGameStore((s) => s.nearbyDoor === id)
+  const isNear = useGameStore((s) => s.nearby === id)
   const leftRef = useRef()
   const rightRef = useRef()
   const t = useT()
