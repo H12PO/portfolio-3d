@@ -15,7 +15,7 @@ export const PROP_TYPES = {}
 export const PROPS = [
   // --- bornes et comptoirs ---
   { id: 'cookie-01',     type: 'cookie_stand', x:   0.0, z: -10.5, rotY: 0, scale: 1 },
-  { id: 'departures-01', type: 'departures',   x: -24.5, z:   1.15, rotY: 0, scale: 1 },
+  { id: 'departures-01', type: 'departures',   x: -24.4, y:  1.15, z:   1.35, rotY: 0, scale: 1 },
   { id: 'vending-01',    type: 'vending',      x:  -3.5, z:  -8.25, rotY: 0, scale: 1 },
   { id: 'bookshelf-01',  type: 'bookshelf',    x:  22, z:   1.3,  rotY: 0, scale: 1 },
 
@@ -36,6 +36,11 @@ export const PROPS = [
   { id: 'portique-s', type: 'portique_sortie', x: 26.7, z: 7.55, rotY: Math.PI / 2, scale: 1 },
   { id: 'jukebox-01', type: 'jukebox', x: 0, z: 2, rotY: 0, scale: 1, y: -0.058 },
 
+
+
+      // --- Decor
+  { id: 'affiche-01', type: 'affiche_paysage', x: 3, z: 2, rotY: 0, scale: 1, image: '/affiches/paysage.jpg' },
+  
 
 
   /*// --- bagages, positions temporaires ---

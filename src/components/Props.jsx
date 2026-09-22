@@ -6,13 +6,19 @@ export default function Props() {
     <group>
       {PROPS.map((p) => {
         const C = COMPONENTS[p.type]
-        if (!C) return null      // type non encore branché : on ignore
+        if (!C) return null      // type non encore branche : on ignore
+
+        // Tout champ qui n'est pas geometrique est transmis tel quel au
+        // composant : image pour les affiches, couleur pour les bagages,
+        // et ce qu'on ajoutera ensuite.
+        const { id, type, x, y, z, rotY, scale, ...options } = p
         return (
           <C
-            key={p.id}
-            position={[p.x, p.y ?? 0, p.z]}
-            rotation-y={p.rotY ?? 0}
-            scale={p.scale ?? 1}
+            key={id}
+            position={[x, y ?? 0, z]}
+            rotation-y={rotY ?? 0}
+            scale={scale ?? 1}
+            {...options}
           />
         )
       })}

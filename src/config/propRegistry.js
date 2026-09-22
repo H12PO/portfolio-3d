@@ -6,7 +6,7 @@
 
 import StandCookie from '../components/props/bornes/StandCookie'
 import PanneauDeparts from '../components/props/bornes/PanneauDeparts'
-import DistributeurBoissons from '../components/props/bornes/DistributeurBoissons'
+import Distributeur from '../components/props/bornes/Distributeur'
 import Bibliotheque from '../components/props/bornes/Bibliotheque'
 
 import Banquette2p from '../components/props/sieges/Banquette2p'
@@ -22,6 +22,14 @@ import Carrousel from '../components/props/bornes/Carrousel'
 import PortiqueEntree from '../components/props/bornes/PortiqueEntree'
 import PortiqueSortie from '../components/props/bornes/PortiqueSortie'
 import Jukebox from '../components/props/loisirs/Jukebox'
+
+import AffichePaysage from '../components/props/signaletique/AffichePaysage'
+
+
+
+
+
+
 
 import BagageMallette from '../components/props/bagages/BagageMallette'
 import BagageSacADos from '../components/props/bagages/BagageSacADos'
@@ -58,7 +66,7 @@ import SuspensionFleurie from '../components/props/vegetation/SuspensionFleurie'
 export const COMPONENTS = {
   cookie_stand: StandCookie,
   departures:   PanneauDeparts,
-  vending:      DistributeurBoissons,
+  vending: Distributeur,
   bookshelf:    Bibliotheque,
 
   banquette_2p:       Banquette2p,
@@ -75,6 +83,7 @@ export const COMPONENTS = {
   portique_sortie: PortiqueSortie,
   jukebox: Jukebox,
 
+  affiche_paysage: AffichePaysage,
   
   bag_mallette:      BagageMallette,
   bag_sac_a_dos:     BagageSacADos,
