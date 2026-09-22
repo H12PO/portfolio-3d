@@ -24,7 +24,9 @@ import PortiqueSortie from '../components/props/bornes/PortiqueSortie'
 import Jukebox from '../components/props/loisirs/Jukebox'
 
 import AffichePaysage from '../components/props/signaletique/AffichePaysage'
-
+import PorteService from "../components/props/decor/PorteService.jsx";
+import ChariotNettoyage from "../components/props/decor/ChariotNettoyage.jsx";
+import AffichePortrait from "../components/props/signaletique/AffichePortrait.jsx";
 
 
 
@@ -84,7 +86,10 @@ export const COMPONENTS = {
   jukebox: Jukebox,
 
   affiche_paysage: AffichePaysage,
-  
+  affiche_portrait : AffichePortrait,
+  porte_service : PorteService,
+  chariot_nettoyage : ChariotNettoyage,
+
   bag_mallette:      BagageMallette,
   bag_sac_a_dos:     BagageSacADos,
   bag_sac_marin:     BagageSacMarin,

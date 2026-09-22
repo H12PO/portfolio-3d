@@ -17,7 +17,7 @@ export const PROPS = [
   { id: 'cookie-01',     type: 'cookie_stand', x:   0.0, z: -10.5, rotY: 0, scale: 1 },
   { id: 'departures-01', type: 'departures',   x: -24.4, y:  1.15, z:   1.35, rotY: 0, scale: 1 },
   { id: 'vending-01',    type: 'vending',      x:  -3.5, z:  -8.25, rotY: 0, scale: 1 },
-  { id: 'bookshelf-01',  type: 'bookshelf',    x:  22, z:   1.3,  rotY: 0, scale: 1 },
+  { id: 'bookshelf-01',  type: 'bookshelf',    x:  22.7, z:   1.4,  rotY: 0, scale: 1 },
 
   // --- sièges, positions temporaires pour jugement ---
   /*{ id: 'banq2-01',    type: 'banquette_2p',       x: -10, z: 2, rotY: 0, scale: 1 },
@@ -39,11 +39,12 @@ export const PROPS = [
 
 
       // --- Decor
-  { id: 'affiche-01', type: 'affiche_paysage', x: 3, z: 2, rotY: 0, scale: 1, image: '/affiches/paysage.jpg' },
-  
+  { id: 'affiche-01', type: 'affiche_paysage', x: 3, z: 2, rotY: 0, scale: 2, image: '/affiches/paysage.jpg' },
+  { id: 'affiche-02', type: 'affiche_portrait', x: 25, z: 1.2, y:  -0.5, rotY: 0, scale: 2.5, image: { fr: '/affiches/Savoie_fr.png', en: '/affiches/Savoie_eng.png' } },
+  { id: 'porte_service-01',     type: 'porte_service',      x: 26.8, z: 5.5, rotY: -Math.PI / 2, scale: 1 },
+  { id: 'chariot_nettoyage-01', type: 'chariot_nettoyage', x: 26.4, z: 4, rotY: Math.PI / 2, scale: 1, },
 
-
-  /*// --- bagages, positions temporaires ---
+  /*// --- bagages, positions temporaires ---p
   { id: 'bag-01', type: 'bag_mallette',       x: -1, z: 5, rotY: 0, scale: 1 },
   { id: 'bag-02', type: 'bag_sac_a_dos',      x:  0, z: 5, rotY: 0, scale: 1 },
   { id: 'bag-03', type: 'bag_sac_marin',      x:  1, z: 5, rotY: 0, scale: 1 },
@@ -51,16 +52,16 @@ export const PROPS = [
   { id: 'bag-05', type: 'bag_valise_cabine',  x:  3, z: 5, rotY: 0, scale: 1 },
   { id: 'bag-06', type: 'bag_valise_rigide',  x:  4, z: 5, rotY: 0, scale: 1 },*/
 
-  /*// --- bacs maçonnés, positions temporaires ---
-  { id: 'bac-01', type: 'bac_fleuri',     x: -6, z: 2, rotY: 0, scale: 1 },
-  { id: 'bac-02', type: 'bac_hortensias', x: -3, z: 2, rotY: 0, scale: 1 },
-  { id: 'bac-03', type: 'bac_exotique',   x:  0, z: 2, rotY: 0, scale: 1 },
-  { id: 'bac-04', type: 'bac_roses',      x:  3, z: 2, rotY: 0, scale: 1 },
-  { id: 'bac-05', type: 'bac_champetre',  x:  6, z: 2, rotY: 0, scale: 1 },
+  // --- bacs maçonnés, positions temporaires ---
+  // { id: 'bac-01', type: 'bac_fleuri',     x: -6, z: 2, rotY: 0, scale: 1 },
+  { id: 'bac-02', type: 'bac_hortensias', x: 26.1, z: 1.4, rotY: Math.PI, scale: 0.90 },
+  // { id: 'bac-03', type: 'bac_exotique',   x:  0, z: 2, rotY: 0, scale: 1 },
+  // { id: 'bac-04', type: 'bac_roses',      x:  3, z: 2, rotY: 0, scale: 1 },
+  // { id: 'bac-05', type: 'bac_champetre',  x:  6, z: 2, rotY: 0, scale: 1 },
 
 
 
-      // --- jardinières, positions temporaires ---
+  /*    // --- jardinières, positions temporaires ---
   { id: 'jard-01', type: 'jard_deux_faces',    x: -8, z: 5, rotY: 0, scale: 1 },
   { id: 'jard-02', type: 'jard_epis',          x: -4, z: 5, rotY: 0, scale: 1 },
   { id: 'jard-03', type: 'jard_haute_mixte',   x:  0, z: 5, rotY: 0, scale: 1 },
