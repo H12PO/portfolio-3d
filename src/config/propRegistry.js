@@ -29,6 +29,8 @@ import ChariotNettoyage from "../components/props/decor/ChariotNettoyage.jsx";
 import AffichePortrait from "../components/props/signaletique/AffichePortrait.jsx";
 
 
+import BarrierePoteau from "../components/props/decor/BarrierePoteau.jsx";
+import BarriereSegment from "../components/props/decor/BarriereSegment.jsx";
 
 
 
@@ -89,6 +91,13 @@ export const COMPONENTS = {
   affiche_portrait : AffichePortrait,
   porte_service : PorteService,
   chariot_nettoyage : ChariotNettoyage,
+
+
+  barriere_segment:BarriereSegment,
+  barriere_poteau: BarrierePoteau,
+
+
+
 
   bag_mallette:      BagageMallette,
   bag_sac_a_dos:     BagageSacADos,

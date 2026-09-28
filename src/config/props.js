@@ -42,24 +42,65 @@ export const PROPS = [
   { id: 'affiche-01', type: 'affiche_paysage', x: 3, z: 2, rotY: 0, scale: 2, image: '/affiches/paysage.jpg' },
   { id: 'affiche-02', type: 'affiche_portrait', x: 25, z: 1.2, y:  -0.5, rotY: 0, scale: 2.5, image: { fr: '/affiches/Savoie_fr.png', en: '/affiches/Savoie_eng.png' } },
   { id: 'porte_service-01',     type: 'porte_service',      x: 26.8, z: 5.5, rotY: -Math.PI / 2, scale: 1 },
-  { id: 'chariot_nettoyage-01', type: 'chariot_nettoyage', x: 26.4, z: 4, rotY: Math.PI / 2, scale: 1, },
+  { id: 'chariot_nettoyage-01', type: 'chariot_nettoyage', x: 26.5, z: 4, rotY: Math.PI / 2, scale: 1, },
+  { id: 'bac-02', type: 'bac_hortensias', x: 26.1, z: 1.4, rotY: Math.PI, scale: 0.90 },
 
-  /*// --- bagages, positions temporaires ---p
-  { id: 'bag-01', type: 'bag_mallette',       x: -1, z: 5, rotY: 0, scale: 1 },
-  { id: 'bag-02', type: 'bag_sac_a_dos',      x:  0, z: 5, rotY: 0, scale: 1 },
-  { id: 'bag-03', type: 'bag_sac_marin',      x:  1, z: 5, rotY: 0, scale: 1 },
-  { id: 'bag-04', type: 'bag_sac_voyage',     x:  2, z: 5, rotY: 0, scale: 1 },
-  { id: 'bag-05', type: 'bag_valise_cabine',  x:  3, z: 5, rotY: 0, scale: 1 },
-  { id: 'bag-06', type: 'bag_valise_rigide',  x:  4, z: 5, rotY: 0, scale: 1 },*/
+    /* FrontSide */
+    //Droite
+  { id: 'fr-barr-D01', type: 'barriere_segment', x: 22, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'fr-barr-D02', type: 'barriere_segment', x: 23.5, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'fr-barr-D03', type: 'barriere_segment', x: 25, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'fr-barr-D04', type: 'barriere_poteau',  x: 26.5, z: 8.8, rotY: 0, scale: 1 },
+
+  { id: 'fr-jard-01', type: 'jard_massif_fleuri', x:  21, z: 9, rotY: 0, scale: 1 },
+  { id: 'fr-banqt-01',    type: 'banquette_tablette', x:   19, z: 9, rotY: Math.PI, scale: 1 },
+  { id: 'fr-jard-02', type: 'bac_fleuri',     x: 16.8, z: 9, rotY: 0, scale: 1 },
+  { id: 'fr-barr-D05', type: 'barriere_poteau',  x: 15.8, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'fr-barr-D06', type: 'barriere_segment', x: 14.3, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'bac-06',   type: 'bac_cactus',            x: 13.8, z: 9, rotY: 0, scale: 1 },
+  { id: 'ilot-01',     type: 'banc_ilot',          x:   12.5, z: 9, rotY: 0, scale: 1 },
+  { id: 'bac-05', type: 'bac_champetre',  x:  10.8, z: 9, rotY: 0, scale: 1 },
+  { id: 'ilot-01',     type: 'banc_ilot',          x:   9, z: 9, rotY: 0, scale: 1 },
+  { id: 'fr-barr-D05', type: 'barriere_poteau',  x: 7.5, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'fr-barr-D06', type: 'barriere_segment', x: 6, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'fr-barr-D07', type: 'barriere_segment', x: 4.5, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'fr-barr-D08', type: 'barriere_segment', x: 3, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'fr-barr-D09', type: 'barriere_segment', x: 3, z: 7.3, rotY: -Math.PI/2, scale: 1 },
+
+
+  //Gauche
+  { id: 'fr-barr-G01', type: 'barriere_segment', x: -26.5, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'fr-barr-G02', type: 'barriere_segment', x: -25.0, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'fr-barr-G03', type: 'barriere_segment', x: -23.5, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'fr-barr-G04', type: 'barriere_poteau',  x: -22.0, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'fr-banqt-01',    type: 'banquette_tablette', x:   -20.3, z: 9, rotY: Math.PI, scale: 1 },
+  { id: 'bac-04', type: 'bac_roses',      x:  -17, z: 9, rotY: 0, scale: 1 },
+  { id: 'fr-barr-G07', type: 'barriere_segment', x: -16, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'fr-barr-G08', type: 'barriere_poteau',  x: -14.5, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'sujet-03', type: 'sujet_monstera',        x:  -13.5, z: 9, rotY: 0, scale: 0.9},
+  { id: 'ilot-01',     type: 'banc_ilot',          x:   -12.3, z: 9, rotY: 0, scale: 1 },
+  { id: 'bac-03', type: 'bac_exotique',   x:  -10.5, z: 9, rotY: 0, scale: 1 },
+  { id: 'banq2-01',    type: 'banquette_2p',       x: -9, z: 9, rotY: Math.PI, scale: 1 },
+  { id: 'bac-06',   type: 'bac_cactus',            x: -8, z: 9, rotY: 0, scale: 1 },
+  { id: 'fr-barr-G05', type: 'barriere_segment', x: -7.5, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'fr-barr-G06', type: 'barriere_segment', x: -6, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'fr-barr-G07', type: 'barriere_segment', x: -4.5, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'fr-barr-G08', type: 'barriere_poteau',  x: -3, z: 8.8, rotY: 0, scale: 1 },
+  { id: 'fr-barr-G09', type: 'barriere_segment', x: -3, z: 7.3, rotY: -Math.PI/2, scale: 1 },
+
+
 
   // --- bacs maçonnés, positions temporaires ---
-  // { id: 'bac-01', type: 'bac_fleuri',     x: -6, z: 2, rotY: 0, scale: 1 },
-  { id: 'bac-02', type: 'bac_hortensias', x: 26.1, z: 1.4, rotY: Math.PI, scale: 0.90 },
-  // { id: 'bac-03', type: 'bac_exotique',   x:  0, z: 2, rotY: 0, scale: 1 },
-  // { id: 'bac-04', type: 'bac_roses',      x:  3, z: 2, rotY: 0, scale: 1 },
-  // { id: 'bac-05', type: 'bac_champetre',  x:  6, z: 2, rotY: 0, scale: 1 },
+   { id: 'bac-01', type: 'bac_fleuri',     x: -6, z: 2, rotY: 0, scale: 1 },
 
+   { id: 'bac-03', type: 'bac_exotique',   x:  -3, z: 2, rotY: 0, scale: 1 },
 
+   //{ id: 'bac-05', type: 'bac_champetre',  x:  6, z: 2, rotY: 0, scale: 1 },
+
+  { id: 'sujet-01', type: 'sujet_feuilles_larges', x: -6, z: -1, rotY: 0, scale: 1 },
+  { id: 'sujet-02', type: 'sujet_fougere',         x: -3, z: -1, rotY: 0, scale: 1 },
+
+  { id: 'sujet-04', type: 'sujet_palmier',         x:  3, z: -1, rotY: 0, scale: 1 },
 
   /*    // --- jardinières, positions temporaires ---
   { id: 'jard-01', type: 'jard_deux_faces',    x: -8, z: 5, rotY: 0, scale: 1 },
@@ -69,11 +110,8 @@ export const PROPS = [
   { id: 'jard-05', type: 'jard_treillis',      x:  8, z: 5, rotY: 0, scale: 1 },
 
   // --- sujets et bac cactus ---
-  { id: 'sujet-01', type: 'sujet_feuilles_larges', x: -6, z: -1, rotY: 0, scale: 1 },
-  { id: 'sujet-02', type: 'sujet_fougere',         x: -3, z: -1, rotY: 0, scale: 1 },
-  { id: 'sujet-03', type: 'sujet_monstera',        x:  0, z: -1, rotY: 0, scale: 1 },
-  { id: 'sujet-04', type: 'sujet_palmier',         x:  3, z: -1, rotY: 0, scale: 1 },
-  { id: 'bac-06',   type: 'bac_cactus',            x:  6, z: -1, rotY: 0, scale: 1 },
+
+
 
   // --- petits pots et suspensions ---
   { id: 'petit-01', type: 'petit_coupe_grasses',          x: -5, z: 7, rotY: 0, scale: 1 },
@@ -82,4 +120,15 @@ export const PROPS = [
   { id: 'petit-04', type: 'petit_terracotta_fleuri',      x:  1, z: 7, rotY: 0, scale: 1 },
   { id: 'susp-01',  type: 'suspension_feuillage',         x:  4, z: 7, rotY: 0, scale: 1 },
   { id: 'susp-02',  type: 'suspension_fleurie',           x:  6, z: 7, rotY: 0, scale: 1 },*/
+
+  /*// --- bagages, positions temporaires ---p
+  { id: 'bag-01', type: 'bag_mallette',       x: -1, z: 5, rotY: 0, scale: 1 },
+  { id: 'bag-02', type: 'bag_sac_a_dos',      x:  0, z: 5, rotY: 0, scale: 1 },
+  { id: 'bag-03', type: 'bag_sac_marin',      x:  1, z: 5, rotY: 0, scale: 1 },
+  { id: 'bag-04', type: 'bag_sac_voyage',     x:  2, z: 5, rotY: 0, scale: 1 },
+  { id: 'bag-05', type: 'bag_valise_cabine',  x:  3, z: 5, rotY: 0, scale: 1 },
+  { id: 'bag-06', type: 'bag_valise_rigide',  x:  4, z: 5, rotY: 0, scale: 1 },*/
+
 ]
+
+
