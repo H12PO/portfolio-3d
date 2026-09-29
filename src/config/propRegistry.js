@@ -15,6 +15,7 @@ import BanquetteDosADos from '../components/props/sieges/BanquetteDosADos'
 import BanquetteTablette from '../components/props/sieges/BanquetteTablette'
 import BancIlot from '../components/props/sieges/BancIlot'
 import Fauteuil from '../components/props/sieges/Fauteuil'
+import TableBasseGrande from "../components/props/sieges/TableBasseGrande.jsx";
 
 import Borne from '../components/props/bornes/Borne'
 import BorneInfo from '../components/props/bornes/BorneInfo'
@@ -79,6 +80,7 @@ export const COMPONENTS = {
   banquette_tablette: BanquetteTablette,
   banc_ilot:          BancIlot,
   fauteuil:           Fauteuil,
+  table_basse_gd:     TableBasseGrande,
 
   borne:      Borne,
   borne_info: BorneInfo,

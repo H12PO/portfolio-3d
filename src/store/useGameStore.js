@@ -2,13 +2,18 @@ import { create } from 'zustand'
 
 export const useGameStore = create((set, get) => ({
   started: false,
-  start: () => set({ started: true }),
+  start: () => set({ started: true, phase: 'couloir' }),
 
   // Un seul mode à la fois : 'play' | 'plan' | 'edit'
   // 'plan' = vue de dessus simple (P), 'edit' = vue de dessus + éditeur (O)
   mode: 'play',
   setMode: (m) => set({ mode: m }),
   toggleMode: (m) => set((s) => ({ mode: s.mode === m ? 'play' : m })),
+  /* 'couloir'    → le joueur est dans le poste de securite
+     'transition' → il est entre, le couloir est encore monte
+     'hall'       → regime normal, couloir demonte */
+  phase: 'couloir',
+  setPhase: (phase) => set({ phase }),
 
   nearby: null,
   setNearby: (door) => set((s) =>

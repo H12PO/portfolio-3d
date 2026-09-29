@@ -74,6 +74,7 @@ export const PROPS = [
   { id: 'fr-barr-G03', type: 'barriere_segment', x: -23.5, z: 8.8, rotY: 0, scale: 1 },
   { id: 'fr-barr-G04', type: 'barriere_poteau',  x: -22.0, z: 8.8, rotY: 0, scale: 1 },
   { id: 'fr-banqt-01',    type: 'banquette_tablette', x:   -20.3, z: 9, rotY: Math.PI, scale: 1 },
+  { id: 'fr-tblbgd-01',    type: 'table_basse_gd', x:   -18.325, z: 9, rotY: 0, scale: 1 },
   { id: 'bac-04', type: 'bac_roses',      x:  -17, z: 9, rotY: 0, scale: 1 },
   { id: 'fr-barr-G07', type: 'barriere_segment', x: -16, z: 8.8, rotY: 0, scale: 1 },
   { id: 'fr-barr-G08', type: 'barriere_poteau',  x: -14.5, z: 8.8, rotY: 0, scale: 1 },

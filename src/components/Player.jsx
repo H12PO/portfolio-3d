@@ -5,7 +5,7 @@ import useInput from '../hooks/useInput'
 import useDoorNavigation from '../hooks/useDoorNavigation'
 import useInteraction from '../hooks/useInteraction'
 import { useGameStore } from '../store/useGameStore'
-import { clampToHall, isInsideHall } from '../config/world'
+import { clampToHall, clampToCouloir, isInsideHall, ENTREE } from '../config/world'
 import { INTERACTIFS } from '../config/interactions'
 import {
   DOORS, STAND_OFF, WALK_IN, BOARDING, LANDING,
@@ -135,6 +135,7 @@ export default function Player() {
     /* ---------- DÉPLACEMENT ---------- */
     // dir n'est volontairement plus normalisé : sa longueur porte le
     // dosage de vitesse, ce qui rendra le joystick analogique gratuit.
+    const enCouloir = store.phase === 'couloir'
     const move = input.current.move
     dir.current.set(
       move.x * INPUT_COS - move.z * INPUT_SIN,
@@ -144,7 +145,8 @@ export default function Player() {
 
     if (dir.current.lengthSq() > 1e-6) {
       pos.addScaledVector(dir.current, SPEED * delta)
-      clampToHall(pos)
+      if (enCouloir) clampToCouloir(pos)
+      else clampToHall(pos)
 
       const target = Math.atan2(dir.current.x, dir.current.z)
       let diff = target - ref.current.rotation.y
@@ -152,6 +154,14 @@ export default function Player() {
       while (diff < -Math.PI) diff += Math.PI * 2
       ref.current.rotation.y += diff * damp(delta, TURN_SPEED)
     }
+
+
+        /* ---------- FRANCHISSEMENT DU POSTE ----------
+       Un seul seuil desormais : clampToHall reprend la main ET
+       le couloir se demonte. A cet instant la camera est a 15.5,
+       le poste est a 16.5 donc deja derriere elle, et les joues
+       ne depassent plus que de 50 cm devant : rien ne clignote. */
+    if (enCouloir && pos.z < ENTREE.zVerrou) store.setPhase('hall')
 
     placeCamera(state, pos, delta, SMOOTHNESS)
 
@@ -173,7 +183,7 @@ export default function Player() {
   })
 
   return (
-    <group ref={ref} position={[0, BODY_Y, 4]}>
+    <group ref={ref} position={[0, BODY_Y, ENTREE.spawnZ]}>
       <mesh castShadow>
         <capsuleGeometry args={[BODY_RADIUS, CAPSULE_LEN, 8, 16]} />
         <meshStandardMaterial color="#e8a33d" />

@@ -61,7 +61,21 @@ export const BOUNDS = {
   cx: (_minX + _maxX) / 2,      //  0
   cz: (_minZ + _maxZ) / 2,      // -2
 }
+export const ENTREE = {
+  demiLargeur: 3.5,
+  zBouche: 9,         // = BOUNDS.maxZ
+  zFond: 27,
+  zMaxJoueur: 19,
+  spawnZ: 18,
+  zVerrou: 8.5,
+}
 
+export function clampToCouloir(pos) {
+  const l = ENTREE.demiLargeur - MARGIN
+  if (pos.x >  l) pos.x =  l
+  if (pos.x < -l) pos.x = -l
+  if (pos.z > ENTREE.zMaxJoueur) pos.z = ENTREE.zMaxJoueur
+}
 
 // ---- Murs. `low` : plafond d'alcôve abaissé ----
 export const WALLS = [

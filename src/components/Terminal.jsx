@@ -8,7 +8,7 @@ import Floor from './Floor'
  * on ne décrit jamais une géométrie, seulement un contour.
  * `low` : mur d'alcôve, arrêté au plafond bas.
  */
-function Wall({ a, b, glazed, low }) {
+export function Wall({ a, b, glazed, low }) { 
   const dx = b[0] - a[0]
   const dz = b[1] - a[1]
   const len = Math.hypot(dx, dz)

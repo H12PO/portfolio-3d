@@ -7,7 +7,7 @@ import Ground from './components/Ground'
 import Player from './components/Player'
 import Props from './components/Props'
 import Door from './components/Door'
-
+import Entree from './components/Entree'
 
 import { EditorScene, EditorPanel } from './components/Editor'
 import DebugCamera from './components/DebugCamera'
@@ -63,6 +63,7 @@ export default function App() {
         <Suspense fallback={null}>
           <Terminal />
           <Ground />
+          <Entree />
           <Props />
           <EditorScene />
           <Player />
