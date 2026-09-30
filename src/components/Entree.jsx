@@ -1,26 +1,17 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useGameStore } from '../store/useGameStore'
 import { BOUNDS, HALL, PALETTE as C, ENTREE } from '../config/world'
 import { Wall } from './Terminal'
+import Props from './Props'
 
-/* ---- CARRELAGE DU PARVIS ----
-   Si le raccord a z = 9 se voit, ce sont ces trois valeurs qui
-   se reglent : la taille du carreau d'abord, la teinte du joint
-   ensuite. Rien d'autre n'a besoin de bouger. */
+
 const CARREAU = 2
 const C_CARREAU = '#f4f3f0'
 const C_JOINT = '#dcdad5'
+const FADE = 0.45
 
-const FADE = 0.45          // duree du fondu du couloir, en secondes
-
-/* ============================================================
-   Dalle carrelee. Le repeat et l'offset sont calcules pour que
-   la trame tombe sur les multiples de CARREAU en coordonnees
-   MONDE, pas sur les bords du quad : la trame du parvis reste
-   donc alignee sur celle du hall quelle que soit son emprise.
-   ============================================================ */
 function Dalle({ x1, z1, x2, z2 }) {
   const map = useMemo(() => {
     const px = 256
@@ -51,11 +42,6 @@ function Dalle({ x1, z1, x2, z2 }) {
   )
 }
 
-/* ============================================================
-   PARVIS — permanent. Sol plein de z = 9 a 27, ferme par des
-   murs repris de Terminal : meme teinte, meme epaisseur, meme
-   hauteur que ceux du hall.
-   ============================================================ */
 function Parvis() {
   const { minX, maxX } = BOUNDS
   const { zBouche, zFond } = ENTREE
@@ -69,8 +55,6 @@ function Parvis() {
   )
 }
 
-/* Joue du couloir. Meme boite que Wall, mais locale : il faut
-   pouvoir toucher a son opacite, ce que Wall ne permet pas. */
 function Joue({ x, z1, z2 }) {
   return (
     <mesh position={[x, HALL.wallHeight / 2, (z1 + z2) / 2]} receiveShadow>
@@ -82,50 +66,46 @@ function Joue({ x, z1, z2 }) {
 
 /* ============================================================
    COULOIR — se demonte lui-meme, en fondu.
-   Au verrou la camera est ENCORE dans le couloir : le couper
-   net ferait clignoter ses joues sur les bords du cadre. Le
-   fondu est la seule sortie propre. Le groupe s'auto-detruit
-   une fois l'opacite a zero.
+   Au premier frame du fondu on CLONE les materiaux : ceux d'un
+   GLB sont partages par useGLTF entre toutes les instances du
+   meme fichier. Sans ce clone, faire fondre une barriere du
+   couloir ferait disparaitre celles du hall, definitivement.
    ============================================================ */
 function Couloir() {
   const phase = useGameStore((s) => s.phase)
   const [monte, setMonte] = useState(true)
   const grp = useRef()
   const k = useRef(1)
-
-  /* Les materiaux d'un GLB sont mis en cache par useGLTF : on les
-     remet opaques au montage, sinon un rechargement a chaud les
-     retrouverait a zero. */
-  useEffect(() => {
-    k.current = 1
-    grp.current?.traverse((o) => {
-      if (!o.isMesh) return
-      for (const m of [].concat(o.material)) {
-        m.transparent = false
-        m.depthWrite = true
-        m.opacity = 1
-        m.needsUpdate = true
-      }
-    })
-  }, [])
+  const clone = useRef(false)
 
   useFrame((_, delta) => {
     if (!monte || phase !== 'hall' || !grp.current) return
-    k.current = Math.max(0, k.current - delta / FADE)
 
-    grp.current.traverse((o) => {
-      if (!o.isMesh) return
-      for (const m of [].concat(o.material)) {
-        if (!m.transparent) {
+    if (!clone.current) {
+      clone.current = true
+      grp.current.traverse((o) => {
+        if (!o.isMesh) return
+        o.material = Array.isArray(o.material)
+          ? o.material.map((m) => m.clone())
+          : o.material.clone()
+        for (const m of [].concat(o.material)) {
           m.transparent = true
           m.depthWrite = false
-          m.needsUpdate = true
         }
-        m.opacity = k.current
-      }
+      })
+    }
+
+    k.current = Math.max(0, k.current - delta / FADE)
+    grp.current.traverse((o) => {
+      if (o.isMesh) for (const m of [].concat(o.material)) m.opacity = k.current
     })
 
-    if (k.current <= 0) setMonte(false)
+    if (k.current <= 0) {
+      grp.current.traverse((o) => {
+        if (o.isMesh) for (const m of [].concat(o.material)) m.dispose()
+      })
+      setMonte(false)
+    }
   })
 
   if (!monte) return null
@@ -135,30 +115,12 @@ function Couloir() {
     <group ref={grp}>
       <Joue x={-L} z1={zBouche} z2={zFond} />
       <Joue x={L} z1={zBouche} z2={zFond} />
-      <Poste />
+      <Props zone="couloir" />
     </group>
   )
+
 }
 
-/* Si gen-props.sh n'a pas tourne sur securite/, commente les
-   quatre imports et l'appel <Poste /> ci-dessus. */
-import PortiqueDetection from './props/securite/PortiqueDetection'
-import ScannerBagages from './props/securite/ScannerBagages'
-import BureauControle from './props/securite/BureauControle'
-import ChaiseControle from './props/securite/ChaiseControle'
-
-function Poste() {
-  return (
-    <>
-      <PortiqueDetection position={[0, 0, 16.5]} />
-      <ScannerBagages   position={[2.0, 0, 17.6]} rotation-y={-Math.PI / 2} />
-      <BureauControle   position={[-2.3, 0, 17.6]} rotation-y={Math.PI / 2} />
-      <ChaiseControle   position={[-2.3, 0, 18.6]} rotation-y={Math.PI / 2} />
-    </>
-  )
-}
-
-/* ============================================================ */
 export default function Entree() {
   return (
     <group>

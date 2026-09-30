@@ -1,17 +1,18 @@
 import { PROPS } from '../config/props'
 import { COMPONENTS } from '../config/propRegistry'
 
-export default function Props() {
+export default function Props({ zone = 'hall' }) {
   return (
     <group>
-      {PROPS.map((p) => {
+      {PROPS.filter((p) => (p.zone ?? 'hall') === zone).map((p) => {
         const C = COMPONENTS[p.type]
         if (!C) return null      // type non encore branche : on ignore
 
         // Tout champ qui n'est pas geometrique est transmis tel quel au
         // composant : image pour les affiches, couleur pour les bagages,
-        // et ce qu'on ajoutera ensuite.
-        const { id, type, x, y, z, rotY, scale, ...options } = p
+        // et ce qu'on ajoutera ensuite. zone fait exception : c'est une
+        // donnee de tri, pas une propriete d'objet 3D.
+        const { id, type, zone: _zone, x, y, z, rotY, scale, ...options } = p
         return (
           <C
             key={id}

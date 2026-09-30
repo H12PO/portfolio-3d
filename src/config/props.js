@@ -130,6 +130,24 @@ export const PROPS = [
   { id: 'bag-05', type: 'bag_valise_cabine',  x:  3, z: 5, rotY: 0, scale: 1 },
   { id: 'bag-06', type: 'bag_valise_rigide',  x:  4, z: 5, rotY: 0, scale: 1 },*/
 
+
+
+      /* ---------- COULOIR D'ENTREE ----------
+     zone: 'couloir' = monte et demonte avec le poste de securite.
+     Tout ce qui est ici disparait en fondu au franchissement du
+     verrou. Emprise utile : x de -3.2 a 3.2, z de 9 a 27. */
+
+  { id: 'sec-portique', type: 'portique_detection', zone: 'couloir', x: 0, z: 15, rotY: 0, scale: 1 },
+  { id: 'sec-scanner', type: 'scanner_bagages', zone: 'couloir', x: 1.2, z: 15, rotY: -Math.PI / 2, scale: 1 },
+  { id: 'sec-bureau', type: 'bureau_controle', zone: 'couloir', x: 2.3, z: 15, rotY: Math.PI / 2, scale: 1 },
+  { id: 'sec-chaise', type: 'chaise_controle', zone: 'couloir', x: 3, z: 15, rotY: -Math.PI / 2, scale: 1 },
+
+  // File d'attente avant le portique. Entraxe 1,625 m, la sangle
+  // part vers +X : trois segments et un poteau ferment la file.
+  { id: 'cou-barr-01', type: 'barriere_segment', zone: 'couloir', x: -3, z: 19.5, rotY: 0, scale: 1 },
+  { id: 'cou-barr-03', type: 'barriere_poteau', zone: 'couloir', x: -1.5, z: 19.5, rotY: 0, scale: 1 },
+  { id: 'cou-barr-02', type: 'barriere_segment', zone: 'couloir', x: 1.5, z: 19.5, rotY: 0, scale: 1 },
+  { id: 'cou-barr-04', type: 'barriere_poteau', zone: 'couloir', x:   3, z: 19.5, rotY: 0, scale: 1 },
 ]
 
 

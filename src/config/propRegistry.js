@@ -28,6 +28,10 @@ import AffichePaysage from '../components/props/signaletique/AffichePaysage'
 import PorteService from "../components/props/decor/PorteService.jsx";
 import ChariotNettoyage from "../components/props/decor/ChariotNettoyage.jsx";
 import AffichePortrait from "../components/props/signaletique/AffichePortrait.jsx";
+import PortiqueDetection from "../components/props/securite/PortiqueDetection.jsx";
+import ScannerBagages from "../components/props/securite/ScannerBagages.jsx";
+import BureauControle from "../components/props/securite/BureauControle.jsx";
+import ChaiseControle from "../components/props/securite/ChaiseControle.jsx";
 
 
 import BarrierePoteau from "../components/props/decor/BarrierePoteau.jsx";
@@ -88,6 +92,11 @@ export const COMPONENTS = {
   portique_entree: PortiqueEntree,
   portique_sortie: PortiqueSortie,
   jukebox: Jukebox,
+  portique_detection:PortiqueDetection,
+  scanner_bagages:ScannerBagages,
+  bureau_controle:BureauControle,
+  chaise_controle:ChaiseControle,
+
 
   affiche_paysage: AffichePaysage,
   affiche_portrait : AffichePortrait,
