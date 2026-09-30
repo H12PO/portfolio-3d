@@ -84,7 +84,11 @@ import PorteGobelets from "../components/props/objets/PorteGobelets.jsx";
 import SacBoutique from "../components/props/objets/SacBoutique.jsx";
 import SachetSnack from "../components/props/objets/SachetSnack.jsx";
 import Telephone from "../components/props/objets/Telephone.jsx";
-
+import Arcade from '../components/props/loisirs/Arcade'
+import AfficheGrand from '../components/props/signaletique/AfficheGrand'
+import PoubelleTri from '../components/props/decor/PoubelleTri'
+import PanneauSolGlissant from '../components/props/decor/PanneauSolGlissant'
+import TableBassePetite from '../components/props/sieges/TableBassePetite'
 
 
 export const COMPONENTS = {
@@ -92,6 +96,12 @@ export const COMPONENTS = {
   departures:   PanneauDeparts,
   vending: Distributeur,
   bookshelf:    Bibliotheque,
+
+  arcade: Arcade,                            // à côté de jukebox
+  affiche_grand: AfficheGrand,               // à côté des deux autres affiches
+  poubelle_tri: PoubelleTri,                 // à côté de porte_service
+  panneau_sol_glissant: PanneauSolGlissant,  // idem
+  table_basse_pt: TableBassePetite,          // à côté de table_basse_gd
 
   banquette_2p:       Banquette2p,
   banquette_4p:       Banquette4p,
