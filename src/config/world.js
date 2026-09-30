@@ -65,7 +65,7 @@ export const ENTREE = {
   demiLargeur: 3.5,
   zBouche: 9,         // = BOUNDS.maxZ
   zFond: 27,
-  zMaxJoueur: 19,
+  zMaxJoueur: 13,
   spawnZ: 18,
   zVerrou: 8.5,
 }

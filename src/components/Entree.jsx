@@ -55,15 +55,59 @@ function Parvis() {
   )
 }
 
-function Joue({ x, z1, z2 }) {
+const H_CLOISON = 2.2
+const EP_CLOISON = 0.25
+const C_RAIL = '#2f5d8a'
+
+/* Cloison de contrôle, definie par ses deux extremites au sol,
+   exactement comme Wall. Trois volumes au lieu d'un : la main
+   courante et la plinthe cassent l'aplat et donnent l'echelle. */
+function Cloison({ a, b }) {
+  const dx = b[0] - a[0]
+  const dz = b[1] - a[1]
+  const len = Math.hypot(dx, dz)
+  if (len < 0.05) return null
+
+  const rotY = Math.atan2(dx, dz) + Math.PI / 2
+
   return (
-    <mesh position={[x, HALL.wallHeight / 2, (z1 + z2) / 2]} receiveShadow>
-      <boxGeometry args={[0.45, HALL.wallHeight, Math.abs(z2 - z1)]} />
-      <meshStandardMaterial color={C.wall} />
-    </mesh>
+    <group position={[(a[0] + b[0]) / 2, 0, (a[1] + b[1]) / 2]} rotation-y={rotY}>
+      <mesh position={[0, H_CLOISON / 2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[len, H_CLOISON, EP_CLOISON]} />
+        <meshStandardMaterial color={C.wall} />
+      </mesh>
+
+      <mesh position={[0, H_CLOISON + 0.04, 0]} castShadow>
+        <boxGeometry args={[len, 0.08, EP_CLOISON + 0.09]} />
+        <meshStandardMaterial color={C_RAIL} metalness={0.2} roughness={0.5} />
+      </mesh>
+
+      <mesh position={[0, 0.06, 0]} receiveShadow>
+        <boxGeometry args={[len, 0.12, EP_CLOISON + 0.04]} />
+        <meshStandardMaterial color={C.structure} />
+      </mesh>
+    </group>
   )
 }
-
+/* Poteau d'angle. Volontairement plus haut et plus epais que la
+   cloison : il n'a plus rien a raccorder, donc plus rien ne peut
+   mal se raccorder. */
+function PoteauCloison({ x, z }) {
+  const s = EP_CLOISON + 0.10
+  const h = H_CLOISON + 0.18
+  return (
+    <group position={[x, 0, z]}>
+      <mesh position={[0, h / 2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[s, h, s]} />
+        <meshStandardMaterial color={C.wall} />
+      </mesh>
+      <mesh position={[0, h + 0.05, 0]} castShadow>
+        <boxGeometry args={[s + 0.06, 0.1, s + 0.06]} />
+        <meshStandardMaterial color={C_RAIL} metalness={0.2} roughness={0.5} />
+      </mesh>
+    </group>
+  )
+}
 /* ============================================================
    COULOIR — se demonte lui-meme, en fondu.
    Au premier frame du fondu on CLONE les materiaux : ceux d'un
@@ -108,13 +152,23 @@ function Couloir() {
     }
   })
 
-  if (!monte) return null
+    if (!monte) return null
 
   const { zBouche, zFond, demiLargeur: L } = ENTREE
+  const { minX, maxX } = BOUNDS
+  const zFront = zBouche + 0.5        // 9.5
+
   return (
     <group ref={grp}>
-      <Joue x={-L} z1={zBouche} z2={zFond} />
-      <Joue x={L} z1={zBouche} z2={zFond} />
+      {/* les deux joues, raccordees a la ligne de front */}
+      <Cloison a={[-L, zFront]} b={[-L, zFond]} />
+      <Cloison a={[L, zFront]} b={[L, zFond]} />
+      <Cloison a={[minX, zFront]} b={[-L, zFront]} />
+      <Cloison a={[L, zFront]} b={[maxX, zFront]} />
+
+      <PoteauCloison x={-L} z={zFront} />
+      <PoteauCloison x={L} z={zFront} />
+
       <Props zone="couloir" />
     </group>
   )

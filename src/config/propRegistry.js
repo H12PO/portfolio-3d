@@ -69,6 +69,21 @@ import PetitTerracottaClochettes from '../components/props/vegetation/PetitTerra
 import PetitTerracottaFleuri from '../components/props/vegetation/PetitTerracottaFleuri'
 import SuspensionFeuillage from '../components/props/vegetation/SuspensionFeuillage'
 import SuspensionFleurie from '../components/props/vegetation/SuspensionFleurie'
+import BouteilleEau from "../components/props/objets/BouteilleEau.jsx";
+import Canette from "../components/props/objets/Canette.jsx";
+import CarteEmbarquement from "../components/props/objets/CarteEmbarquement.jsx";
+import CasqueAudio from "../components/props/objets/CasqueAudio.jsx";
+import GobeletCafe from "../components/props/objets/GobeletCafe.jsx";
+import JournalOuvert from "../components/props/objets/JournalOuvert.jsx";
+import JournalPlie from "../components/props/objets/JournalPlie.jsx";
+import LivrePoche from "../components/props/objets/LivrePoche.jsx";
+import Magazine from "../components/props/objets/Magazine.jsx";
+import MugIsotherme from "../components/props/objets/MugIsotherme.jsx";
+import PileProspectus from "../components/props/objets/PileProspectus.jsx";
+import PorteGobelets from "../components/props/objets/PorteGobelets.jsx";
+import SacBoutique from "../components/props/objets/SacBoutique.jsx";
+import SachetSnack from "../components/props/objets/SachetSnack.jsx";
+import Telephone from "../components/props/objets/Telephone.jsx";
 
 
 
@@ -108,8 +123,6 @@ export const COMPONENTS = {
   barriere_poteau: BarrierePoteau,
 
 
-
-
   bag_mallette:      BagageMallette,
   bag_sac_a_dos:     BagageSacADos,
   bag_sac_marin:     BagageSacMarin,
@@ -143,4 +156,23 @@ export const COMPONENTS = {
   petit_terracotta_fleuri:     PetitTerracottaFleuri,
   suspension_feuillage:        SuspensionFeuillage,
   suspension_fleurie:          SuspensionFleurie,
+
+  bouteille_eau:      BouteilleEau,
+  canette: Canette,
+  carte_embarquement: CarteEmbarquement,
+  casque_audio: CasqueAudio,
+  gobelet_cafe: GobeletCafe,
+  journal_ouvert: JournalOuvert,
+  journal_plie: JournalPlie,
+  livre_poche: LivrePoche,
+  magazine: Magazine,
+  mug_isotherme: MugIsotherme,
+  pile_prospectus: PileProspectus,
+  porte_gobelets: PorteGobelets,
+  sac_boutique: SacBoutique,
+  sachet_snack: SachetSnack,
+  telephone: Telephone,
+
+
+
 }
