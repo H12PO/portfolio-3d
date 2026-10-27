@@ -1,6 +1,7 @@
-import { useRef } from 'react'
+import { Suspense, useEffect, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import Perso from './Perso'
 import useInput from '../hooks/useInput'
 import useDoorNavigation from '../hooks/useDoorNavigation'
 import useInteraction from '../hooks/useInteraction'
@@ -11,7 +12,19 @@ import {
   DOORS, STAND_OFF, WALK_IN, BOARDING, LANDING,
 } from '../config/doors'
 
-const SPEED = 4
+/* ============================================================
+   DÉPLACEMENT — marche par défaut, course touche maintenue
+   ============================================================
+   Maj plutôt que Ctrl : avec Ctrl, les touches de déplacement
+   deviennent des raccourcis du navigateur (Ctrl+S, Ctrl+D,
+   Ctrl+Q en AZERTY, Ctrl+W en QWERTY), dont certains ne
+   peuvent pas être bloqués. Perso.jsx choisit seul Marche ou
+   Course d'après la vitesse réelle : rien d'autre à brancher. */
+const WALK_SPEED = 1.8                       // m/s
+const RUN_SPEED = 4                          // m/s
+const RUN_KEYS = ['ShiftLeft', 'ShiftRight']
+const ACCEL = 6                              // douceur du passage marche <-> course
+
 const SMOOTHNESS = 4
 const ARRIVAL = 0.15
 const TURN_SPEED = 10
@@ -27,14 +40,13 @@ const CAM = {
   lookAtY: 2.0,
   wallMargin: 1.2,
 }
-/* Gabarit du joueur. Le chibi devra respecter cette hauteur totale ;
-   son style vient des proportions, pas de la taille. */
+
+/* Gabarit du joueur. Le groupe est placé au centre de l'ancienne
+   capsule (BODY_Y) : l'embarquement, le débarquement et la
+   caméra s'appuient dessus. Le perso, dont l'origine est aux
+   pieds, est donc redescendu de BODY_Y dans le groupe. */
 const BODY_HEIGHT = 1.7
-const BODY_RADIUS = 0.3
-const BODY_Y = BODY_HEIGHT / 2                          // centre de la capsule
-const CAPSULE_LEN = BODY_HEIGHT - 2 * BODY_RADIUS       // 1.10
-
-
+const BODY_Y = BODY_HEIGHT / 2
 
 /* Repère d'entrée → repère monde.
    La caméra regarde vers −Z, écran et monde coïncident : angle nul.
@@ -42,7 +54,6 @@ const CAPSULE_LEN = BODY_HEIGHT - 2 * BODY_RADIUS       // 1.10
 const INPUT_YAW = 0
 const INPUT_COS = Math.cos(INPUT_YAW)
 const INPUT_SIN = Math.sin(INPUT_YAW)
-
 
 const smoothstep = (x) => x * x * (3 - 2 * x)
 const damp = (delta, k = SMOOTHNESS) => 1 - Math.exp(-k * delta)
@@ -58,6 +69,24 @@ export default function Player() {
   const dist = useRef(CAM.distance)
   const camTarget = useRef(new THREE.Vector3())
 
+  const running = useRef(false)
+  const speed = useRef(WALK_SPEED)
+
+  /* ---------- TOUCHE DE COURSE ---------- */
+  useEffect(() => {
+    const down = (e) => { if (RUN_KEYS.includes(e.code)) running.current = true }
+    const up = (e) => { if (RUN_KEYS.includes(e.code)) running.current = false }
+    // si la fenêtre perd le focus touche enfoncée, le keyup n'arrive jamais
+    const blur = () => { running.current = false }
+    window.addEventListener('keydown', down)
+    window.addEventListener('keyup', up)
+    window.addEventListener('blur', blur)
+    return () => {
+      window.removeEventListener('keydown', down)
+      window.removeEventListener('keyup', up)
+      window.removeEventListener('blur', blur)
+    }
+  }, [])
 
   function placeCamera(state, pos, delta, k) {
     let d = dist.current
@@ -126,14 +155,14 @@ export default function Player() {
       return
     }
 
-        /* ---------- ZOOM ---------- */
+    /* ---------- ZOOM ---------- */
     dist.current = THREE.MathUtils.clamp(
       dist.current + input.current.zoomDelta, CAM.minDist, CAM.maxDist
     )
     input.current.zoomDelta = 0
 
     /* ---------- DÉPLACEMENT ---------- */
-    // dir n'est volontairement plus normalisé : sa longueur porte le
+    // dir n'est volontairement pas normalisé : sa longueur porte le
     // dosage de vitesse, ce qui rendra le joystick analogique gratuit.
     const enCouloir = store.phase === 'couloir'
     const move = input.current.move
@@ -143,8 +172,12 @@ export default function Player() {
       move.x * INPUT_SIN + move.z * INPUT_COS,
     )
 
+    // la vitesse glisse vers sa cible : on sent l'accélération
+    const targetSpeed = running.current ? RUN_SPEED : WALK_SPEED
+    speed.current = THREE.MathUtils.lerp(speed.current, targetSpeed, damp(delta, ACCEL))
+
     if (dir.current.lengthSq() > 1e-6) {
-      pos.addScaledVector(dir.current, SPEED * delta)
+      pos.addScaledVector(dir.current, speed.current * delta)
       if (enCouloir) clampToCouloir(pos)
       else clampToHall(pos)
 
@@ -155,8 +188,7 @@ export default function Player() {
       ref.current.rotation.y += diff * damp(delta, TURN_SPEED)
     }
 
-
-        /* ---------- FRANCHISSEMENT DU POSTE ----------
+    /* ---------- FRANCHISSEMENT DU POSTE ----------
        Un seul seuil desormais : clampToHall reprend la main ET
        le couloir se demonte. A cet instant la camera est a 15.5,
        le poste est a 16.5 donc deja derriere elle, et les joues
@@ -184,14 +216,9 @@ export default function Player() {
 
   return (
     <group ref={ref} position={[0, BODY_Y, ENTREE.spawnZ]}>
-      <mesh castShadow>
-        <capsuleGeometry args={[BODY_RADIUS, CAPSULE_LEN, 8, 16]} />
-        <meshStandardMaterial color="#e8a33d" />
-      </mesh>
-      <mesh position={[0, 0.55, 0.3]}>
-        <boxGeometry args={[0.12, 0.12, 0.25]} />
-        <meshStandardMaterial color="#2b3440" />
-      </mesh>
+      <Suspense fallback={null}>
+        <Perso position={[0, -BODY_Y, 0]} />
+      </Suspense>
     </group>
   )
 }
