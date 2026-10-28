@@ -1,0 +1,247 @@
+/* ============================================================
+   SITE VITRINE — en-tête, page Projets, page d'un projet, CV
+   Mêmes couleurs que l'intro : fond #10101a, texte #e8e8f0
+   ============================================================ */
+
+.site {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  background: #10101a;
+  color: #e8e8f0;
+  font: 15px/1.6 system-ui, sans-serif;
+}
+
+.site-btn {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, .22);
+  background: transparent;
+  color: inherit;
+  font: 500 14px system-ui, sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.site-btn:hover { background: rgba(255, 255, 255, .08); }
+.site-btn:disabled { opacity: .35; cursor: default; }
+
+.site a:focus-visible,
+.site button:focus-visible { outline: 2px solid #e8e8f0; outline-offset: 2px; }
+
+/* ---------- En-tête ---------- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: rgba(16, 16, 26, .85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, .07);
+}
+
+.site-header-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+@media (min-width: 640px) {
+  .site-header-inner { padding: 16px 28px; }
+}
+
+.site-brand {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: -.01em;
+}
+
+.site-nav { display: flex; gap: 4px; }
+.site-nav a {
+  color: inherit;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  opacity: .6;
+}
+.site-nav a:hover { opacity: 1; }
+.site-nav a.active { opacity: 1; background: rgba(255, 255, 255, .08); }
+
+/* Sélecteur FR / EN, intégré à l'en-tête (remplace LangSwitch sur le site) */
+.site-nav { align-items: center; }
+.site-langues {
+  display: flex;
+  margin-left: 8px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, .12);
+}
+.site-langues button {
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: 500 12px system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  opacity: .45;
+  cursor: pointer;
+}
+.site-langues button:hover { opacity: .8; }
+.site-langues button[aria-pressed="true"] { opacity: 1; }
+
+/* ---------- Contenu ---------- */
+
+.site-main {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 48px 16px 96px;
+}
+.site-main--etroit { max-width: 736px; }
+@media (min-width: 640px) {
+  .site-main { padding: 64px 28px 120px; }
+}
+
+.site-main h1 {
+  font-size: clamp(34px, 6vw, 46px);
+  font-weight: 600;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.lab-sub {
+  opacity: .6;
+  max-width: 560px;
+  margin: 14px 0 0;
+}
+
+/* ---------- Page Projets ---------- */
+
+.lab-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 36px 0 24px;
+}
+
+.lab-tab {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: transparent;
+  color: inherit;
+  font: 500 13px system-ui, sans-serif;
+  cursor: pointer;
+}
+.lab-tab:hover { border-color: rgba(255, 255, 255, .35); }
+.lab-tab[aria-pressed="true"] {
+  background: #e8e8f0;
+  border-color: #e8e8f0;
+  color: #10101a;
+}
+.lab-tab span { opacity: .5; margin-left: 7px; }
+
+.lab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.lab-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  background: rgba(255, 255, 255, .03);
+  color: inherit;
+  text-decoration: none;
+  overflow: hidden;
+  transition: transform .15s, border-color .15s;
+}
+.lab-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, .3);
+}
+
+/* Aperçu provisoire : un dégradé par projet, en attendant les vignettes vidéo */
+.lab-thumb { aspect-ratio: 16 / 9; }
+
+.lab-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px 16px;
+}
+.lab-card h2 { font-size: 16px; font-weight: 600; margin: 0; }
+.lab-card p { font-size: 14px; opacity: .65; margin: 0; }
+
+.lab-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+.lab-badge {
+  font-size: 11px;
+  letter-spacing: .04em;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .18);
+  opacity: .8;
+}
+
+/* ---------- Page d'un projet ---------- */
+
+.projet {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Page plein écran : l'en-tête s'étale sur toute la largeur, comme la barre */
+.projet .site-header-inner { max-width: none; }
+
+.projet-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, .07);
+}
+@media (min-width: 640px) {
+  .projet-bar { padding: 12px 28px; }
+}
+
+.projet-titre { flex: 1; min-width: 200px; }
+.projet-titre h1 { font-size: 17px; font-weight: 600; margin: 0; line-height: 1.3; }
+.projet-titre p { font-size: 13px; opacity: .55; margin: 2px 0 0; }
+
+.projet-actions { display: flex; gap: 8px; }
+
+/* Mobile : boutons sur la première ligne, titre seul en dessous, sans résumé */
+@media (max-width: 640px) {
+  .projet-actions { margin-left: auto; }
+  .projet-titre { order: 3; flex-basis: 100%; }
+  .projet-titre p { display: none; }
+}
+
+.projet-canvas {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: block;
+}
+
+.projet-erreur {
+  margin: 48px auto;
+  opacity: .7;
+}

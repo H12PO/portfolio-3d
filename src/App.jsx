@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router'
+import { Routes, Route, Navigate, useLocation } from 'react-router'
 import { Suspense, useEffect, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Stats } from '@react-three/drei'
@@ -18,6 +18,10 @@ import Ticket from './ui/Ticket'
 import LangSwitch from './ui/LangSwitch'
 import { DOORS } from './config/doors'
 import Musique from './ui/Musique'
+import LabPage from './lab/LabPage'
+import ProjectPage from './lab/ProjectPage'
+import CvPage from './site/CvPage'
+
 /**
  * Soleil. Les bornes shadow-camera-* sont écrites sur l'objet par R3F,
  * mais la matrice de projection de la caméra d'ombre n'est pas recalculée
@@ -51,9 +55,17 @@ function Sun() {
 }
 
 export default function App() {
+  // La scène 3D ne se dessine que sur « / ». Sur toutes les autres pages
+  // (portes, site vitrine), elle est cachée derrière une page opaque :
+  // on coupe la boucle de rendu pour libérer le GPU.
+  const { pathname } = useLocation()
+  const enJeu = pathname === '/'
+  // Le site vitrine a son propre sélecteur de langue dans son en-tête
+  const surSite = pathname === '/cv' || pathname.startsWith('/projets')
+
   return (
     <>
-      <Canvas shadows camera={{ position: [0, 6, 20], fov: 35 }}>
+      <Canvas shadows camera={{ position: [0, 6, 20], fov: 35 }} frameloop={enJeu ? 'always' : 'never'}>
         <color attach="background" args={['#8fc4e8']} />
 
         <ambientLight intensity={1.3} />
@@ -71,18 +83,20 @@ export default function App() {
         </Suspense>
 
         <DebugCamera />
-        <Stats />
+        {enJeu && <Stats />}
       </Canvas>
       <EditorPanel />
       <Prompt />
       <Ticket />
       <Routes>
-        <Route path="/" element={null} />
+        <Route path="/" element={<Intro />} />
+        <Route path="/projets" element={<LabPage />} />
+        <Route path="/projets/:id" element={<ProjectPage />} />
+        <Route path="/cv" element={<CvPage />} />
         <Route path="/:doorId" element={<GuardedPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      <Intro />
-      <LangSwitch />
+      {!surSite && <LangSwitch />}
       <Musique />
     </>
   )

@@ -1,0 +1,338 @@
+/* ============================================================
+   PAGE « FOURMI DE LANGTON »
+   Une feuille quadrillée sur le bureau sombre du site.
+   La feuille est la seule pièce forte : tout autour reste discret.
+   ============================================================ */
+
+.fourmi {
+  --papier: #EEF1EC;
+  --encre: #1A2238;
+  --texte: #e8e8f0;
+  --discret: rgba(232, 232, 240, .56);
+  --trait: rgba(255, 255, 255, .08);
+  --quadrillage: rgba(64, 104, 96, .55);
+  --serif: 'STIX Two Text Variable', 'STIX Two Text', Georgia, serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.fourmi button { font: inherit; color: inherit; cursor: pointer; }
+.fourmi button:focus-visible,
+.fourmi input:focus-visible {
+  outline: 2px solid var(--papier);
+  outline-offset: 2px;
+}
+
+/* ---------- Plateau : barre / feuille / barre ---------- */
+
+.fourmi-plateau {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.fourmi-barre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+  padding: 8px 20px;
+  font: 13.5px/1.4 system-ui, sans-serif;
+}
+.fourmi-barre--haut { justify-content: space-between; border-bottom: 1px solid var(--trait); }
+.fourmi-barre--bas { min-height: 60px; border-top: 1px solid var(--trait); }
+
+.fourmi-feuille {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.fourmi-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  cursor: crosshair;
+}
+.fourmi-canvas[data-outil="main"] { cursor: grab; }
+.fourmi-canvas[data-outil="main"]:active { cursor: grabbing; }
+
+/* Choix exclusifs (outils, vue) : texte discret, l'actif est souligné à la couleur du papier */
+.fourmi-choix { display: flex; gap: 2px; }
+.fourmi-choix button,
+.fourmi-types button {
+  padding: 6px 9px;
+  border: 0;
+  background: none;
+  color: var(--discret);
+  font-weight: 500;
+}
+.fourmi-choix button:hover,
+.fourmi-types button:hover { color: var(--texte); }
+.fourmi-choix button[aria-pressed="true"],
+.fourmi-types button[aria-pressed="true"] {
+  color: var(--texte);
+  box-shadow: inset 0 -2px 0 var(--papier);
+}
+
+.fourmi-court { display: none; }
+
+/* Boutons d'action */
+.fourmi-principal {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  border: 0;
+  border-radius: 3px;
+  background: var(--papier);
+  color: var(--encre) !important;
+  font-weight: 600 !important;
+}
+.fourmi-principal:hover { background: #fff; }
+
+.fourmi-texte {
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 3px;
+  background: none;
+  color: var(--texte);
+}
+.fourmi-texte:hover { background: rgba(255, 255, 255, .06); }
+
+.fourmi-lecture { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.fourmi-lecture .fourmi-principal { min-width: 108px; justify-content: center; margin-right: 6px; }
+
+.fourmi-vitesse {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--discret);
+}
+.fourmi-vitesse input { width: 120px; accent-color: var(--papier); }
+.fourmi-vitesse span {
+  min-width: 118px;
+  color: var(--texte);
+  font-variant-numeric: tabular-nums;
+}
+
+.fourmi-compteur {
+  display: flex;
+  white-space: nowrap;
+  gap: 4px 16px;
+  margin: 0 0 0 auto;
+  color: var(--discret);
+  font-variant-numeric: tabular-nums;
+}
+.fourmi-compteur span:first-child { color: var(--texte); }
+
+/* Note de la visite guidée, à la place des commandes de lecture */
+.fourmi-visite {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 32px;
+  padding: 6px 0;
+}
+.fourmi-visite-etape { margin: 0; color: var(--discret); }
+.fourmi-visite h2 {
+  margin: 2px 0 0;
+  font: 600 21px/1.25 var(--serif);
+}
+.fourmi-visite-texte {
+  margin: 4px 0 0;
+  max-width: 64ch;
+  font: 16px/1.55 var(--serif);
+  color: rgba(232, 232, 240, .88);
+}
+.fourmi-visite-actions {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: center;
+  display: flex;
+  gap: 6px;
+}
+
+/* ---------- Marge ---------- */
+
+.fourmi-marge {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 24px 48px;
+  border-left: 1px solid var(--trait);
+  font: 14px/1.5 system-ui, sans-serif;
+}
+
+.fourmi-onglets {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  gap: 20px;
+  padding-top: 14px;
+  background: #10101a;
+  border-bottom: 1px solid var(--trait);
+}
+.fourmi-onglets button {
+  margin-bottom: -1px;
+  padding: 0 0 10px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--discret);
+  font-weight: 500;
+}
+.fourmi-onglets button[aria-selected="true"] { color: var(--texte); border-bottom-color: var(--papier); }
+
+.fourmi-marge section { padding: 24px 0 4px; }
+.fourmi-marge h3 {
+  margin: 0 0 10px;
+  font: 600 19px/1.3 var(--serif);
+}
+
+.fourmi-types { display: flex; gap: 6px; margin: 0 0 10px -9px; }
+
+.fourmi-liste { list-style: none; margin: 0; padding: 0; }
+.fourmi-liste button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 6px 10px 6px 12px;
+  border: 0;
+  border-left: 2px solid transparent;
+  background: none;
+  color: var(--discret);
+  text-align: left;
+}
+.fourmi-liste button:hover { color: var(--texte); }
+.fourmi-liste button[aria-pressed="true"] {
+  color: var(--texte);
+  border-left-color: var(--papier);
+  background: rgba(255, 255, 255, .04);
+}
+.fourmi-liste code {
+  font: 12px var(--mono);
+  letter-spacing: .04em;
+  opacity: .75;
+}
+
+.fourmi-description {
+  margin: 12px 0 0;
+  font: 15.5px/1.5 var(--serif);
+  color: rgba(232, 232, 240, .85);
+}
+
+.fourmi-saisie { margin-top: 20px; }
+.fourmi-saisie label { display: block; margin-bottom: 4px; color: var(--discret); }
+.fourmi-saisie div { display: flex; align-items: center; gap: 10px; }
+.fourmi-saisie input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 2px;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, .3);
+  background: none;
+  color: var(--texte);
+  font: 600 15px var(--mono);
+  letter-spacing: .14em;
+}
+.fourmi-saisie input:focus { outline: none; border-bottom: 2px solid var(--papier); }
+.fourmi-saisie input[aria-invalid="true"] { border-bottom-color: #ff8a80; }
+
+.fourmi-aide { margin: 10px 0 0; font-size: 13px; color: var(--discret); }
+.fourmi-aide--erreur { color: #ff8a80; }
+
+/* Une case de la feuille : papier ou encre, cernée du quadrillage */
+.fourmi-case {
+  display: inline-block;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  box-shadow: inset 0 0 0 1px var(--quadrillage);
+  vertical-align: -2px;
+}
+
+.fourmi-legende {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+  color: rgba(232, 232, 240, .85);
+}
+.fourmi-legende li { display: flex; align-items: center; gap: 10px; }
+.fourmi-legende code { width: 1ch; font: 600 13px var(--mono); }
+
+.fourmi-table {
+  width: 100%;
+  margin-top: 8px;
+  border-collapse: collapse;
+}
+.fourmi-table th,
+.fourmi-table td {
+  padding: 7px 4px;
+  border-bottom: 1px solid var(--trait);
+  text-align: left;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.fourmi-table thead th { color: var(--discret); }
+.fourmi-table td { color: rgba(232, 232, 240, .85); }
+.fourmi-table td .fourmi-case { margin-right: 8px; }
+.fourmi-table td code { margin-right: 6px; font: 600 13px var(--mono); }
+
+.fourmi-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  color: rgba(232, 232, 240, .85);
+  cursor: pointer;
+}
+.fourmi-option input { width: 15px; height: 15px; margin: 0; accent-color: var(--papier); }
+
+.fourmi-fiche { padding-top: 24px; }
+.fourmi-large { width: 100%; justify-content: center; padding: 10px 16px; }
+.fourmi-fiche p {
+  margin: 0 0 10px;
+  font: 15.5px/1.6 var(--serif);
+  color: rgba(232, 232, 240, .86);
+}
+.fourmi-fiche .fourmi-aide { margin-top: 20px; font: 13px/1.5 system-ui, sans-serif; color: var(--discret); }
+
+/* ---------- Mobile : feuille en haut, marge en dessous ---------- */
+
+@media (max-width: 900px) {
+  /* Simple empilement : la grille garderait une hauteur fixe et ferait chevaucher la marge */
+  .fourmi {
+    display: block;
+    overflow-y: auto;
+  }
+  .fourmi-feuille { flex: none; height: 56vh; min-height: 300px; }
+  .fourmi-barre { padding: 6px 12px; gap: 6px 16px; }
+  .fourmi-choix button { padding: 6px 7px; }
+  .fourmi-long { display: none; }
+  .fourmi-court { display: inline; }
+  .fourmi-vitesse input { width: 100px; }
+  .fourmi-vitesse span { min-width: 0; }
+  .fourmi-compteur { margin-left: 0; width: 100%; }
+  .fourmi-visite { grid-template-columns: minmax(0, 1fr); }
+  .fourmi-visite-actions { grid-column: 1; grid-row: auto; margin-top: 10px; justify-content: flex-end; }
+  .fourmi-marge {
+    overflow: visible;
+    padding: 0 16px 40px;
+    border-left: 0;
+    border-top: 1px solid var(--trait);
+  }
+}

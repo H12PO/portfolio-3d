@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router'
 import { useProgress } from '@react-three/drei'
 import { useGameStore } from '../store/useGameStore'
 import { useT } from '../i18n'
+import { useTexte } from '../site/textes'
 
 const KEY = {
   display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
@@ -19,11 +21,22 @@ const CARD = {
   textAlign: 'center',
 }
 
+// Boutons secondaires : accès direct au site vitrine, sans passer par l'aéroport
+const RACCOURCI = {
+  padding: '10px 28px', borderRadius: 9,
+  border: '1px solid rgba(255,255,255,.18)',
+  background: 'transparent',
+  color: 'inherit', font: '500 14px system-ui',
+  cursor: 'pointer',
+}
+
 export default function Intro() {
   const started = useGameStore((s) => s.started)
   const start = useGameStore((s) => s.start)
   const { progress, active } = useProgress()
+  const navigate = useNavigate()
   const t = useT()
+  const site = useTexte().t
 
   const [timedOut, setTimedOut] = useState(false)
 
@@ -92,6 +105,15 @@ export default function Intro() {
         >
           {ready ? t('intro.enter') : `${t('intro.loading')} ${Math.round(progress)}%`}
         </button>
+
+        {/* Pas besoin d'attendre le chargement de la 3D pour ces deux-là */}
+        <p style={{ opacity: .45, marginTop: 36, marginBottom: 12, fontSize: 13 }}>
+          {site('intro.raccourci')}
+        </p>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button onClick={() => navigate('/cv')} style={RACCOURCI}>{site('nav.cv')}</button>
+          <button onClick={() => navigate('/projets')} style={RACCOURCI}>{site('nav.projets')}</button>
+        </div>
       </div>
     </div>
   )
