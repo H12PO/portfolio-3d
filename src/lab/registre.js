@@ -3,15 +3,26 @@ import { lazy } from 'react'
 // ============================================================
 //  REGISTRE DES PROJETS
 //  Un projet = un dossier src/lab/<id>/ contenant :
-//    meta.js   → sa fiche (titre, onglet, statut…), lue tout de suite
-//    index.js  → mount(canvas) : version simple, aussi utilisée par la borne
+//    meta.js   → sa fiche (titre, domaine, statut…), lue tout de suite
+//    index.js  → mount(canvas) pour la borne, et apercu(canvas) pour la page Projets
 //    page.jsx  → (facultatif) une page complète, qui remplace le canvas simple
 //  Ajouter un projet = créer le dossier. Rien d'autre à toucher.
 // ============================================================
 
-// Ordre d'affichage des onglets. « une » = les projets marqués une: true.
-// Un onglet sans projet n'apparaît pas.
-export const ONGLETS = ['une', 'simulations', 'maths', 'algos', 'jeux', 'finance', 'entretiens', 'live']
+// Ordre des domaines sur la page Projets, et leur mise en page :
+//   vitrine → grande image réelle + texte
+//   liste   → une ligne par projet, avec les méthodes
+//   ecrans  → des écrans de borne
+// Un domaine sans projet n'apparaît pas.
+export const DOMAINES = [
+  { id: 'simulations', mise: 'vitrine' },
+  { id: 'maths', mise: 'vitrine' },
+  { id: 'algos', mise: 'vitrine' },
+  { id: 'finance', mise: 'liste' },
+  { id: 'jeux', mise: 'ecrans' },
+  { id: 'entretiens', mise: 'liste' },
+  { id: 'live', mise: 'vitrine' },
+]
 
 const fiches = import.meta.glob('./*/meta.js', { eager: true, import: 'default' })
 const codes = import.meta.glob('./*/index.js')

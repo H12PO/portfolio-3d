@@ -1,247 +1,283 @@
 /* ============================================================
-   SITE VITRINE — en-tête, page Projets, page d'un projet, CV
-   Mêmes couleurs que l'intro : fond #10101a, texte #e8e8f0
+   SITE VITRINE
+   Chaque projet est une petite application : en-tête de document,
+   onglets, espace de travail, barre d'état. Couleur signature :
+   vert jungle, utilisée avec parcimonie (onglet actif, action
+   principale, repères).
    ============================================================ */
 
 .site {
+  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  --serif: 'STIX Two Text Variable', 'STIX Two Text', Georgia, serif;
+
   position: absolute;
   inset: 0;
   overflow-y: auto;
-  background: #10101a;
-  color: #e8e8f0;
-  font: 15px/1.6 system-ui, sans-serif;
+  background: var(--fond);
+  color: var(--texte);
+  font: 14px/1.5 var(--sans);
 }
 
-.site-btn {
-  padding: 8px 18px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, .22);
-  background: transparent;
-  color: inherit;
-  font: 500 14px system-ui, sans-serif;
-  cursor: pointer;
-  white-space: nowrap;
+.site[data-theme="clair"] {
+  color-scheme: light;
+  --fond: #F6F7F9;
+  --surface: #FFFFFF;
+  --texte: #16181D;
+  --discret: #5F6573;
+  --trait: #E1E4E9;
+  --survol: #EEF0F3;
+  --champ: #F6F7F9;
+  --sig: #1E7A50;
+  --sur-sig: #FFFFFF;
+  --sig-doux: rgba(30, 122, 80, .1);
 }
-.site-btn:hover { background: rgba(255, 255, 255, .08); }
-.site-btn:disabled { opacity: .35; cursor: default; }
 
-.site a:focus-visible,
-.site button:focus-visible { outline: 2px solid #e8e8f0; outline-offset: 2px; }
+.site[data-theme="sombre"] {
+  color-scheme: dark;
+  --fond: #111317;
+  --surface: #171A1F;
+  --texte: #E7E9EE;
+  --discret: #9AA0AC;
+  --trait: #262A31;
+  --survol: #1F232A;
+  --champ: #111317;
+  --sig: #33AD78;
+  --sur-sig: #0B1711;
+  --sig-doux: rgba(51, 173, 120, .14);
+}
 
-/* ---------- En-tête ---------- */
+.site button { font: inherit; color: inherit; cursor: pointer; }
+.site a { color: inherit; }
+.site :focus-visible { outline: 2px solid var(--sig); outline-offset: 2px; }
+
+/* ---------- Boutons communs ---------- */
+
+.btn-principal {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px 7px 13px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--sig);
+  color: var(--sur-sig) !important;
+  font-weight: 600 !important;
+}
+.btn-principal:hover { filter: brightness(1.08); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 13px;
+  border: 1px solid var(--trait);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.btn:hover { background: var(--survol); }
+.btn:disabled { opacity: .45; cursor: default; }
+
+/* ---------- En-tête du site ---------- */
 
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 1;
-  background: rgba(16, 16, 26, .85);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, .07);
-}
-
-.site-header-inner {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 14px 16px;
+  z-index: 5;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-@media (min-width: 640px) {
-  .site-header-inner { padding: 16px 28px; }
+  gap: 28px;
+  height: 48px;
+  padding: 0 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--trait);
 }
 
-.site-brand {
-  color: inherit;
-  text-decoration: none;
+.site-marque {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 15px;
   font-weight: 600;
-  font-size: 17px;
   letter-spacing: -.01em;
+  text-decoration: none;
 }
+.site-marque::before { content: ''; width: 9px; height: 9px; background: var(--sig); }
 
-.site-nav { display: flex; gap: 4px; }
+.site-nav { display: flex; gap: 6px; }
 .site-nav a {
-  color: inherit;
-  text-decoration: none;
-  font-size: 14px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  opacity: .6;
-}
-.site-nav a:hover { opacity: 1; }
-.site-nav a.active { opacity: 1; background: rgba(255, 255, 255, .08); }
-
-/* Sélecteur FR / EN, intégré à l'en-tête (remplace LangSwitch sur le site) */
-.site-nav { align-items: center; }
-.site-langues {
-  display: flex;
-  margin-left: 8px;
-  padding-left: 12px;
-  border-left: 1px solid rgba(255, 255, 255, .12);
-}
-.site-langues button {
   padding: 4px 8px;
-  border: 0;
   border-radius: 6px;
-  background: transparent;
-  color: inherit;
-  font: 500 12px system-ui, sans-serif;
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  opacity: .45;
-  cursor: pointer;
-}
-.site-langues button:hover { opacity: .8; }
-.site-langues button[aria-pressed="true"] { opacity: 1; }
-
-/* ---------- Contenu ---------- */
-
-.site-main {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 48px 16px 96px;
-}
-.site-main--etroit { max-width: 736px; }
-@media (min-width: 640px) {
-  .site-main { padding: 64px 28px 120px; }
-}
-
-.site-main h1 {
-  font-size: clamp(34px, 6vw, 46px);
-  font-weight: 600;
-  letter-spacing: -.02em;
-  line-height: 1.1;
-  margin: 0;
-}
-
-.lab-sub {
-  opacity: .6;
-  max-width: 560px;
-  margin: 14px 0 0;
-}
-
-/* ---------- Page Projets ---------- */
-
-.lab-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 36px 0 24px;
-}
-
-.lab-tab {
-  padding: 7px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, .16);
-  background: transparent;
-  color: inherit;
-  font: 500 13px system-ui, sans-serif;
-  cursor: pointer;
-}
-.lab-tab:hover { border-color: rgba(255, 255, 255, .35); }
-.lab-tab[aria-pressed="true"] {
-  background: #e8e8f0;
-  border-color: #e8e8f0;
-  color: #10101a;
-}
-.lab-tab span { opacity: .5; margin-left: 7px; }
-
-.lab-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 14px;
-}
-
-.lab-card {
-  display: flex;
-  flex-direction: column;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, .1);
-  background: rgba(255, 255, 255, .03);
-  color: inherit;
+  color: var(--discret);
   text-decoration: none;
-  overflow: hidden;
-  transition: transform .15s, border-color .15s;
 }
-.lab-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, .3);
-}
+.site-nav a:hover { color: var(--texte); }
+.site-nav a.active { color: var(--texte); font-weight: 500; }
 
-/* Aperçu provisoire : un dégradé par projet, en attendant les vignettes vidéo */
-.lab-thumb { aspect-ratio: 16 / 9; }
-
-.lab-card-body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 14px 16px 16px;
+.site-outils { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.site-langues { display: flex; }
+.site-langues button {
+  padding: 3px 5px;
+  border: 0;
+  background: none;
+  color: var(--discret);
+  font-size: 13px;
+  text-transform: uppercase;
 }
-.lab-card h2 { font-size: 16px; font-weight: 600; margin: 0; }
-.lab-card p { font-size: 14px; opacity: .65; margin: 0; }
-
-.lab-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: auto;
-  padding-top: 8px;
+.site-langues button[aria-pressed="true"] { color: var(--texte); font-weight: 600; }
+.site-theme {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--trait);
+  border-radius: 6px;
+  background: none;
+  color: var(--discret);
 }
-.lab-badge {
-  font-size: 11px;
-  letter-spacing: .04em;
-  padding: 2px 9px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, .18);
-  opacity: .8;
+.site-theme:hover { color: var(--texte); }
+
+/* ---------- Pages simples (CV) ---------- */
+
+.page-col { max-width: 1040px; margin: 0 auto; padding: 40px 24px 80px; }
+.page-titre { margin: 0 0 6px; font-size: 30px; font-weight: 600; letter-spacing: -.02em; }
+.page-intro { max-width: 600px; margin: 0; color: var(--discret); font-size: 15px; }
+
+/* ---------- Page Projets : un bloc par domaine ---------- */
+
+.domaine {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 24px;
+  padding: 18px 0 30px;
+  border-top: 1px solid var(--trait);
+}
+.page-intro + .domaine { margin-top: 34px; }
+.domaine h2 { margin: 0; font-size: 15px; font-weight: 600; }
+.domaine-compte { color: var(--discret); font-size: 13px; }
+.domaine-projets { display: grid; gap: 22px; }
+
+/* Domaines visuels : grande image réelle + texte */
+.vitrine {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 22px;
+  align-items: end;
+  text-decoration: none;
+}
+.vitrine canvas,
+.ecran canvas {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--trait);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.vitrine canvas { aspect-ratio: 16 / 10; }
+.vitrine:hover canvas,
+.ecran:hover canvas { border-color: var(--sig); }
+.vitrine h3 { margin: 0 0 4px; font-size: 18px; font-weight: 600; letter-spacing: -.01em; }
+.vitrine:hover h3 { text-decoration: underline; text-decoration-color: var(--sig); text-underline-offset: 4px; }
+.vitrine p { margin: 0 0 12px; color: var(--discret); }
+
+.meta { display: flex; flex-wrap: wrap; gap: 4px 14px; color: var(--discret); font: 12px var(--mono); }
+.meta .statut-wip { color: var(--sig); }
+
+/* Domaines « liste » (finance, entretiens) : une ligne par projet */
+.liste { border-top: 1px solid var(--trait); }
+.liste a {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) auto;
+  gap: 16px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--trait);
+  text-decoration: none;
+}
+.liste a:hover span:first-child { text-decoration: underline; text-decoration-color: var(--sig); text-underline-offset: 3px; }
+.liste span:nth-child(2) { color: var(--discret); }
+.liste span:last-child { color: var(--discret); font: 12px var(--mono); }
+
+/* Domaine « jeux » : des écrans de borne */
+.ecrans { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.ecran { text-decoration: none; }
+.ecran canvas { aspect-ratio: 4 / 3; }
+.ecran span { display: block; margin-top: 6px; }
+
+canvas[data-vide="true"] {
+  background-image: repeating-linear-gradient(135deg, transparent 0 9px, var(--trait) 9px 10px);
 }
 
 /* ---------- Page d'un projet ---------- */
 
-.projet {
+.projet { display: flex; flex-direction: column; overflow: hidden; }
+
+/* En-tête de document : fil, titre, onglets */
+.doc { padding: 16px 20px 0; background: var(--surface); border-bottom: 1px solid var(--trait); }
+.doc-fil { display: flex; gap: 6px; color: var(--discret); font-size: 13px; }
+.doc-fil a { text-decoration: none; }
+.doc-fil a:hover { color: var(--texte); text-decoration: underline; }
+.doc-fil span[aria-hidden] { opacity: .6; }
+.doc-titre { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 24px; }
+.doc h1 { margin: 2px 0 2px; font-size: 22px; font-weight: 600; letter-spacing: -.015em; }
+.doc-titre p { margin: 0 0 14px; color: var(--discret); }
+.doc-actions { display: flex; gap: 8px; margin-bottom: 14px; }
+
+.doc-onglets { display: flex; gap: 2px; overflow-x: auto; }
+.doc-onglets button {
+  flex: none;
+  position: relative;
+  top: 1px;
+  padding: 8px 14px 9px;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 6px 6px 0 0;
+  background: none;
+  color: var(--discret);
+}
+.doc-onglets button:hover { color: var(--texte); }
+.doc-onglets button[aria-selected="true"] {
+  background: var(--fond);
+  border-color: var(--trait);
+  color: var(--texte);
+  font-weight: 500;
+  box-shadow: inset 0 2px 0 var(--sig);
+}
+.doc-titre + .doc-onglets { margin-top: 2px; }
+.doc:not(:has(.doc-onglets)) { padding-bottom: 0; }
+
+/* Barre d'état, en bas de l'application */
+.etat {
+  flex: none;
   display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  align-items: stretch;
+  min-height: 26px;
+  overflow-x: auto;
+  background: var(--surface);
+  border-top: 1px solid var(--trait);
+  color: var(--discret);
+  font: 12px var(--mono);
+  white-space: nowrap;
 }
+.etat span { display: flex; align-items: center; padding: 0 12px; border-right: 1px solid var(--trait); }
+.etat .etat-statut { gap: 7px; color: var(--texte); }
+.etat .etat-statut::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--discret); }
+.etat .etat-statut[data-actif="true"]::before { background: var(--sig); }
+.etat .etat-fin { margin-left: auto; border-right: 0; border-left: 1px solid var(--trait); }
 
-/* Page plein écran : l'en-tête s'étale sur toute la largeur, comme la barre */
-.projet .site-header-inner { max-width: none; }
+/* Projet sans page dédiée : un canvas simple */
+.projet-canvas { flex: 1; min-height: 0; width: 100%; display: block; }
+.projet-erreur { margin: 48px auto; max-width: 480px; color: var(--discret); text-align: center; }
 
-.projet-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px 16px;
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, .07);
-}
-@media (min-width: 640px) {
-  .projet-bar { padding: 12px 28px; }
-}
+/* ---------- Mobile ---------- */
 
-.projet-titre { flex: 1; min-width: 200px; }
-.projet-titre h1 { font-size: 17px; font-weight: 600; margin: 0; line-height: 1.3; }
-.projet-titre p { font-size: 13px; opacity: .55; margin: 2px 0 0; }
-
-.projet-actions { display: flex; gap: 8px; }
-
-/* Mobile : boutons sur la première ligne, titre seul en dessous, sans résumé */
-@media (max-width: 640px) {
-  .projet-actions { margin-left: auto; }
-  .projet-titre { order: 3; flex-basis: 100%; }
-  .projet-titre p { display: none; }
-}
-
-.projet-canvas {
-  flex: 1;
-  min-height: 0;
-  width: 100%;
-  display: block;
-}
-
-.projet-erreur {
-  margin: 48px auto;
-  opacity: .7;
+@media (max-width: 760px) {
+  .site-header { gap: 14px; padding: 0 14px; }
+  .domaine { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .vitrine { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .liste a { grid-template-columns: minmax(0, 1fr) auto; }
+  .liste span:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
+  .doc { padding: 12px 14px 0; }
+  .doc-titre p { display: none; }
+  .doc h1 { margin-bottom: 10px; font-size: 19px; }
+  .doc-onglets button { padding: 8px 9px 9px; font-size: 13px; }
 }

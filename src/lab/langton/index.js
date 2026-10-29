@@ -1,14 +1,15 @@
 // ============================================================
-//  FOURMI DE LANGTON — version simple, pour la borne d'arcade
-//  (la page du site utilise page.jsx, sur le même moteur)
-//  Grille torique, cadrage auto, les règles à lettres défilent.
+//  FOURMI DE LANGTON — versions légères
+//  mount()  : pour l'écran de la borne d'arcade (sans boutons)
+//  apercu() : l'image réelle affichée sur la page Projets
+//  La page du site, elle, est dans page.jsx, sur le même moteur.
 // ============================================================
 
 import { creerMonde, avancer, regleLettres, changerRegle } from './moteur'
 import { creerRendu } from './rendu'
 import { PRESETS_LETTRES } from './presets'
 
-const EFFETS = { surligneur: true, quadrillage: false, passages: false }
+const SANS_EFFET = { surligneur: false, quadrillage: false, passages: false }
 
 /**
  * Contrat commun à tous les projets du labo.
@@ -16,7 +17,7 @@ const EFFETS = { surligneur: true, quadrillage: false, passages: false }
  * @param mode    'page' | 'arcade'
  * @returns {{ pause, resume, input, unmount }}
  */
-export function mount(canvas, { mode = 'arcade' } = {}) {
+export function mount(canvas, { mode = 'arcade', theme = 'sombre' } = {}) {
   const taille = mode === 'arcade' ? 160 : 320
   const monde = creerMonde({ W: taille, H: taille, regle: regleLettres('RL'), bords: 'tore' })
   const rendu = creerRendu(canvas, monde)
@@ -25,7 +26,7 @@ export function mount(canvas, { mode = 'arcade' } = {}) {
 
   function image() {
     avancer(monde, Math.min(1000, 1 + Math.floor(monde.pas / 100)))
-    rendu.dessiner({ effets: EFFETS, auto: true })
+    rendu.dessiner({ effets: { ...SANS_EFFET, surligneur: true }, auto: true, theme })
     raf = requestAnimationFrame(image)
   }
 
@@ -51,4 +52,13 @@ export function mount(canvas, { mode = 'arcade' } = {}) {
     },
     unmount: arreter,
   }
+}
+
+// Une image fixe : la fourmi juste après le début de l'autoroute
+export function apercu(canvas, { theme = 'clair' } = {}) {
+  const monde = creerMonde({ W: 320, H: 220, regle: regleLettres('RL') })
+  avancer(monde, 11800)
+  const rendu = creerRendu(canvas, monde)
+  rendu.recentrer()
+  rendu.dessiner({ effets: SANS_EFFET, auto: false, theme })
 }

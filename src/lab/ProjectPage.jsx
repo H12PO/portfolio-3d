@@ -1,10 +1,9 @@
 import { Suspense, useEffect, useRef, useState } from 'react'
 import { Navigate, useParams } from 'react-router'
-import SiteHeader from '../site/SiteHeader'
+import Site from '../site/Site'
 import { useTexte, useTitre } from '../site/textes'
 import BarreProjet from './BarreProjet'
 import { trouver, charger, PAGES, pick } from './registre'
-import '../site/site.css'
 
 export default function ProjectPage() {
   const { id } = useParams()
@@ -18,8 +17,7 @@ export default function ProjectPage() {
   const PageDuProjet = PAGES[id]
 
   return (
-    <div className="site projet">
-      <SiteHeader />
+    <Site className="projet">
       {PageDuProjet
         ? (
           <Suspense fallback={<BarreProjet meta={meta} />}>
@@ -27,7 +25,7 @@ export default function ProjectPage() {
           </Suspense>
         )
         : <CanvasSimple key={id} id={id} meta={meta} />}
-    </div>
+    </Site>
   )
 }
 
@@ -84,10 +82,10 @@ function CanvasSimple({ id, meta }) {
   return (
     <>
       <BarreProjet meta={meta}>
-        <button className="site-btn" onClick={basculer} disabled={erreur}>
+        <button className="btn" onClick={basculer} disabled={erreur}>
           {enPause ? t('projets.reprendre') : t('projets.pause')}
         </button>
-        <button className="site-btn" onClick={relancer}>{t('projets.recommencer')}</button>
+        <button className="btn" onClick={relancer}>{t('projets.recommencer')}</button>
       </BarreProjet>
 
       {erreur

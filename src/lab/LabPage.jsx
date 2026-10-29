@@ -1,76 +1,80 @@
-import { Link, useSearchParams } from 'react-router'
-import SiteHeader from '../site/SiteHeader'
+import { Link } from 'react-router'
+import Site from '../site/Site'
 import { useTexte, useTitre } from '../site/textes'
-import { PROJETS, ONGLETS, pick } from './registre'
-import '../site/site.css'
+import { useTheme } from '../site/theme'
+import Apercu from './Apercu'
+import { PROJETS, DOMAINES, pick } from './registre'
 
-const parOnglet = (onglet) =>
-  onglet === 'une' ? PROJETS.filter((p) => p.une) : PROJETS.filter((p) => p.onglet === onglet)
-
-// Teinte stable tirée de l'id : chaque projet garde sa couleur d'aperçu
-const teinte = (id) => [...id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7)
-
+// Page /projets : un bloc par domaine, chacun avec la mise en page qui lui convient
 export default function LabPage() {
   const { t, lang } = useTexte()
-  const [params, setParams] = useSearchParams()
+  const theme = useTheme()
   useTitre(t('projets.titre'))
 
-  // Onglet actif rangé dans l'URL (?onglet=finance) : il survit au retour d'un projet
-  const onglets = ONGLETS.filter((o) => parOnglet(o).length > 0)
-  const demande = params.get('onglet')
-  const onglet = onglets.includes(demande) ? demande : onglets[0]
-  const liste = onglet ? parOnglet(onglet) : []
+  const blocs = DOMAINES
+    .map((d) => ({ ...d, projets: PROJETS.filter((p) => p.domaine === d.id) }))
+    .filter((d) => d.projets.length > 0)
+
+  const lien = (p) => ({ to: `/projets/${p.id}`, state: { depuis: '/projets' } })
+  const statut = (p) => <span className={`statut-${p.statut}`}>{t(`projets.statut.${p.statut}`)}</span>
 
   return (
-    <div className="site">
-      <SiteHeader />
+    <Site>
+      <main className="page-col">
+        <h1 className="page-titre">{t('projets.titre')}</h1>
+        <p className="page-intro">{t('projets.sousTitre')}</p>
 
-      <main className="site-main">
-        <h1>{t('projets.titre')}</h1>
-        <p className="lab-sub">{t('projets.sousTitre')}</p>
+        {blocs.map((d) => (
+          <section key={d.id} className="domaine" aria-labelledby={`domaine-${d.id}`}>
+            <div>
+              <h2 id={`domaine-${d.id}`}>{t(`projets.domaines.${d.id}`)}</h2>
+              <div className="domaine-compte">{t('projets.compte')(d.projets.length)}</div>
+            </div>
 
-        <nav className="lab-tabs">
-          {onglets.map((o) => (
-            <button
-              key={o}
-              className="lab-tab"
-              aria-pressed={o === onglet}
-              onClick={() => setParams({ onglet: o }, { replace: true })}
-            >
-              {t(`projets.onglets.${o}`)}
-              <span>{parOnglet(o).length}</span>
-            </button>
-          ))}
-        </nav>
+            {d.mise === 'vitrine' && (
+              <div className="domaine-projets">
+                {d.projets.map((p) => (
+                  <Link key={p.id} className="vitrine" {...lien(p)}>
+                    <Apercu id={p.id} theme={theme} />
+                    <div>
+                      <h3>{pick(p.titre, lang)}</h3>
+                      <p>{pick(p.resume, lang)}</p>
+                      <div className="meta">
+                        {p.techno && <span>{p.techno}</span>}
+                        {p.annee && <span>{p.annee}</span>}
+                        {statut(p)}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
 
-        <div className="lab-grid">
-          {liste.map((p) => {
-            const h = teinte(p.id)
-            return (
-              <Link
-                key={p.id}
-                to={`/projets/${p.id}`}
-                state={{ depuis: `/projets?onglet=${onglet}` }}
-                className="lab-card"
-              >
-                <div
-                  className="lab-thumb"
-                  style={{ background: `linear-gradient(135deg, hsl(${h} 45% 28%), hsl(${(h + 50) % 360} 45% 12%))` }}
-                />
-                <div className="lab-card-body">
-                  <h2>{pick(p.titre, lang)}</h2>
-                  <p>{pick(p.resume, lang)}</p>
-                  <div className="lab-badges">
-                    {p.statut === 'wip' && <span className="lab-badge">{t('projets.enCours')}</span>}
-                    {p.statut === 'idee' && <span className="lab-badge">{t('projets.idee')}</span>}
-                    {p.arcade === 'jouable' && <span className="lab-badge">🕹 {t('projets.borne')}</span>}
-                  </div>
-                </div>
-              </Link>
-            )
-          })}
-        </div>
+            {d.mise === 'liste' && (
+              <div className="liste">
+                {d.projets.map((p) => (
+                  <Link key={p.id} {...lien(p)}>
+                    <span>{pick(p.titre, lang)}</span>
+                    <span>{pick(p.methodes ?? p.resume, lang)}</span>
+                    {statut(p)}
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {d.mise === 'ecrans' && (
+              <div className="ecrans">
+                {d.projets.map((p) => (
+                  <Link key={p.id} className="ecran" {...lien(p)}>
+                    <Apercu id={p.id} theme={theme} />
+                    <span>{pick(p.titre, lang)}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </section>
+        ))}
       </main>
-    </div>
+    </Site>
   )
 }

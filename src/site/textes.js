@@ -10,59 +10,61 @@ import { useLangStore } from '../i18n'
 const TEXTES = {
   fr: {
     nom: 'Hippolyte',
+    nombre: 'fr-FR',
     nav: { projets: 'Projets', cv: 'CV' },
-    intro: { raccourci: 'Pas le temps de jouer ?' },
+    intro: { raccourci: 'Pas le temps de jouer ?' },
+    theme: { clair: 'Passer en thème clair', sombre: 'Passer en thème sombre' },
     projets: {
       titre: 'Projets',
-      sousTitre: 'Simulations, mathématiques et finance quantitative : des projets de code à ouvrir en un clic.',
-      onglets: {
-        une: 'À la une',
+      sousTitre: 'Ce que je code pour comprendre : simulations, mathématiques et finance quantitative.',
+      compte: (n) => (n > 1 ? `${n} projets` : `${n} projet`),
+      domaines: {
         simulations: 'Simulations',
-        maths: 'Maths & génératif',
+        maths: 'Maths et génératif',
         algos: 'Algorithmes',
         jeux: 'Jeux',
         finance: 'Finance quantitative',
         entretiens: 'Entretiens',
         live: 'Données en direct',
       },
-      enCours: 'En cours',
-      idee: 'Idée',
-      borne: 'Sur la borne',
+      statut: { fini: 'terminé', wip: 'en cours', idee: 'idée' },
+      ouvrir: 'Ouvrir le projet',
       pause: 'Pause',
       reprendre: 'Reprendre',
       recommencer: 'Recommencer',
-      erreur: 'Impossible de charger ce projet.',
+      erreur: 'Ce projet n’a pas pu se charger. Rechargez la page pour réessayer.',
     },
     cv: {
       titre: 'CV',
-      bientot: 'Bientôt ici : le CV en version classique, rapide à lire.',
+      bientot: 'Bientôt ici : le CV en version classique, rapide à lire.',
     },
   },
 
   en: {
     nom: 'Hippolyte',
+    nombre: 'en-US',
     nav: { projets: 'Projects', cv: 'CV' },
     intro: { raccourci: 'No time to play?' },
+    theme: { clair: 'Switch to light theme', sombre: 'Switch to dark theme' },
     projets: {
       titre: 'Projects',
-      sousTitre: 'Simulations, mathematics and quantitative finance: code projects, one click away.',
-      onglets: {
-        une: 'Featured',
+      sousTitre: 'What I code to understand things: simulations, mathematics and quantitative finance.',
+      compte: (n) => (n > 1 ? `${n} projects` : `${n} project`),
+      domaines: {
         simulations: 'Simulations',
-        maths: 'Maths & generative',
+        maths: 'Maths and generative',
         algos: 'Algorithms',
         jeux: 'Games',
         finance: 'Quantitative finance',
         entretiens: 'Interviews',
         live: 'Live data',
       },
-      enCours: 'In progress',
-      idee: 'Idea',
-      borne: 'On the arcade',
+      statut: { fini: 'done', wip: 'in progress', idee: 'idea' },
+      ouvrir: 'Open the project',
       pause: 'Pause',
       reprendre: 'Resume',
       recommencer: 'Restart',
-      erreur: 'This project could not be loaded.',
+      erreur: 'This project failed to load. Reload the page to try again.',
     },
     cv: {
       titre: 'CV',
@@ -73,11 +75,11 @@ const TEXTES = {
 
 const lire = (dico, chemin) => chemin.split('.').reduce((o, k) => o?.[k], dico)
 
-// t('projets.onglets.une') → le texte dans la langue courante, le français à défaut
+// t('projets.domaines.finance') → le texte dans la langue courante, le français à défaut
 export function useTexte() {
   const lang = useLangStore((s) => s.lang)
   const t = (chemin) => lire(TEXTES[lang], chemin) ?? lire(TEXTES.fr, chemin) ?? chemin
-  return { t, lang }
+  return { t, lang, nombre: (n, options) => n.toLocaleString(t('nombre'), options) }
 }
 
 // Titre de l'onglet du navigateur : « Projets · Hippolyte »
