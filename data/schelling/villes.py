@@ -8,12 +8,13 @@ et autoroutes, gares, écoles, commerces), et les revenus de l'Insee
 de N × N cases. Le site lit ensuite le fichier produit, sans rien télécharger.
 
     python villes.py "Paris, France" --id paris
-    python villes.py --exemples                 # Paris, Lyon et Marseille
-    python villes.py "Nantes, France" --id nantes --taille 128
+    python villes.py --exemples                 # Lyon, Paris et Bouc-Bel-Air
+    python villes.py "Bouc-Bel-Air, France" --taille 64
 
 Sorties : public/data/schelling/<id>.json, et la liste villes.json.
-Le premier passage télécharge beaucoup (plusieurs minutes pour Paris) ;
-tout est gardé dans le dossier cache/ pour les passages suivants.
+Le premier passage télécharge beaucoup (environ 25 minutes pour Paris) ;
+chaque réponse d'OpenStreetMap est gardée dans le dossier cache/ : un
+passage interrompu (Ctrl+C) ne redemande pas ce qui a déjà été reçu.
 
 Licences : les fichiers produits sont des bases dérivées d'OpenStreetMap
 (© les contributeurs d'OpenStreetMap, licence ODbL) et de données de l'Insee
@@ -45,10 +46,20 @@ ICI = pathlib.Path(__file__).resolve().parent
 SORTIE = ICI.parent.parent / 'public' / 'data' / 'schelling'
 CACHE = ICI / 'cache'
 
+# Le dernier nombre : le côté de la grille (None : celui de --taille, 128 par défaut).
+# Une petite commune en 64 × 64 garde des cases d'une centaine de mètres.
 EXEMPLES = [
-    ('Paris, France', 'paris', 'Paris'),
-    ('Lyon, France', 'lyon', 'Lyon'),
-    ('Marseille, France', 'marseille', 'Marseille'),
+    ('Lyon, France', 'lyon', 'Lyon', None),
+    ('Paris, France', 'paris', 'Paris', None),
+    ('Bouc-Bel-Air, France', 'bouc-bel-air', 'Bouc-Bel-Air', 64),
+]
+
+# Serveurs Overpass : le premier est le serveur officiel ; les autres servent
+# de secours s'il refuse ou coupe la connexion (ce qui arrive quand il est saturé).
+SERVEURS = [
+    'https://overpass-api.de/api',
+    'https://overpass.private.coffee/api',
+    'https://maps.mail.ru/osm/tools/overpass/api',
 ]
 
 INSEE_URL = 'https://www.insee.fr/fr/statistiques/fichier/8735162/Filosofi2021_carreaux_200m_csv.zip'
@@ -91,39 +102,73 @@ def b64(tableau):
 #  OpenStreetMap
 # ------------------------------------------------------------
 
-def preparer_osmnx():
+def preparer_osmnx(contact=None):
     import osmnx as ox
     ox.settings.use_cache = True
     ox.settings.cache_folder = str(CACHE / 'osmnx')
     ox.settings.requests_timeout = 600
     ox.settings.log_console = False
+    if contact:  # les serveurs aiment savoir qui les interroge
+        ox.settings.http_user_agent = f'{ox.settings.http_user_agent}; portfolio-schelling, contact: {contact}'
     return ox
 
 
-def objets(ox, polygone, etiquettes, tuiles=1, essais=3):
+def choisir_serveur(ox, url):
+    ox.settings.overpass_url = url
+    # seul le serveur officiel publie ses créneaux libres ; ailleurs, OSMnx attendrait 60 s à chaque requête
+    ox.settings.overpass_rate_limit = 'overpass-api.de' in url
+
+
+def raison(e):
+    """Une raison d'échec courte : le code HTTP s'il y en a un, sinon le type d'erreur."""
+    m = re.search(r'responded:? (\d{3}[^<\n]{0,40})', str(e))
+    return m.group(1).strip() if m else type(e).__name__
+
+
+def demander(ox, zone, etiquettes, essais=3):
+    """Une requête, avec trois essais par serveur, puis le serveur suivant. None si la zone est vide."""
+    depart = SERVEURS.index(ox.settings.overpass_url) if ox.settings.overpass_url in SERVEURS else 0
+    ordre = [ox.settings.overpass_url] + [s for s in SERVEURS[depart + 1:] + SERVEURS[:depart] if s != ox.settings.overpass_url]
+    for k, url in enumerate(ordre):
+        if k:
+            dire(f'    on passe sur le serveur {url.split("/")[2]}')
+            choisir_serveur(ox, url)
+        for essai in range(essais):
+            try:
+                return ox.features_from_polygon(zone, etiquettes)
+            except Exception as e:  # réponse vide, serveur occupé, délai dépassé, connexion coupée
+                if 'InsufficientResponse' in type(e).__name__ or 'No matching features' in str(e):
+                    return None
+                if essai < essais - 1:
+                    dire(f'    serveur occupé ({raison(e)}), nouvel essai dans 30 s')
+                    time.sleep(30)
+                elif k == len(ordre) - 1:
+                    raise
+                else:
+                    dire(f'    serveur occupé ({raison(e)})')
+
+
+def objets(ox, polygone, etiquettes, tuiles=1):
     """Les objets OSM d'un polygone (en WGS84), tuile par tuile pour les grosses requêtes."""
     import geopandas as gpd
     import pandas as pd
     minx, miny, maxx, maxy = polygone.bounds
     morceaux = []
+    zones = []
     for i in range(tuiles):
         for j in range(tuiles):
             tuile = box(minx + (maxx - minx) * i / tuiles, miny + (maxy - miny) * j / tuiles,
                         minx + (maxx - minx) * (i + 1) / tuiles, miny + (maxy - miny) * (j + 1) / tuiles)
             zone = polygone.intersection(tuile)
-            if zone.is_empty:
-                continue
-            for essai in range(essais):
-                try:
-                    morceaux.append(ox.features_from_polygon(zone, etiquettes))
-                    break
-                except Exception as e:  # réponse vide, serveur occupé, délai dépassé
-                    if 'InsufficientResponse' in type(e).__name__ or 'No matching features' in str(e):
-                        break
-                    if essai == essais - 1:
-                        raise
-                    dire(f'    serveur occupé ({type(e).__name__}), nouvel essai dans 30 s')
-                    time.sleep(30)
+            if not zone.is_empty:
+                zones.append(zone)
+    for k, zone in enumerate(zones, 1):
+        debut = time.time()
+        gdf = demander(ox, zone, etiquettes)
+        if gdf is not None:
+            morceaux.append(gdf)
+        if len(zones) > 1:
+            dire(f'    tuile {k}/{len(zones)} : {0 if gdf is None else len(gdf)} objets en {time.time() - debut:.0f} s')
     if not morceaux:
         return gpd.GeoDataFrame(geometry=[], crs='EPSG:4326')
     tout = pd.concat(morceaux)
@@ -447,22 +492,39 @@ def main():
     a.add_argument('ville', nargs='?', help='« Ville, Pays », par exemple « Nantes, France »')
     a.add_argument('--id', help='identifiant court du fichier (par défaut : tiré du nom)')
     a.add_argument('--nom', help='nom affiché sur le site (par défaut : le premier mot de la requête)')
-    a.add_argument('--exemples', action='store_true', help='prépare Paris, Lyon et Marseille')
+    a.add_argument('--exemples', action='store_true', help='prépare Lyon, Paris et Bouc-Bel-Air')
     a.add_argument('--taille', type=int, default=128, help='côté de la grille, en cases (128 par défaut)')
     a.add_argument('--sans-insee', action='store_true', help='sans les revenus de l’Insee (villes hors de France)')
     a.add_argument('--sortie', type=pathlib.Path, default=SORTIE, help='dossier des fichiers produits')
+    a.add_argument('--contact', help='un e-mail ou l’adresse de votre site, transmis aux serveurs d’OpenStreetMap')
+    a.add_argument('--serveur', help='le serveur Overpass à essayer en premier, par exemple https://overpass.private.coffee/api')
     args = a.parse_args()
 
     villes = list(EXEMPLES) if args.exemples else []
     if args.ville:
         nom = args.nom or args.ville.split(',')[0].strip()
-        villes.append((args.ville, args.id or identifiant(nom), nom))
+        villes.append((args.ville, args.id or identifiant(nom), nom, None))
     if not villes:
         a.print_help()
         sys.exit(1)
-    ox = preparer_osmnx()
-    for requete, id_ville, nom in villes:
-        ecrire(preparer_ville(requete, id_ville, nom, args.taille, not args.sans_insee, ox), args.sortie)
+    ox = preparer_osmnx(args.contact)
+    if args.serveur:
+        url = args.serveur.rstrip('/').removesuffix('/interpreter')
+        if url not in SERVEURS:
+            SERVEURS.insert(0, url)
+        choisir_serveur(ox, url)
+    else:
+        choisir_serveur(ox, SERVEURS[0])
+    ratees = []
+    for requete, id_ville, nom, taille in villes:
+        try:
+            ecrire(preparer_ville(requete, id_ville, nom, taille or args.taille, not args.sans_insee, ox), args.sortie)
+        except Exception as e:  # une ville ratée n'empêche pas les suivantes (Ctrl+C, lui, arrête tout)
+            dire(f'  ÉCHEC pour {nom} : {raison(e)} — relancer la même commande reprendra où elle s’est arrêtée')
+            ratees.append(nom)
+    if ratees:
+        dire(f'\nÀ relancer : {", ".join(ratees)}')
+        sys.exit(1)
 
 
 if __name__ == '__main__':

@@ -52,30 +52,30 @@ Stack existante : Vite 8 · React 19 · three.js 0.185 · R3F 9 · drei 10 · Zu
 
 ## 3. Tes projets
 
-| # | Projet | Onglet | Besoin dominant | Calcul | Données | Diff. | Effort | Borne | Visibilité |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | Fourmi de Langton | Simulations | Interface | 🟢 | — | 1 | S | ✅ | Public |
-| 2 | Jeu de la vie + variantes | Simulations | Interface (GPU pour les grandes grilles) | 🟢 | motifs au format RLE | 2 (Lenia : 4) | S → M | ✅ | Public |
-| 3 | Ségrégation de Schelling multi-facteurs | Simulations | Interface + réglages + courbes | 🟢 (Worker) | — (carte réelle : 🟡) | 3 | M | ⚠️ | Public |
-| 4 | Traceur de lignes de désir | Simulations | Interface | 🟢 | — (traces réelles : 🟡) | 3 | M | ✅ | Public |
-| 5a | Perudo contre des bots | Jeux | Interface + IA des bots | 🟢 | — | 3 | M | ✅ | Public |
-| 5b | Perudo en ligne | Jeux | Serveur temps réel | 🔴 | — | 4 | L | ❌ | 🔒 tant que WIP |
-| 6 | Générateur de fractales | Maths & génératif | Shader GPU | 🟢 | — | 2 (zoom profond : 5) | S → M | ✅ | Public |
-| 7 | Visualiseur musical | Maths & génératif | Web Audio + shaders | 🟢 | fichier ou micro du visiteur | 3 | M | ✅ | Public |
-| 8 | Zone d'animations mathématiques | Maths & génératif | Interface | 🟢 | — | 1–3 | S chacune | ✅ | Public |
-| 9 | Entraînement entretiens finance | Entretiens | Contenu + interface | 🟢 QCM/quiz/code · 🔴 correction IA | ta banque de questions | 3 + contenu | L | ❌ | Public / IA 🔒 |
-| 10 | Pricer d'options + greeks | Finance quant | Calcul + graphes | 🟢 (MC en Worker) | — | 3 | M | ⚠️ | Public |
-| 11 | Backtester de pair trading | Finance quant | Données + calcul | 🟡 + 🟢 | quotidien, 50–200 actions | 4 | L | ❌ | Public (résultats) |
-| 12 | Carnet d'ordres + market making | Finance quant | Simulation + visuel | 🟢 | simulées | 4 | L | ✅ | Public |
-| 13 | Signaux alpha par machine learning | 🔒 Labo | Calcul lourd | 🟡 (entraînement chez toi) | gros historique | 5 | XL | ❌ | 🔒 |
-| 14 | Market Profile / TPO | Finance quant | Visuel | 🟢 rendu · 🟡 données | barres 30 min | 3 | M | ⚠️ | Public |
-| 15 | Détecteur de volatility clustering | Finance quant | Calcul + graphes | 🟡 | quotidien | 3 | M | ❌ | Public |
-| 16 | Carte de saisonnalité intraday | Finance quant | Heatmap | 🟡 | intraday sur plusieurs années | 2 (données : 4) | M | ❌ | Public |
-| 17 | Test de neutralité aux facteurs | Finance quant | Calcul | 🟡 | facteurs Fama-French + rendements | 3 | M | ❌ | Public |
-| 18 | Momentum dépendant du régime | Finance quant | Calcul | 🟡 | quotidien, long historique | 4 | L | ❌ | Public |
-| 19 | Fiches info & recherche | Finance quant | Contenu | 🟢 | — | 1 (le temps est dans l'écriture) | continu | ❌ | Public |
-| 20 | ISS Live Tracker | Données live | Interface | 🟢 | API publique | 1 | S | ✅ | Public |
-| 21 | Lab de trading IA | 🔒 Labo | Tout | 🔴 | fournisseur payant | 5 | XL | ❌ | 🔒 |
+| # | Projet                                      | Onglet | Besoin dominant | Calcul | Données | Diff. | Effort | Borne | Visibilité |
+|---|---------------------------------------------|---|---|---|---|---|---|---|---|
+| 1 | ~~Fourmi de Langton~~                       | Simulations | Interface | 🟢 | — | 1 | S | ✅ | Public |
+| 2 | ~~Jeu de la vie + variantes~~               | Simulations | Interface (GPU pour les grandes grilles) | 🟢 | motifs au format RLE | 2 (Lenia : 4) | S → M | ✅ | Public |
+| 3 | ~~Ségrégation de Schelling multi-facteurs~~ | Simulations | Interface + réglages + courbes | 🟢 (Worker) | — (carte réelle : 🟡) | 3 | M | ⚠️ | Public |
+| 4 | ~~Traceur de lignes de désir~~              | Simulations | Interface | 🟢 | — (traces réelles : 🟡) | 3 | M | ✅ | Public |
+| 5a | Perudo contre des bots                      | Jeux | Interface + IA des bots | 🟢 | — | 3 | M | ✅ | Public |
+| 5b | Perudo en ligne                             | Jeux | Serveur temps réel | 🔴 | — | 4 | L | ❌ | 🔒 tant que WIP |
+| 6 | ~~Générateur de fractales~~                 | Maths & génératif | Shader GPU | 🟢 | — | 2 (zoom profond : 5) | S → M | ✅ | Public |
+| 7 | Visualiseur musical                         | Maths & génératif | Web Audio + shaders | 🟢 | fichier ou micro du visiteur | 3 | M | ✅ | Public |
+| 8 | Zone d'animations mathématiques             | Maths & génératif | Interface | 🟢 | — | 1–3 | S chacune | ✅ | Public |
+| 9 | Entraînement entretiens finance             | Entretiens | Contenu + interface | 🟢 QCM/quiz/code · 🔴 correction IA | ta banque de questions | 3 + contenu | L | ❌ | Public / IA 🔒 |
+| 10 | Pricer d'options + greeks                   | Finance quant | Calcul + graphes | 🟢 (MC en Worker) | — | 3 | M | ⚠️ | Public |
+| 11 | Backtester de pair trading                  | Finance quant | Données + calcul | 🟡 + 🟢 | quotidien, 50–200 actions | 4 | L | ❌ | Public (résultats) |
+| 12 | Carnet d'ordres + market making             | Finance quant | Simulation + visuel | 🟢 | simulées | 4 | L | ✅ | Public |
+| 13 | Signaux alpha par machine learning          | 🔒 Labo | Calcul lourd | 🟡 (entraînement chez toi) | gros historique | 5 | XL | ❌ | 🔒 |
+| 14 | Market Profile / TPO                        | Finance quant | Visuel | 🟢 rendu · 🟡 données | barres 30 min | 3 | M | ⚠️ | Public |
+| 15 | Détecteur de volatility clustering          | Finance quant | Calcul + graphes | 🟡 | quotidien | 3 | M | ❌ | Public |
+| 16 | Carte de saisonnalité intraday              | Finance quant | Heatmap | 🟡 | intraday sur plusieurs années | 2 (données : 4) | M | ❌ | Public |
+| 17 | Test de neutralité aux facteurs             | Finance quant | Calcul | 🟡 | facteurs Fama-French + rendements | 3 | M | ❌ | Public |
+| 18 | Momentum dépendant du régime                | Finance quant | Calcul | 🟡 | quotidien, long historique | 4 | L | ❌ | Public |
+| 19 | Fiches info & recherche                     | Finance quant | Contenu | 🟢 | — | 1 (le temps est dans l'écriture) | continu | ❌ | Public |
+| 20 | ISS Live Tracker                            | Données live | Interface | 🟢 | API publique | 1 | S | ✅ | Public |
+| 21 | Lab de trading IA                           | 🔒 Labo | Tout | 🔴 | fournisseur payant | 5 | XL | ❌ | 🔒 |
 
 **Bilan : sur ces 22 lignes (Perudo compte double), 12 tournent entièrement dans le navigateur, 7 se contentent d'un pré-calcul, et 3 seulement exigent un vrai serveur** (Perudo en ligne, correction IA des entretiens, Lab IA). Tu peux construire presque toute la page sans backend.
 
@@ -136,19 +136,19 @@ Version publique sans IA : corrigé type + grille d'auto-évaluation. Attention 
 
 ### 🧬 Simulations
 
-| Projet | En deux mots | Calcul | Effort | Borne |
-|---|---|---|---|---|
-| ⭐ Boids | Nuées d'oiseaux à partir de trois règles locales | 🟢 | S | ✅ |
+| Projet                          | En deux mots | Calcul | Effort | Borne |
+|---------------------------------|---|---|---|---|
+| ⭐ ~~Boids~~                     | Nuées d'oiseaux à partir de trois règles locales | 🟢 | S | ✅ |
 | ⭐ Foule d'aéroport / évacuation | Modèle de forces sociales ; sorties, goulets, panique. Réutilise les lignes de désir et se branche sur le hall | 🟢 | M | ✅ |
-| Physarum | Moisissure qui dessine des réseaux (Jones, 2010), magnifique sur GPU | 🟢 | M | ✅ |
+| Physarum                        | Moisissure qui dessine des réseaux (Jones, 2010), magnifique sur GPU | 🟢 | M | ✅ |
 | Réaction-diffusion (Gray-Scott) | Motifs de Turing : taches, rayures, labyrinthes | 🟢 | S | ✅ |
-| ⭐ Tas de sable abélien | Criticité auto-organisée : avalanches de toutes tailles, métaphore des krachs | 🟢 | S | ✅ |
-| Modèle d'Ising | Aimantation et transition de phase ; cousin des modèles de comportement moutonnier en finance | 🟢 | S | ✅ |
-| Trafic de Nagel-Schreckenberg | Bouchons fantômes qui naissent de rien | 🟢 | S | ✅ |
-| Feux de forêt / percolation | Seuil critique de propagation | 🟢 | S | ✅ |
-| Proies-prédateurs | Lotka-Volterra en équations et en agents, côte à côte | 🟢 | S → M | ✅ |
-| Marché artificiel multi-agents | Bulles et krachs émergents à la Santa Fe ; cousin de Schelling | 🟢 | L | ✅ |
-| Fluides (Stable Fluids) | Fluide qu'on touille à la souris | 🟢 | M | ✅ |
+| ⭐ Tas de sable abélien          | Criticité auto-organisée : avalanches de toutes tailles, métaphore des krachs | 🟢 | S | ✅ |
+| Modèle d'Ising                  | Aimantation et transition de phase ; cousin des modèles de comportement moutonnier en finance | 🟢 | S | ✅ |
+| Trafic de Nagel-Schreckenberg   | Bouchons fantômes qui naissent de rien | 🟢 | S | ✅ |
+| Feux de forêt / percolation     | Seuil critique de propagation | 🟢 | S | ✅ |
+| Proies-prédateurs               | Lotka-Volterra en équations et en agents, côte à côte | 🟢 | S → M | ✅ |
+| Marché artificiel multi-agents  | Bulles et krachs émergents à la Santa Fe ; cousin de Schelling | 🟢 | L | ✅ |
+| Fluides (Stable Fluids)         | Fluide qu'on touille à la souris | 🟢 | M | ✅ |
 
 ### 🌀 Maths & génératif
 
@@ -447,53 +447,53 @@ Classement arbitraire, pondéré par quatre critères : l'intérêt pour un recr
 
 #### Palier 1 — D'abord (1–15)
 
-| Rang | Projet | Effort | Pourquoi ici |
-|---|---|---|---|
-| 1 | Fourmi de Langton | S | Pose le contrat, la page et la borne avec le projet le plus simple |
-| 2 | Jeu de la vie + variantes | S → M | Réutilise toute la chaîne de Langton |
-| 3 | Générateur de fractales | S → M | Premier shader, effet immédiat |
-| 4 | Pricer d'options + greeks | M | Le projet quant de référence |
-| 5 | Calcul mental chronométré | S | Format des tests de trading, parfait sur la borne |
-| 6 | Casse-têtes de probabilité | S | Montre le raisonnement probabiliste |
-| 7 | Simulateur de trajectoires | S | Complète le pricer, très visuel |
-| 8 | Épicycles de Fourier | S | Interactif et spectaculaire |
-| 9 | Attracteurs étranges | S | Nourrit l'attract mode de la borne |
-| 10 | ISS Live Tracker | S | Premier projet de données, globe 3D |
-| 11 | Boids | S | Base de la future foule d'aéroport |
-| 12 | Planche de Galton | S | Pont vers l'arbre binomial du pricer |
+| Rang | Projet                               | Effort | Pourquoi ici |
+|---|--------------------------------------|---|---|
+| 1 | ~~Fourmi de Langton~~                | S | Pose le contrat, la page et la borne avec le projet le plus simple |
+| 2 | ~~Jeu de la vie + variantes~~        | S → M | Réutilise toute la chaîne de Langton |
+| 3 | ~~Générateur de fractales~~          | S → M | Premier shader, effet immédiat |
+| 4 | Pricer d'options + greeks            | M | Le projet quant de référence |
+| 5 | Calcul mental chronométré            | S | Format des tests de trading, parfait sur la borne |
+| 6 | Casse-têtes de probabilité           | S | Montre le raisonnement probabiliste |
+| 7 | Simulateur de trajectoires           | S | Complète le pricer, très visuel |
+| 8 | Épicycles de Fourier                 | S | Interactif et spectaculaire |
+| 9 | Attracteurs étranges                 | S | Nourrit l'attract mode de la borne |
+| 10 | ISS Live Tracker                     | S | Premier projet de données, globe 3D |
+| 11 | ~~Boids~~                            | S | Base de la future foule d'aéroport |
+| 12 | Planche de Galton                    | S | Pont vers l'arbre binomial du pricer |
 | 13 | Constructeur de stratégies d'options | S | Prolonge le pricer à peu de frais |
-| 14 | Jeu du market maker | M | Relie entretiens, finance et arcade |
-| 15 | Carnet d'ordres + market making | L | La pièce maîtresse en microstructure |
+| 14 | Jeu du market maker                  | M | Relie entretiens, finance et arcade |
+| 15 | Carnet d'ordres + market making      | L | La pièce maîtresse en microstructure |
 
 #### Palier 2 — Le cœur de la vitrine (16–40)
 
-| Rang | Projet | Effort | Pourquoi ici |
-|---|---|---|---|
-| 16 | Perudo contre des bots | M | Ton projet, et un pont vers les probabilités |
-| 17 | Schelling multi-facteurs | M | Pièce signature sur l'émergence |
-| 18 | Lignes de désir | M | Se branche sur l'aéroport |
-| 19 | Entretiens finance (QCM, quiz, code) | L | Contenu long : à commencer tôt, utile pour toi autant que pour la vitrine |
-| 20 | Simulateur de delta-hedging | S → M | La couverture, cœur du métier d'options |
-| 21 | Trading Pit | S → M | Jeu de borne qui parle finance |
-| 22 | Visualiseur musical | M | Spectaculaire, change de registre |
-| 23 | Les pièges du backtest | M | Ce qui distingue un candidat sérieux |
-| 24 | Volatility clustering | M | Premier projet sur données figées |
-| 25 | Neutralité aux facteurs | M | Facteurs gratuits, méthode classique |
-| 26 | Market Profile / TPO | M | Visuel original |
-| 27 | Backtester de pair trading | L | Grand classique des entretiens quant |
-| 28 | Surface de volatilité 3D | M | La vitrine three.js de la finance |
-| 29 | Pricer d'obligations | S | Ouvre le chapitre des taux |
-| 30 | Modèles de taux courts | S → M | Suite logique des obligations |
-| 31 | Sugarscape | M | Inégalités émergentes, très parlant |
-| 32 | Yard-sale model | S | Résultat contre-intuitif en une soirée |
-| 33 | Dilemme du prisonnier spatial | S → M | Beau visuel, théorie des jeux |
-| 34 | Tas de sable abélien | S | Métaphore des krachs |
-| 35 | Modèle de Kyle | S → M | Microstructure jouable sur la borne |
-| 36 | Valorisation DCF + Monte Carlo | S → M | Parle aussi aux profils corporate finance |
-| 37 | Critère de Kelly & ruine | S | Court et marquant |
-| 38 | Foule d'aéroport | M | Réutilise boids et lignes de désir |
+| Rang | Projet                                | Effort | Pourquoi ici |
+|---|---------------------------------------|---|---|
+| 16 | Perudo contre des bots                | M | Ton projet, et un pont vers les probabilités |
+| 17 | ~~Schelling multi-facteurs~~          | M | Pièce signature sur l'émergence |
+| 18 | ~~Lignes de désir~~                   | M | Se branche sur l'aéroport |
+| 19 | Entretiens finance (QCM, quiz, code)  | L | Contenu long : à commencer tôt, utile pour toi autant que pour la vitrine |
+| 20 | Simulateur de delta-hedging           | S → M | La couverture, cœur du métier d'options |
+| 21 | Trading Pit                           | S → M | Jeu de borne qui parle finance |
+| 22 | Visualiseur musical                   | M | Spectaculaire, change de registre |
+| 23 | Les pièges du backtest                | M | Ce qui distingue un candidat sérieux |
+| 24 | Volatility clustering                 | M | Premier projet sur données figées |
+| 25 | Neutralité aux facteurs               | M | Facteurs gratuits, méthode classique |
+| 26 | Market Profile / TPO                  | M | Visuel original |
+| 27 | Backtester de pair trading            | L | Grand classique des entretiens quant |
+| 28 | Surface de volatilité 3D              | M | La vitrine three.js de la finance |
+| 29 | Pricer d'obligations                  | S | Ouvre le chapitre des taux |
+| 30 | Modèles de taux courts                | S → M | Suite logique des obligations |
+| 31 | Sugarscape                            | M | Inégalités émergentes, très parlant |
+| 32 | Yard-sale model                       | S | Résultat contre-intuitif en une soirée |
+| 33 | Dilemme du prisonnier spatial         | S → M | Beau visuel, théorie des jeux |
+| 34 | Tas de sable abélien                  | S | Métaphore des krachs |
+| 35 | Modèle de Kyle                        | S → M | Microstructure jouable sur la borne |
+| 36 | Valorisation DCF + Monte Carlo        | S → M | Parle aussi aux profils corporate finance |
+| 37 | Critère de Kelly & ruine              | S | Court et marquant |
+| 38 | Foule d'aéroport                      | M | Réutilise boids et lignes de désir |
 | 39 | Pathfinding sur le plan de l'aéroport | S | Clin d'œil au jeu |
-| 40 | Carte du marché en réseau | M | Graphe 3D des corrélations |
+| 40 | Carte du marché en réseau             | M | Graphe 3D des corrélations |
 
 #### Palier 3 — Approfondissements (41–75)
 

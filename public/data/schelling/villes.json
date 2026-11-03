@@ -1,0 +1,16 @@
+[
+ {
+  "id": "lyon",
+  "nom": "Lyon",
+  "taille": 128,
+  "cellule": 91.1,
+  "insee": true
+ },
+ {
+  "id": "paris",
+  "nom": "Paris",
+  "taille": 128,
+  "cellule": 146.3,
+  "insee": true
+ }
+]
