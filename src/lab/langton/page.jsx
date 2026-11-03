@@ -5,6 +5,7 @@ import { useTexte } from '../../site/textes'
 import { useTheme } from '../../site/theme'
 import { TEXTES } from './textes'
 import Atelier from './Atelier'
+import '../commun/atelier.css'
 import './langton.css'
 
 // ============================================================

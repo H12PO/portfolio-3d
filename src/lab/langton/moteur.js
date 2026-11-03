@@ -230,16 +230,8 @@ export function mesurerLangton(pasMax = 20000, echantillon = 50) {
 
 /* ---------- Expérience Monte Carlo : feuilles de départ aléatoires ---------- */
 
-// Générateur pseudo-aléatoire reproductible (mulberry32)
-export function generateur(graine) {
-  let a = graine | 0
-  return () => {
-    a = (a + 0x6D2B79F5) | 0
-    let t = Math.imul(a ^ (a >>> 15), 1 | a)
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}
+// Générateur pseudo-aléatoire reproductible, partagé avec les autres projets
+export { generateur } from '../commun/aleatoire.js'
 
 let historique = null
 

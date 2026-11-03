@@ -3,8 +3,10 @@
 //  La grille est peinte pixel par pixel dans un petit canvas hors écran
 //  (1 pixel = 1 case), puis agrandie à l'écran sans lissage.
 //  Deux thèmes (clair, sombre). Effets activables : surligneur,
-//  quadrillage, carte des passages.
+//  quadrillage, carte des passages. Zoom et cadrage : lab/commun/camera.js.
 // ============================================================
+
+import { creerCamera } from '../commun/camera'
 
 const hex = (h) => [1, 3, 5].map((k) => parseInt(h.slice(k, k + 2), 16))
 
@@ -59,7 +61,8 @@ export function creerRendu(canvas, monde) {
   let off, octx, img, px
   let pal = null
   let palPour = ''
-  const cam = { x: m.W / 2, y: m.H / 2, zoom: 20 }
+  const vue = creerCamera(canvas, { largeur: m.W, hauteur: m.H })
+  const { css } = vue
 
   function preparer() {
     off = document.createElement('canvas')
@@ -75,26 +78,6 @@ export function creerRendu(canvas, monde) {
   function vider() {
     px.fill(0)
     octx.putImageData(img, 0, 0)
-  }
-
-  const css = () => canvas.width / (canvas.clientWidth || canvas.width) // pixels écran par pixel CSS
-  const zoomMin = () => Math.min(canvas.width / m.W, canvas.height / m.H) * 0.85
-  const zoomMax = () => 48 * css()
-  const borner = (z) => Math.min(zoomMax(), Math.max(zoomMin(), z))
-
-  // Cadrage auto : garde toute la zone active à l'écran, en douceur
-  function cadrer(douceur = 0.07) {
-    const b = m.boite
-    if (!b) return
-    const marge = 6 + 0.12 * Math.max(b.x1 - b.x0, b.y1 - b.y0)
-    const bw = b.x1 - b.x0 + 1 + 2 * marge
-    const bh = b.y1 - b.y0 + 1 + 2 * marge
-    const z = Math.min(borner(Math.min(canvas.width / bw, canvas.height / bh)), 22 * css())
-    const cx = (b.x0 + b.x1 + 1) / 2
-    const cy = (b.y0 + b.y1 + 1) / 2
-    cam.x += (cx - cam.x) * douceur
-    cam.y += (cy - cam.y) * douceur
-    cam.zoom = Math.exp(Math.log(cam.zoom) + (Math.log(z) - Math.log(cam.zoom)) * douceur)
   }
 
   function peindreGrille(effets, pasParImage, th, nomTheme) {
@@ -136,55 +119,15 @@ export function creerRendu(canvas, monde) {
     octx.putImageData(img, 0, 0, b.x0, b.y0, b.x1 - b.x0 + 1, b.y1 - b.y0 + 1)
   }
 
-  // Quadrillage : traits fins à chaque case quand on zoome, plus marqués toutes les 10 cases
-  function quadriller(ox, oy, z, th) {
-    const zc = z / css()
-    if (zc < 2) return
-    const cw = canvas.width
-    const ch = canvas.height
-    const x0 = Math.max(0, Math.floor(-ox / z))
-    const x1 = Math.min(m.W, Math.ceil((cw - ox) / z))
-    const y0 = Math.max(0, Math.floor(-oy / z))
-    const y1 = Math.min(m.H, Math.ceil((ch - oy) / z))
-    const haut = Math.max(0, oy)
-    const bas = Math.min(ch, oy + m.H * z)
-    const gauche = Math.max(0, ox)
-    const droite = Math.min(cw, ox + m.W * z)
-
-    const tracer = (filtre, alpha) => {
-      ctx.strokeStyle = `rgba(${th.grille}, ${alpha})`
-      ctx.beginPath()
-      for (let x = x0; x <= x1; x++) {
-        if (!filtre(x)) continue
-        const sx = Math.round(ox + x * z) + 0.5
-        ctx.moveTo(sx, haut)
-        ctx.lineTo(sx, bas)
-      }
-      for (let y = y0; y <= y1; y++) {
-        if (!filtre(y)) continue
-        const sy = Math.round(oy + y * z) + 0.5
-        ctx.moveTo(gauche, sy)
-        ctx.lineTo(droite, sy)
-      }
-      ctx.stroke()
-    }
-
-    ctx.lineWidth = 1
-    if (zc >= 5) tracer((k) => k % 10 !== 0, Math.min(1, (zc - 5) / 8) * 0.6)
-    tracer((k) => k % 10 === 0, Math.min(1, (zc - 2) / 4))
-  }
-
   function dessiner({ effets, pasParImage = 1, auto = true, marques = [], theme = 'clair' }) {
     const th = THEMES[theme]
-    if (auto) cadrer()
+    if (auto) vue.cadrer(m.boite)
     peindreGrille(effets, pasParImage, th, theme)
 
     const e = css()
     const cw = canvas.width
     const ch = canvas.height
-    const z = cam.zoom
-    const ox = cw / 2 - cam.x * z
-    const oy = ch / 2 - cam.y * z
+    const { ox, oy, z } = vue.origine()
 
     ctx.setTransform(1, 0, 0, 1, 0, 0)
     ctx.globalAlpha = 1
@@ -193,7 +136,7 @@ export function creerRendu(canvas, monde) {
     ctx.fillStyle = th.feuille
     ctx.fillRect(ox, oy, m.W * z, m.H * z)
 
-    if (effets.quadrillage) quadriller(ox, oy, z, th)
+    if (effets.quadrillage) vue.quadriller(ctx, th.grille)
 
     ctx.imageSmoothingEnabled = false
     ctx.drawImage(off, ox, oy, m.W * z, m.H * z)
@@ -236,37 +179,10 @@ export function creerRendu(canvas, monde) {
     }
   }
 
-  // Coordonnées canvas (pixels) → case
-  function versCase(sx, sy) {
-    const z = cam.zoom
-    return {
-      x: Math.floor((sx - canvas.width / 2) / z + cam.x),
-      y: Math.floor((sy - canvas.height / 2) / z + cam.y),
-    }
-  }
-
-  // Zoom autour d'un point de l'écran (la case sous le curseur ne bouge pas)
-  function zoomer(facteur, sx = canvas.width / 2, sy = canvas.height / 2) {
-    const z0 = cam.zoom
-    const z1 = borner(z0 * facteur)
-    const wx = (sx - canvas.width / 2) / z0 + cam.x
-    const wy = (sy - canvas.height / 2) / z0 + cam.y
-    cam.zoom = z1
-    cam.x = wx - (sx - canvas.width / 2) / z1
-    cam.y = wy - (sy - canvas.height / 2) / z1
-  }
-
-  function deplacer(dx, dy) {
-    cam.x -= dx / cam.zoom
-    cam.y -= dy / cam.zoom
-  }
-
-  function recentrer() {
-    for (let k = 0; k < 200; k++) cadrer(0.2)
-  }
+  const recentrer = () => vue.recentrer(m.boite)
 
   preparer()
   recentrer()
 
-  return { dessiner, vider, versCase, zoomer, deplacer, recentrer, camera: cam }
+  return { dessiner, vider, versCase: vue.versCase, zoomer: vue.zoomer, deplacer: vue.deplacer, recentrer, camera: vue.camera }
 }

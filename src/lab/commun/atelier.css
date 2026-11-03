@@ -1,0 +1,281 @@
+/* ============================================================
+   ATELIER COMMUN : l'onglet Simulation des projets du labo
+   Outils, cadre du canvas, barre de lecture, curseur à crans,
+   visite guidée, inspecteur repliable. Couleurs : jetons de site.css.
+   ============================================================ */
+
+/* ---------- Atelier ---------- */
+
+.atelier { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.atelier[hidden] { display: none; }
+
+.atelier-corps {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-rows: minmax(0, 1fr);
+}
+.atelier-corps[data-replie="true"] { grid-template-columns: minmax(0, 1fr); }
+
+.plan { display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 12px 12px 0 16px; }
+
+.plan-outils {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 10px;
+}
+.plan-outils-droite { display: flex; gap: 8px; }
+
+/* Groupe de choix (outils, vue, type de règle) */
+.groupe {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--trait);
+  border-radius: 7px;
+  background: var(--surface);
+}
+.groupe button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 5px 11px;
+  border: 0;
+  border-radius: 5px;
+  background: none;
+  color: var(--discret);
+}
+.groupe button:hover { color: var(--texte); }
+.groupe button[aria-pressed="true"] { background: var(--survol); color: var(--texte); font-weight: 500; }
+.groupe svg { opacity: .8; }
+.groupe--plein { display: flex; margin-bottom: 12px; }
+.groupe--plein button { flex: 1; }
+
+.cadre {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--trait);
+  border-radius: 8px;
+}
+.cadre-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  cursor: crosshair;
+}
+.cadre-canvas[data-outil="main"] { cursor: grab; }
+.cadre-canvas[data-outil="main"]:active { cursor: grabbing; }
+
+/* Barre de lecture, sous la feuille */
+.transport {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 24px;
+  min-height: 62px;
+  padding: 12px 0;
+}
+.transport-boutons { display: flex; flex-wrap: wrap; gap: 8px; }
+.transport-boutons .btn-principal { min-width: 112px; justify-content: center; }
+
+/* Curseur à crans */
+.crans-libelle { display: flex; align-items: center; gap: 12px; color: var(--discret); }
+.crans { position: relative; width: 200px; height: 24px; }
+.crans::before,
+.crans::after {
+  content: '';
+  position: absolute;
+  top: 11px;
+  left: 5px;
+  height: 2px;
+  border-radius: 1px;
+}
+.crans::before { right: 5px; background: var(--trait); }
+.crans::after { width: calc(var(--plein) - 5px); background: var(--texte); }
+.crans i {
+  position: absolute;
+  top: 7px;
+  width: 1px;
+  height: 10px;
+  margin-left: -.5px;
+  background: var(--discret);
+  opacity: .45;
+}
+.crans input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+.crans input::-webkit-slider-runnable-track { height: 24px; background: transparent; }
+.crans input::-moz-range-track { height: 24px; background: transparent; }
+.crans input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 18px;
+  margin-top: 3px;
+  border: 2px solid var(--texte);
+  border-radius: 3px;
+  background: var(--surface);
+}
+.crans input::-moz-range-thumb {
+  width: 10px;
+  height: 18px;
+  box-sizing: border-box;
+  border: 2px solid var(--texte);
+  border-radius: 3px;
+  background: var(--surface);
+}
+.crans input:focus-visible { outline: none; }
+.crans:has(input:focus-visible) { outline: 2px solid var(--sig); outline-offset: 3px; border-radius: 3px; }
+.crans-libelle output { min-width: 128px; color: var(--texte); font: 500 13px var(--mono); }
+
+/* Note de la visite guidée, à la place des commandes de lecture */
+.visite {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 32px;
+}
+.visite-etape { margin: 0; color: var(--discret); font-size: 13px; }
+.visite h2 { margin: 2px 0 0; font-size: 17px; font-weight: 600; }
+.visite-texte { margin: 4px 0 0; max-width: 70ch; }
+.visite-actions { grid-column: 2; grid-row: 1 / span 3; align-self: center; display: flex; gap: 8px; }
+
+/* ---------- Inspecteur ---------- */
+
+.inspecteur {
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--surface);
+  border-left: 1px solid var(--trait);
+}
+.insp-tete {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 10px 9px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--trait);
+  font-weight: 500;
+}
+.insp-tete button {
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 5px;
+  background: none;
+  color: var(--discret);
+  font-size: 16px;
+}
+.insp-tete button:hover { background: var(--survol); color: var(--texte); }
+
+.bloc { padding: 12px 14px 14px; border-bottom: 1px solid var(--trait); }
+.bloc h3 { display: flex; justify-content: space-between; margin: 0 0 10px; font-size: 13px; font-weight: 600; }
+.bloc h3 span { color: var(--discret); font-weight: 400; }
+
+.ligne { display: grid; grid-template-columns: 84px minmax(0, 1fr); align-items: center; gap: 8px; margin-bottom: 8px; }
+.ligne label { color: var(--discret); }
+
+.inspecteur select,
+.saisie input {
+  width: 100%;
+  min-width: 0;
+  padding: 5px 9px;
+  border: 1px solid var(--trait);
+  border-radius: 6px;
+  background-color: var(--champ);
+  color: var(--texte);
+  font: inherit;
+}
+.inspecteur select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 26px;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 13px) 52%, calc(100% - 9px) 52%;
+  background-size: 4px 4px;
+  background-repeat: no-repeat;
+}
+.saisie { display: flex; gap: 6px; }
+.saisie input { font: 500 13px var(--mono); letter-spacing: .1em; }
+.saisie input[aria-invalid="true"] { border-color: #C2413B; }
+.saisie .btn { padding: 4px 10px; }
+
+.aide { margin: 0 0 10px; color: var(--discret); font-size: 12.5px; }
+.aide--erreur { color: #C2413B; }
+.site[data-theme="sombre"] .aide--erreur { color: #F0857F; }
+
+/* Cases à cocher et boutons radio dessinés */
+.option { display: flex; align-items: center; gap: 9px; padding: 4px 0; cursor: pointer; }
+.option input {
+  flex: none;
+  display: grid;
+  place-content: center;
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  border: 1.5px solid var(--discret);
+  border-radius: 3px;
+  background: var(--surface);
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+.option input[type="radio"] { border-radius: 50%; }
+.option input:checked { border-color: var(--texte); }
+.option input[type="checkbox"]:checked { background: var(--texte); }
+.option input[type="checkbox"]:checked::before {
+  content: '';
+  width: 7px;
+  height: 4px;
+  border: 2px solid var(--surface);
+  border-top: 0;
+  border-right: 0;
+  transform: translate(0, -1px) rotate(-45deg);
+}
+.option input[type="radio"]:checked::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--texte);
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 860px) {
+  .projet { overflow-y: auto; }
+  .atelier { flex: none; }
+  .atelier-corps,
+  .atelier-corps[data-replie="true"] { display: block; }
+  .plan { padding: 10px 12px 0; }
+  .cadre { flex: none; height: 56vh; min-height: 300px; }
+  .inspecteur { border-left: 0; border-top: 1px solid var(--trait); }
+  .insp-tete { position: static; }
+  .visite { grid-template-columns: minmax(0, 1fr); }
+  .visite-actions { grid-column: 1; grid-row: auto; margin-top: 10px; justify-content: flex-end; }
+  .crans { width: 150px; }
+  .crans-libelle output { min-width: 0; }
+  .plan-outils .groupe button { padding: 5px 8px; }
+  .groupe svg { display: none; }
+}

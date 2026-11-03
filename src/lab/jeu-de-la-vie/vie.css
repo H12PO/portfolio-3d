@@ -1,0 +1,219 @@
+/* ============================================================
+   PAGE « JEU DE LA VIE » : ce qui lui est propre
+   Le reste vient de lab/commun/atelier.css et lab/commun/lecture.css.
+   ============================================================ */
+
+/* Cases à cocher des voisines : naissance et survie, de 0 à 8 */
+.voisines { display: grid; gap: 6px; margin: 4px 0 12px; }
+.voisines-ligne { display: grid; grid-template-columns: 84px minmax(0, 1fr); align-items: center; gap: 8px; }
+.voisines-ligne > span { color: var(--discret); }
+.voisines-cases { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 3px; }
+.voisines-cases button {
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--trait);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--discret);
+  font: 500 12px var(--mono);
+}
+.voisines-cases button:hover:not(:disabled) { color: var(--texte); border-color: var(--discret); }
+.voisines-cases button[aria-pressed="true"] { background: var(--sig); border-color: var(--sig); color: var(--sur-sig); }
+.voisines-cases button:disabled { opacity: .35; cursor: default; }
+
+.ligne--large { grid-template-columns: minmax(0, 1fr); }
+.boutons-ligne { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; }
+.boutons-ligne .btn { padding: 4px 10px; }
+.boutons-ligne .btn-icone { padding: 4px 8px; }
+
+/* Densité de la soupe */
+.curseur { display: flex; align-items: center; gap: 10px; }
+.curseur input { flex: 1; min-width: 0; accent-color: var(--sig); }
+.curseur output { min-width: 40px; text-align: right; font: 500 12.5px var(--mono); }
+
+/* Import / export RLE */
+.rle { margin-top: 4px; }
+.rle summary { color: var(--discret); cursor: pointer; padding: 4px 0; }
+.rle summary:hover { color: var(--texte); }
+.rle form { display: grid; gap: 6px; margin-top: 6px; }
+.rle .aide { margin: 0; }
+.rle textarea {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  resize: vertical;
+  padding: 6px 8px;
+  border: 1px solid var(--trait);
+  border-radius: 6px;
+  background: var(--champ);
+  color: var(--texte);
+  font: 12px/1.45 var(--mono);
+}
+
+.analyse { margin: 0; font-size: 13.5px; }
+
+/* Légende des états des règles Generations */
+.legende-etats { list-style: none; display: grid; gap: 5px; margin: 2px 0 0; padding: 0; color: var(--discret); font-size: 13px; }
+.legende-etats li { display: flex; align-items: center; gap: 8px; }
+.pastille { width: 12px; height: 12px; box-shadow: inset 0 0 0 1px var(--trait); }
+
+/* Courbe de population dans la barre d'état */
+.etat .etat-courbe { margin-right: 8px; }
+.etat-courbe polyline { fill: none; stroke: var(--sig); stroke-width: 1.4; stroke-linejoin: round; }
+
+/* Figure « quatre destins » (onglet Comprendre) */
+.destins { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 22px 0; }
+.destins figure { margin: 0; }
+.destins canvas { display: block; width: 100%; aspect-ratio: 1; border: 1px solid var(--trait); border-radius: 6px; }
+.destins figcaption { margin-top: 6px; font: 500 14px var(--sans); }
+.destins figcaption span { display: block; color: var(--discret); font-weight: 400; font-size: 13px; }
+
+@media (max-width: 860px) {
+  .destins { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ---------- Figures de l'onglet Théorie ---------- */
+
+/* Une case et ses huit voisines, à cliquer */
+.voisinage { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; width: 186px; height: 186px; }
+.voisinage button {
+  border: 1px solid var(--trait);
+  border-radius: 4px;
+  background: var(--surface);
+}
+.voisinage button:hover { border-color: var(--discret); }
+.voisinage button[aria-pressed="true"] { background: var(--texte); border-color: var(--texte); }
+.voisinage .voisinage-centre { box-shadow: 0 0 0 2px var(--fond), 0 0 0 4px var(--sig); }
+.figure .voisinage-verdict { color: var(--texte); font-weight: 500; }
+
+/* Les cinq phases du planeur */
+.planeur-phases { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-bottom: 10px; }
+.planeur-phases svg { display: block; width: 100%; height: auto; border: 1px solid var(--trait); border-radius: 4px; }
+.planeur-phases span { display: block; margin-top: 4px; color: var(--discret); font: 12.5px var(--mono); text-align: center; }
+.mini-feuille { fill: var(--surface); }
+.mini-grille { stroke: var(--trait); stroke-width: 1; }
+.mini-cellule { fill: var(--texte); }
+.mini-depart { fill: none; stroke: var(--sig); stroke-width: 1.5; stroke-dasharray: 3 3; }
+
+/* Canon de Gosper : un canvas large */
+.figure-vaste { display: block; width: min(100%, 520px); aspect-ratio: 4 / 3; border: 1px solid var(--trait); border-radius: 6px; }
+.saut .figure-vaste { width: 100%; }
+.figure--large > figcaption { margin-top: 8px; }
+
+/* Jumeaux : deux grilles côte à côte */
+.jumeaux { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 460px; margin-bottom: 10px; }
+.jumeaux canvas { display: block; width: 100%; aspect-ratio: 1; border: 1px solid var(--trait); border-radius: 6px; }
+.jumeaux span { display: block; margin-top: 6px; color: var(--discret); font-size: 13px; }
+
+.figure-actions--sous { align-items: center; margin: -10px 0 24px; }
+.article .aide-figure { margin: 0; color: var(--discret); font: 13px/1.5 var(--sans); }
+
+@media (max-width: 860px) {
+  .planeur-phases { gap: 6px; }
+  .voisinage { width: 156px; height: 156px; }
+}
+
+/* Sauter dans le temps (Hashlife) */
+.saut-commandes { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 18px; margin-bottom: 12px; }
+.saut-commandes label { display: grid; gap: 4px; color: var(--discret); font-size: 13px; }
+.saut-commandes select {
+  padding: 5px 9px;
+  border: 1px solid var(--trait);
+  border-radius: 6px;
+  background: var(--champ);
+  color: var(--texte);
+  font: 14px var(--sans);
+}
+.saut-curseur { flex: 1; min-width: 220px; }
+.saut-curseur input { width: 100%; accent-color: var(--sig); }
+.saut-curseur output { color: var(--texte); font: 500 13px var(--mono); }
+.saut-vue { aspect-ratio: 2 / 1; }
+.saut-vue[data-vide="true"] { background-image: repeating-linear-gradient(135deg, transparent 0 9px, var(--trait) 9px 10px); }
+
+/* Paramètre λ : barres cliquables et soupe en action */
+.lambda-corps { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.lambda-barres { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.lambda-barres button {
+  display: grid;
+  grid-template-columns: minmax(0, 130px) minmax(0, 1fr) 96px;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: none;
+  color: var(--texte);
+  font: 13.5px var(--sans);
+  text-align: left;
+  cursor: pointer;
+}
+.lambda-barres button:hover { border-color: var(--trait); }
+.lambda-barres button[aria-pressed="true"] { border-color: var(--sig); background: var(--sig-doux); }
+.lambda-nom { display: grid; min-width: 0; }
+.lambda-nom code { color: var(--discret); font: 11.5px var(--mono); }
+.lambda-barre { position: relative; height: 10px; border-left: 1px solid var(--discret); }
+.lambda-barre span { position: absolute; inset: 1px auto 1px 0; border-radius: 0 4px 4px 0; background: var(--discret); }
+.lambda-barres button[aria-pressed="true"] .lambda-barre span { background: var(--sig); }
+.lambda-valeur { color: var(--discret); font: 12px var(--mono); text-align: right; white-space: nowrap; }
+.lambda-vue .figure-vaste { width: 100%; }
+.lambda-vue .figure-etat { margin-top: 6px; }
+.article .lambda-legende { margin-top: 10px; }
+
+/* Réplicateurs : deux grilles côte à côte, plus larges que les jumeaux */
+.jumeaux.replicateurs { max-width: 560px; }
+
+@media (max-width: 860px) {
+  .lambda-corps { grid-template-columns: minmax(0, 1fr); }
+  .lambda-barres button { grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr) 86px; }
+}
+
+/* ---------- Figures de l'onglet Calcul ---------- */
+
+/* Porte NON : la grille, puis les bits d'entrée et de sortie */
+.figure-vaste.porte-vue { width: 100%; }
+.porte-bits { display: grid; gap: 6px; margin: 12px 0 10px; }
+.porte-ligne { display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: center; gap: 10px; }
+.porte-ligne > span { color: var(--discret); font-size: 13px; }
+.porte-cases { display: grid; grid-template-columns: repeat(8, minmax(0, 38px)); gap: 4px; }
+.porte-cases button,
+.porte-cases output {
+  display: grid;
+  place-items: center;
+  height: 30px;
+  border: 1px solid var(--trait);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--texte);
+  font: 500 13px var(--mono);
+}
+.porte-cases button { padding: 0; color: var(--discret); cursor: pointer; }
+.porte-cases button:hover { border-color: var(--discret); }
+.porte-cases button[aria-pressed="true"] { background: var(--texte); border-color: var(--texte); color: var(--fond); }
+.porte-cases output[data-attente="true"] { color: var(--discret); }
+.porte-cases output[data-lu="true"] { box-shadow: 0 0 0 2px var(--sig); }
+
+/* Machine à deux compteurs */
+.minsky .saut-commandes { align-items: flex-end; }
+.minsky-depart { display: grid; gap: 4px; color: var(--discret); font-size: 13px; }
+.minsky-depart > div { display: flex; align-items: center; gap: 6px; }
+.minsky-depart .btn { padding: 4px 10px; }
+.minsky-depart output { min-width: 52px; color: var(--texte); font: 500 13px var(--mono); text-align: center; }
+.minsky-corps { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 250px); gap: 16px 24px; align-items: start; margin-bottom: 12px; }
+.minsky-registres { display: grid; gap: 12px; }
+.minsky-registre { display: grid; grid-template-columns: 18px minmax(0, 1fr) 28px; align-items: center; gap: 10px; font: 500 13px var(--mono); }
+.minsky-registre output { text-align: right; }
+.minsky-rail { display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); gap: 3px; }
+.minsky-rail span { aspect-ratio: 1; border: 1px dashed var(--trait); border-radius: 3px; background: var(--surface); }
+.minsky-rail span:first-child { border-style: solid; border-color: var(--discret); }
+.minsky-rail span[data-bloc="true"] { border: 1px solid var(--texte); background: var(--texte); }
+.figure .minsky-action { min-height: 40px; margin: 0; font: 13px/1.5 var(--sans); }
+.minsky-code { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; font: 13px/1.4 var(--mono); }
+.minsky-code li { padding: 5px 8px; border: 1px solid transparent; border-radius: 4px; color: var(--discret); }
+.minsky-code li[aria-current="true"] { border-color: var(--sig); background: var(--sig-doux); color: var(--texte); }
+.minsky-code b { margin-right: 8px; color: var(--texte); font-weight: 500; }
+
+@media (max-width: 860px) {
+  .minsky-corps { grid-template-columns: minmax(0, 1fr); }
+  .porte-ligne { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+}

@@ -1,19 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { creerMonde, avancer, reculer, regleLettres, essaiAutoroute, generateur } from './moteur'
 import { THEMES } from './rendu'
+import { preparer, useLargeur } from '../commun/graphes'
 
 // ============================================================
 //  FIGURES DE L'ONGLET THÉORIE
 //  Toutes tournent sur le vrai moteur, dans le navigateur.
 // ============================================================
-
-// Prépare un canvas à la taille de son affichage (écran haute densité compris)
-function preparer(canvas) {
-  const e = Math.min(window.devicePixelRatio || 1, 2)
-  canvas.width = Math.max(1, Math.round(canvas.clientWidth * e))
-  canvas.height = Math.max(1, Math.round(canvas.clientHeight * e))
-  return { ctx: canvas.getContext('2d'), e }
-}
 
 function dessinerFourmi(ctx, f, x, y, z, th, e) {
   const a = (f.dir * Math.PI) / 2
@@ -182,20 +175,6 @@ export function FigureRetour({ txt, theme, fmt }) {
       </figcaption>
     </figure>
   )
-}
-
-/* ---------- Largeur réelle d'un graphique ---------- */
-
-// Le viewBox suit la largeur affichée : 1 unité = 1 pixel, donc des libellés lisibles sur mobile
-function useLargeur(defaut) {
-  const ref = useRef(null)
-  const [largeur, setLargeur] = useState(defaut)
-  useEffect(() => {
-    const obs = new ResizeObserver(([e]) => setLargeur(Math.max(280, Math.round(e.contentRect.width))))
-    obs.observe(ref.current)
-    return () => obs.disconnect()
-  }, [])
-  return [ref, largeur]
 }
 
 /* ---------- Courbe : distance au départ en fonction du nombre de pas ---------- */

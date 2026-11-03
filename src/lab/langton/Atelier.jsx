@@ -1,5 +1,7 @@
 import { useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import BarreEtat from '../BarreEtat'
+import Crans, { IconeLecture, IconePause } from '../commun/Crans'
+import { useGestes, useClavier } from '../commun/gestes'
 import {
   creerMonde, avancer, regleLettres, regleTurmite, lettresValides, changerRegle,
   reinitialiser, toutEffacer, ajouterFourmi, poserMur, gommer,
@@ -41,21 +43,6 @@ const ICONES = {
   gomme: <rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.4" strokeDasharray="2 2" />,
 }
 const Icone = ({ nom }) => <svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true">{ICONES[nom]}</svg>
-
-// Curseur à crans : un vrai <input type="range">, habillé (rail, crans, poignée)
-function Crans({ valeur, max, onChange, libelle, texte }) {
-  const pos = (k) => `calc(5px + ${k / max} * (100% - 10px))`
-  return (
-    <label className="crans-libelle">
-      <span>{libelle}</span>
-      <span className="crans" style={{ '--plein': pos(valeur) }}>
-        {Array.from({ length: max + 1 }, (_, k) => <i key={k} style={{ left: pos(k) }} />)}
-        <input type="range" min="0" max={max} step="1" value={valeur} onChange={(e) => onChange(Number(e.target.value))} />
-      </span>
-      <output>{texte}</output>
-    </label>
-  )
-}
 
 export default function Atelier({ ref, visible, theme, T }) {
   const canvasRef = useRef(null)
@@ -144,20 +131,9 @@ export default function Atelier({ ref, visible, theme, T }) {
     const ro = new ResizeObserver(dimensionner)
     ro.observe(canvas)
 
-    // Molette : zoom autour du curseur (écouteur non passif pour bloquer le défilement)
-    const molette = (e) => {
-      e.preventDefault()
-      const r = canvas.getBoundingClientRect()
-      rendu.zoomer(Math.exp(-e.deltaY * 0.0015), (e.clientX - r.left) * echelle, (e.clientY - r.top) * echelle)
-      opts.current.auto = false
-      setAuto(false)
-    }
-    canvas.addEventListener('wheel', molette, { passive: false })
-
     return () => {
       cancelAnimationFrame(raf)
       ro.disconnect()
-      canvas.removeEventListener('wheel', molette)
     }
   }, [])
 
@@ -253,99 +229,33 @@ export default function Atelier({ ref, visible, theme, T }) {
   useImperativeHandle(ref, () => ({ lancerVisite }))
 
   /* ---------- Clavier : espace = lancer / pause, flèche droite = un pas ---------- */
-  useEffect(() => {
-    const touche = (e) => {
-      if (!opts.current.visible) return
-      if (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'SUMMARY'].includes(e.target.tagName)) return
-      if (e.code === 'Space') {
-        e.preventDefault()
-        const p = !opts.current.pause
-        opts.current.pause = p
-        setPause(p)
-      } else if (e.code === 'ArrowRight') {
-        e.preventDefault()
-        opts.current.pause = true
-        setPause(true)
-        avancer(sim.current.monde, 1)
-      }
-    }
-    window.addEventListener('keydown', touche)
-    return () => window.removeEventListener('keydown', touche)
-  }, [])
+  useClavier({
+    actif: visible,
+    touches: {
+      Space: () => (opts.current.pause ? lancer() : arreter()),
+      ArrowRight: pasAPas,
+    },
+  })
 
   /* ---------- Souris et doigts ---------- */
-  const pointeurs = useRef(new Map())
-  const derniereCase = useRef(null)
-
-  const versCanvas = (e) => {
-    const r = canvasRef.current.getBoundingClientRect()
-    const s = sim.current.echelle
-    return { x: (e.clientX - r.left) * s, y: (e.clientY - r.top) * s }
-  }
-
-  // Murs et gomme : on relie les cases entre deux événements pour ne pas laisser de trous
-  const tracer = (p) => {
-    const { monde, rendu } = sim.current
-    const c = rendu.versCase(p.x, p.y)
-    const depart = derniereCase.current ?? c
-    const n = Math.max(Math.abs(c.x - depart.x), Math.abs(c.y - depart.y), 1)
-    for (let k = 0; k <= n; k++) {
-      const x = Math.round(depart.x + ((c.x - depart.x) * k) / n)
-      const y = Math.round(depart.y + ((c.y - depart.y) * k) / n)
-      if (outil === 'mur') poserMur(monde, x, y)
-      else gommer(monde, x, y)
-    }
-    derniereCase.current = c
-  }
-
   const camManuelle = () => {
     opts.current.auto = false
     setAuto(false)
   }
 
-  const surAppui = (e) => {
-    e.currentTarget.setPointerCapture(e.pointerId)
-    const p = versCanvas(e)
-    pointeurs.current.set(e.pointerId, p)
-    if (pointeurs.current.size > 1) return
-    derniereCase.current = null
-    if (outil === 'fourmi') {
-      const c = sim.current.rendu.versCase(p.x, p.y)
+  const gestes = useGestes(canvasRef, {
+    vue: () => sim.current?.rendu ?? null,
+    echelle: () => sim.current.echelle,
+    outil,
+    outilsTrace: ['mur', 'gomme'],
+    onTrace: (c) => (outil === 'mur' ? poserMur : gommer)(sim.current.monde, c.x, c.y),
+    onAppui: (c) => {
+      if (outil !== 'fourmi') return
       ajouterFourmi(sim.current.monde, c.x, c.y)
       setStats((s) => ({ ...s, fourmis: sim.current.monde.fourmis.length }))
-    } else if (outil === 'mur' || outil === 'gomme') {
-      tracer(p)
-    }
-  }
-
-  const surMouvement = (e) => {
-    const avant = pointeurs.current.get(e.pointerId)
-    if (!avant) return
-    const p = versCanvas(e)
-    const { rendu } = sim.current
-
-    if (pointeurs.current.size === 2) {
-      // Pincement : zoom + déplacement autour du milieu des deux doigts
-      const [a, b] = [...pointeurs.current.values()]
-      const autre = a === avant ? b : a
-      const d0 = Math.hypot(avant.x - autre.x, avant.y - autre.y)
-      const d1 = Math.hypot(p.x - autre.x, p.y - autre.y)
-      if (d0 > 0) rendu.zoomer(d1 / d0, (p.x + autre.x) / 2, (p.y + autre.y) / 2)
-      rendu.deplacer((p.x - avant.x) / 2, (p.y - avant.y) / 2)
-      camManuelle()
-    } else if (outil === 'main') {
-      rendu.deplacer(p.x - avant.x, p.y - avant.y)
-      camManuelle()
-    } else if (outil === 'mur' || outil === 'gomme') {
-      tracer(p)
-    }
-    pointeurs.current.set(e.pointerId, p)
-  }
-
-  const surRelache = (e) => {
-    pointeurs.current.delete(e.pointerId)
-    derniereCase.current = null
-  }
+    },
+    onCamManuelle: camManuelle,
+  })
 
   /* ---------- Affichage ---------- */
   const regleActive = useMemo(() => construireRegle(regle), [regle])
@@ -384,15 +294,7 @@ export default function Atelier({ ref, visible, theme, T }) {
           </div>
 
           <div className="cadre">
-            <canvas
-              ref={canvasRef}
-              className="cadre-canvas"
-              data-outil={outil}
-              onPointerDown={surAppui}
-              onPointerMove={surMouvement}
-              onPointerUp={surRelache}
-              onPointerCancel={surRelache}
-            />
+            <canvas ref={canvasRef} className="cadre-canvas" data-outil={outil} {...gestes} />
           </div>
 
           <div className="transport">
@@ -566,10 +468,3 @@ export default function Atelier({ ref, visible, theme, T }) {
     </div>
   )
 }
-
-const IconeLecture = () => (
-  <svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor" /></svg>
-)
-const IconePause = () => (
-  <svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><path d="M4 2.5h3v11H4zM9 2.5h3v11H9z" fill="currentColor" /></svg>
-)

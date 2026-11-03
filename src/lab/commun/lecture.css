@@ -1,0 +1,198 @@
+/* ============================================================
+   LECTURE COMMUNE : les onglets d'articles des projets du labo
+   Article et sommaire, démonstrations, encadrés experts, équations
+   KaTeX, figures et graphiques, frise, références.
+   ============================================================ */
+
+.lecture { flex: 1; min-height: 0; overflow-y: auto; }
+.lecture-grille {
+  display: grid;
+  grid-template-columns: minmax(0, 700px) 210px;
+  justify-content: center;
+  gap: 56px;
+  padding: 36px 24px 96px;
+}
+
+.article h2 { margin: 0 0 14px; font: 600 26px/1.25 var(--serif); }
+.article section { scroll-margin-top: 24px; }
+.article section + section { margin-top: 44px; }
+.article p,
+.article li { font: 17px/1.62 var(--serif); }
+.article p { margin: 0 0 14px; }
+.article ul { margin: 0 0 14px; padding-left: 22px; }
+.article li { margin-bottom: 6px; }
+
+.sommaire { position: sticky; top: 28px; align-self: start; font-size: 13px; }
+.sommaire p { margin: 0 0 8px; font-weight: 500; }
+.sommaire a {
+  display: block;
+  padding: 3px 0 3px 11px;
+  border-left: 1px solid var(--trait);
+  color: var(--discret);
+  text-decoration: none;
+}
+.sommaire a:hover { color: var(--texte); }
+.sommaire a[aria-current="true"] { padding-left: 10px; border-left: 2px solid var(--sig); color: var(--texte); }
+
+.preuve { margin: 20px 0; border: 1px solid var(--trait); border-radius: 8px; background: var(--surface); }
+.preuve summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 14px;
+  font-weight: 500;
+  cursor: pointer;
+  list-style: none;
+}
+.preuve summary::-webkit-details-marker { display: none; }
+.preuve summary span:first-child::before { content: '+'; display: inline-block; width: 18px; color: var(--discret); }
+.preuve[open] summary span:first-child::before { content: '−'; }
+.preuve[open] summary { border-bottom: 1px solid var(--trait); }
+.preuve-source { color: var(--discret); font-weight: 400; }
+.preuve-corps { padding: 10px 18px 2px; }
+.preuve-corps p { font-size: 16px; }
+
+.figure { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 18px; align-items: start; margin: 26px 0; }
+.figure--large { display: block; }
+.figure-canvas {
+  display: block;
+  width: 260px;
+  height: 260px;
+  border: 1px solid var(--trait);
+  border-radius: 6px;
+}
+.figure figcaption p { margin: 0 0 8px; font: 14px/1.55 var(--sans); color: var(--discret); }
+.figure .figure-etat { display: flex; flex-wrap: wrap; gap: 4px 14px; min-height: 22px; color: var(--texte); font: 13px var(--mono); }
+.figure-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.figure-titre { margin-bottom: 8px; font-weight: 500; }
+
+/* Courbe */
+.courbe { position: relative; }
+.courbe svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: none; }
+.courbe-grille { stroke: var(--trait); stroke-width: 1; }
+.courbe-texte { fill: var(--discret); font: 11px var(--sans); }
+.courbe-texte--fort { fill: var(--texte); }
+.courbe-repere { stroke: var(--discret); stroke-width: 1; stroke-dasharray: 3 4; }
+.courbe-ligne { fill: none; stroke: var(--sig); stroke-width: 2; stroke-linejoin: round; }
+.courbe-viseur { stroke: var(--discret); stroke-width: 1; }
+.courbe-point { fill: var(--sig); stroke: var(--surface); stroke-width: 2; }
+.courbe-info {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 12px));
+  padding: 4px 8px;
+  border: 1px solid var(--trait);
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--texte);
+  font: 12px var(--mono);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Graphique commun : séries, points, légende */
+.graphique-ligne { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.graphique-point { stroke: var(--surface); stroke-width: 2; }
+.graphique-point--actif { stroke-width: 2.5; }
+.legende-graphique { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 0 0 8px; padding: 0; list-style: none; }
+.article .legende-graphique li { display: flex; align-items: center; gap: 7px; margin: 0; color: var(--discret); font: 13px var(--sans); }
+.legende-graphique span { width: 14px; height: 3px; border-radius: 2px; }
+
+.donnees { margin-top: 10px; font-size: 13px; }
+.donnees summary { color: var(--discret); cursor: pointer; }
+.donnees table { margin-top: 8px; border-collapse: collapse; font: 12.5px var(--mono); }
+.donnees th,
+.donnees td { padding: 3px 18px 3px 0; border-bottom: 1px solid var(--trait); text-align: right; }
+.donnees th { color: var(--discret); font: 500 12px var(--sans); }
+
+.mesures { width: 100%; margin: 24px 0; border-collapse: collapse; }
+.mesures caption { margin-bottom: 8px; text-align: left; font-weight: 500; }
+.mesures th,
+.mesures td { padding: 8px 0; border-bottom: 1px solid var(--trait); text-align: left; vertical-align: top; }
+.mesures th { width: 46%; padding-right: 16px; color: var(--discret); font-weight: 400; }
+.mesures td { font: 13px/1.6 var(--mono); }
+
+/* Équations (KaTeX) : la couleur suit le texte, donc le thème */
+.article .katex { font-size: 1.08em; }
+.maths { white-space: nowrap; } /* une formule en ligne ne se coupe pas en fin de ligne */
+.equation { margin: 6px 0 18px; padding: 4px 0; overflow-x: auto; overflow-y: hidden; }
+.equation .katex-display { margin: 0; }
+.equation--etroite { display: none; }
+
+/* Encadrés « Pour les experts » : repliés, entre deux filets, comme un complément de manuel */
+.expert { margin: 26px 0; border-top: 1px solid var(--texte); border-bottom: 1px solid var(--trait); }
+.expert > summary {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 11px 0;
+  cursor: pointer;
+  list-style: none;
+}
+.expert > summary::-webkit-details-marker { display: none; }
+.expert > summary::after { content: '+'; margin-left: auto; color: var(--discret); font: 15px var(--mono); }
+.expert[open] > summary::after { content: '−'; }
+.expert > summary:hover .expert-titre { text-decoration: underline; text-decoration-color: var(--sig); text-underline-offset: 4px; }
+.expert-etiquette { flex: none; color: var(--sig); font: 600 11.5px var(--sans); letter-spacing: .07em; text-transform: uppercase; }
+.expert-titre { font: italic 17px/1.4 var(--serif); }
+.expert-corps { padding: 4px 0 8px; }
+.expert-corps p,
+.expert-corps li { font-size: 16px; }
+.expert .figure { margin: 18px 0; }
+
+/* Histogramme Monte Carlo */
+.histo-barre { fill: var(--sig); }
+.histo-survol { fill: var(--survol); }
+.histo-cible { fill: transparent; }
+.histo-lancer {
+  position: absolute;
+  inset: 24px 16px 36px 44px;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.article .histo-lancer p { margin: 0; color: var(--discret); font: 13px/1.5 var(--sans); }
+.mesures--serre { margin: 14px 0 12px; }
+
+/* Frise chronologique de l'onglet Histoire */
+.frise { list-style: none; margin: 6px 0 0; padding: 0; }
+.frise li { display: grid; grid-template-columns: 108px minmax(0, 1fr); gap: 20px; padding: 13px 0; border-top: 1px solid var(--trait); }
+.frise li:last-child { border-bottom: 1px solid var(--trait); }
+.frise-annee { color: var(--discret); font: 500 14px/1.95 var(--mono); }
+.article .frise p { margin: 0; }
+.frise strong { font-weight: 600; }
+
+.refs { padding-left: 20px; }
+.article .refs li { font: 14.5px/1.55 var(--sans); }
+.refs a { text-decoration-color: var(--sig); text-underline-offset: 3px; }
+
+.appel { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 20px 0 6px; color: var(--discret); }
+
+.presets { margin: 18px 0 0; border-top: 1px solid var(--trait); }
+.presets div { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--trait); }
+.presets dt { display: flex; justify-content: space-between; gap: 12px; font-weight: 500; }
+.presets dt code { color: var(--discret); font: 12.5px var(--mono); }
+.presets dd { margin: 0; color: var(--discret); }
+
+/* ---------- Écrans moyens et mobiles ---------- */
+
+@media (max-width: 1100px) {
+  .lecture-grille { grid-template-columns: minmax(0, 700px); }
+  .sommaire { display: none; }
+}
+
+@media (max-width: 720px) {
+  .equation--large { display: none; }
+  .equation--etroite { display: block; }
+}
+
+@media (max-width: 860px) {
+  .lecture { flex: none; overflow: visible; }
+  .lecture-grille { padding: 24px 16px 64px; }
+  .figure { grid-template-columns: minmax(0, 1fr); }
+  .figure-canvas { width: 100%; height: auto; aspect-ratio: 1; }
+  .presets div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .frise li { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .expert > summary { flex-wrap: wrap; gap: 2px 12px; }
+}

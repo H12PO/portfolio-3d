@@ -1,0 +1,123 @@
+/* ============================================================
+   PAGE « LENIA » : ce qui lui est propre
+   Le reste vient de lab/commun/atelier.css et lab/commun/lecture.css.
+   ============================================================ */
+
+/* ---------- Explorateur ---------- */
+
+.ln-cadre { background: #090a0f; }
+.ln-canvas { cursor: crosshair; touch-action: none; }
+
+/* Les quatre mutants : la carte graphique les dessine, ces étiquettes s'y superposent */
+.ln-mutants {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  pointer-events: none;
+}
+.ln-mutant {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, .08);
+}
+.ln-mutant-titre {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, .55);
+  color: #fff;
+  font: 500 12px var(--sans);
+}
+.ln-mutant-titre strong { font-weight: 600; }
+.ln-mutant-titre strong[data-verdict="vivant"] { color: #6fe0a0; }
+.ln-mutant-titre strong[data-verdict="eteint"] { color: #b0b4bd; }
+.ln-mutant-titre strong[data-verdict="explose"] { color: #ff9a7a; }
+.ln-mutant-titre strong[data-verdict="conserve"] { color: #9cc8ff; }
+.ln-mutant .btn { pointer-events: auto; padding: 3px 10px; font-size: 12.5px; }
+
+.ln-erreur { flex: 1; display: grid; align-content: center; justify-items: start; gap: 10px; max-width: 640px; padding: 40px 24px; }
+.ln-erreur h2 { margin: 0; font-size: 18px; }
+.ln-erreur p { margin: 0; color: var(--discret); }
+.ln-erreur pre { max-width: 100%; overflow: auto; font: 12px var(--mono); }
+
+/* Bestiaire */
+.ln-bestiaire {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  margin: 6px 0 8px;
+  padding: 0;
+  list-style: none;
+}
+.ln-bestiaire button {
+  display: grid;
+  width: 100%;
+  padding: 5px 8px;
+  border: 1px solid var(--trait);
+  border-radius: 6px;
+  background: var(--champ);
+  color: var(--texte);
+  font: 13px var(--sans);
+  text-align: left;
+  cursor: pointer;
+}
+.ln-bestiaire button:hover { border-color: var(--discret); }
+.ln-bestiaire button[aria-pressed="true"] { border-color: var(--sig); background: var(--sig-doux); }
+.ln-bestiaire em { overflow: hidden; color: var(--discret); font-size: 11px; white-space: nowrap; text-overflow: ellipsis; }
+
+/* Éditeur : courbes et anneaux */
+.ln-courbes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 4px 0 10px; }
+.ln-courbes figure { margin: 0; }
+.ln-courbes svg { display: block; width: 100%; height: auto; border: 1px solid var(--trait); border-radius: 6px; background: var(--champ); }
+.ln-courbes figcaption { margin-top: 4px; color: var(--discret); font-size: 11.5px; line-height: 1.35; }
+.ln-axes line { stroke: var(--trait); stroke-width: 1; }
+.ln-axes text { fill: var(--discret); font: 9px var(--mono); }
+.ln-axes .ln-axes-titre { font-style: italic; }
+.ln-trace { fill: none; stroke: var(--sig); stroke-width: 1.8; stroke-linejoin: round; }
+.ln-trace--2 { stroke: #d9822b; }
+.ln-pastille { display: inline-block; width: 9px; height: 3px; margin: 0 4px 2px 0; border-radius: 2px; background: var(--sig); vertical-align: middle; }
+.ln-pastille--2 { margin-left: 8px; background: #d9822b; }
+
+.ln-anneaux { display: grid; gap: 4px; margin: 6px 0 10px; }
+.ln-anneaux-titre { color: var(--discret); font-size: 12.5px; }
+.ln-anneaux .curseur { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 8px; }
+.ln-petit { justify-self: start; padding: 2px 8px; font-size: 12px; }
+
+/* ---------- Figures des onglets de lecture ---------- */
+
+.ln-figure-canvas { display: block; width: min(100%, 520px); aspect-ratio: 1; border: 1px solid var(--trait); border-radius: 6px; background: #090a0f; }
+.ln-figure-canvas--large { width: 100%; aspect-ratio: 2 / 1; }
+.ln-choix { display: inline-flex; flex-wrap: wrap; margin-bottom: 12px; }
+.ln-paire { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; max-width: 760px; margin-bottom: 10px; }
+.ln-paire canvas { display: block; width: 100%; height: auto; aspect-ratio: 1; border: 1px solid var(--trait); border-radius: 6px; background: #090a0f; image-rendering: pixelated; }
+.ln-paire span { display: block; margin-top: 6px; color: var(--discret); font-size: 13px; }
+.ln-curseur { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; max-width: 560px; margin: 8px 0 12px; color: var(--discret); font-size: 13px; }
+.ln-curseur output { min-width: 80px; color: var(--texte); font: 500 13px var(--mono); }
+.ln-galerie { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin: 20px 0 26px; }
+.ln-galerie figure { margin: 0; }
+.ln-galerie canvas { display: block; width: 100%; height: auto; aspect-ratio: 1; border: 1px solid var(--trait); border-radius: 6px; background: #090a0f; }
+.ln-galerie figcaption { display: grid; justify-items: start; gap: 4px; margin-top: 8px; font-size: 13.5px; }
+.ln-galerie strong { font-weight: 600; }
+.ln-galerie span { color: var(--discret); }
+.ln-galerie .btn { margin-top: 4px; padding: 4px 10px; font-size: 13px; }
+
+/* Trois vues côte à côte : état, potentiel, croissance */
+.ln-trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; max-width: 760px; margin-bottom: 10px; }
+.ln-trio canvas,
+.ln-paire--une canvas,
+.ln-figure-canvas--petit { display: block; width: 100%; height: auto; aspect-ratio: 1; border: 1px solid var(--trait); border-radius: 6px; background: #090a0f; image-rendering: pixelated; }
+.ln-trio span { display: block; margin-top: 6px; color: var(--discret); font-size: 13px; }
+.ln-paire--une { grid-template-columns: minmax(0, 320px); }
+.ln-figure-canvas--petit { width: min(100%, 360px); margin-bottom: 10px; }
+.ln-regle { max-width: 520px; }
+.ln-banc { max-width: 560px; margin: 14px 0 6px; font-variant-numeric: tabular-nums; }
+.ln-banc th { width: auto; padding-right: 12px; }
+
+@media (max-width: 860px) {
+  .ln-paire { grid-template-columns: minmax(0, 1fr); }
+  .ln-trio { gap: 6px; }
+}

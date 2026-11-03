@@ -1,0 +1,165 @@
+/* ============================================================
+   PAGE « SCHELLING » : ce qui lui est propre
+   Le reste vient de lab/commun/atelier.css et lab/commun/lecture.css.
+   ============================================================ */
+
+/* ---------- Explorateur ---------- */
+
+.sc-cadre { background: #0d0f14; }
+.sc-canvas { cursor: crosshair; touch-action: none; }
+
+/* Étiquettes « Ville A / Ville B » et légende, posées sur la ville */
+.sc-etiquettes {
+  position: absolute;
+  inset: 0 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  pointer-events: none;
+}
+.sc-etiquette {
+  justify-self: start;
+  margin: 8px 10px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, .6);
+  color: #fff;
+  font: 12px var(--sans);
+}
+.sc-etiquette strong { font-weight: 600; }
+.sc-etiquette[data-cote="a"] strong { color: #6fd6a3; }
+.sc-etiquette[data-cote="b"] strong { color: #8fb8ea; }
+.sc-legende {
+  position: absolute;
+  left: 10px;
+  bottom: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  max-width: calc(100% - 20px);
+  padding: 3px 9px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, .6);
+  color: #e7e9ee;
+  font: 12px var(--sans);
+  pointer-events: none;
+}
+.sc-legende span { display: inline-flex; align-items: center; gap: 5px; }
+.sc-legende i { width: 9px; height: 9px; border-radius: 2px; }
+.sc-rampe { width: 80px; height: 8px; border-radius: 2px; }
+
+/* Courbes en direct, sous la barre de lecture */
+.sc-courbes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+  padding-bottom: 12px;
+}
+.sc-courbe { margin: 0; padding: 7px 9px 6px; border: 1px solid var(--trait); border-radius: 7px; background: var(--surface); }
+.sc-courbe figcaption { display: flex; justify-content: space-between; gap: 6px; color: var(--discret); font-size: 12px; }
+.sc-courbe-valeurs { display: inline-flex; gap: 6px; font: 600 12px var(--mono); }
+.sc-courbe svg { display: block; width: 100%; height: 44px; margin-top: 4px; overflow: visible; }
+.sc-courbe-axe { stroke: var(--trait); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.sc-courbe-moitie { stroke: var(--trait); stroke-width: 1; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+.sc-courbe-trace { fill: none; stroke-width: 1.8; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+
+/* Scénarios */
+.sc-scenarios {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+}
+.sc-scenarios button {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px;
+  width: 100%;
+  height: 100%;
+  padding: 5px 8px;
+  border: 1px solid var(--trait);
+  border-radius: 6px;
+  background: var(--champ);
+  color: var(--texte);
+  font: 13px/1.3 var(--sans);
+  text-align: left;
+  cursor: pointer;
+}
+.sc-scenarios button:hover { border-color: var(--discret); }
+.sc-scenarios button[aria-pressed="true"] { border-color: var(--sig); background: var(--sig-doux); }
+.sc-scenarios em { flex: none; color: var(--discret); font: 10.5px var(--mono); font-style: normal; }
+
+/* Plis de l'inspecteur */
+.sc-pli { margin: 0 -14px; border-top: 1px solid var(--trait); }
+.sc-pli:first-of-type { border-top: 0; }
+.sc-pli summary {
+  padding: 8px 14px;
+  color: var(--texte);
+  font-weight: 500;
+  cursor: pointer;
+  list-style-position: inside;
+}
+.sc-pli summary:hover { background: var(--survol); }
+.sc-pli-corps { padding: 4px 14px 8px; }
+.sc-sous-titre { margin: 6px 0 6px; color: var(--discret); font-size: 12px; }
+.sc-pastille { display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 2px; vertical-align: 0; }
+.sc-reglage { margin-bottom: 8px; }
+.sc-reglage-tete { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; color: var(--discret); font-size: 12.5px; }
+.sc-reglage-tete label { display: inline-flex; align-items: center; min-width: 0; }
+.sc-reglage-tete output { flex: none; color: var(--texte); font: 500 12px var(--mono); }
+.sc-reglage input { display: block; width: 100%; margin: 3px 0 0; }
+
+/* Pinceau */
+.sc-outils { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; margin-bottom: 10px; }
+.sc-outils button,
+.sc-pinceau-groupes button {
+  padding: 5px 6px;
+  border: 1px solid var(--trait);
+  border-radius: 6px;
+  background: var(--champ);
+  color: var(--texte);
+  font: 12.5px var(--sans);
+  cursor: pointer;
+}
+.sc-outils button[aria-pressed="true"],
+.sc-pinceau-groupes button[aria-pressed="true"] { border-color: var(--sig); background: var(--sig-doux); }
+.sc-pinceau-groupes { display: flex; gap: 4px; margin-bottom: 10px; }
+.sc-pinceau-groupes button { display: grid; place-items: center; width: 34px; height: 28px; padding: 0; }
+.sc-pinceau-groupes i { width: 14px; height: 14px; border-radius: 3px; }
+
+/* ---------- Fiches des scénarios (onglet Comprendre) ---------- */
+
+.article .sc-fiche-question { margin: 4px 0 14px; padding: 10px 14px; border-left: 3px solid var(--sig); background: var(--sig-doux); font-size: 1.08em; font-weight: 500; }
+.article .sc-fiche-titre { margin: 18px 0 4px; color: var(--discret); font: 600 12px var(--sans); letter-spacing: .06em; text-transform: uppercase; }
+.sc-fiche-images { margin: 14px 0 6px; }
+.sc-fiche-images figcaption { display: grid; gap: 1px; }
+.sc-fiche-images figcaption strong { color: var(--texte); font-weight: 500; }
+
+/* ---------- Figures des onglets de lecture ---------- */
+
+.sc-figure-canvas { display: block; width: 100%; height: auto; border: 1px solid var(--trait); border-radius: 6px; background: #0d0f14; image-rendering: pixelated; }
+.sc-paire { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; max-width: 760px; margin-bottom: 10px; }
+.sc-paire figure, .sc-trio figure { margin: 0; }
+.sc-paire figcaption, .sc-trio figcaption { margin-top: 6px; color: var(--discret); font-size: 13px; }
+.sc-trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; max-width: 760px; margin-bottom: 10px; }
+.sc-commandes { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 10px 0 12px; }
+.sc-curseur { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; max-width: 560px; margin: 8px 0 12px; color: var(--discret); font-size: 13px; }
+.sc-curseur output { min-width: 70px; color: var(--texte); font: 500 13px var(--mono); }
+.sc-ligne-1d { display: flex; flex-wrap: wrap; gap: 2px; max-width: 760px; margin: 8px 0; }
+.sc-ligne-1d span { width: 14px; height: 14px; border-radius: 3px; }
+.sc-ligne-1d span[data-mal="true"] { outline: 2px solid #D55E00; outline-offset: -2px; }
+.sc-tableau { max-width: 620px; margin: 12px 0; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 860px) {
+  .sc-paire, .sc-trio { grid-template-columns: minmax(0, 1fr); }
+  .sc-fiche-images .sc-paire { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .sc-fiche-images .sc-trio { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .sc-fiche-images figcaption { font-size: 12px; }
+  .sc-courbes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.article .sc-note { margin: 6px 0 0; color: var(--discret); font: 13px/1.5 var(--sans); }
+.article .sc-etat { margin: 6px 0; color: var(--texte); font: 13px/1.5 var(--mono); }
+
